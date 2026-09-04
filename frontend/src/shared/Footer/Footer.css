@@ -38,8 +38,15 @@
     font-size: 14px;
 }
 
-.footer-col a:hover {
-    color: var(--gold);
+.footer-text {
+    color: var(--text);
+    font-size: 14px;
+}
+
+.footer-social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .footer-bottom {
