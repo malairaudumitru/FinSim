@@ -12,15 +12,15 @@ function Footer() {
                     </div>
                     <div className="footer-col">
                         <h4>Scenarii</h4>
-                        <a href="#scenarios">Primul salariu</a>
-                        <a href="#scenarios">Chirie și facturi</a>
-                        <a href="#scenarios">Primul credit</a>
+                        <Link to="/" hash="scenarios">Primul salariu</Link>
+                        <Link to="/" hash="scenarios">Chirie și facturi</Link>
+                        <Link to="/" hash="scenarios">Primul credit</Link>
                     </div>
                     <div className="footer-col">
                         <h4>Despre proiect</h4>
-                        <a href="#">Despre noi</a>
-                        <a href="#">Întrebări frecvente</a>
-                        <a href="#">Termeni și condiții</a>
+                        <Link to="/">Despre noi</Link>
+                        <Link to="/faq">Întrebări frecvente</Link>
+                        <Link to="/faq">Termeni și condiții</Link>
                     </div>
                     <div className="footer-col">
                         <h4>Contul meu</h4>

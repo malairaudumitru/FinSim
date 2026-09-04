@@ -9,9 +9,9 @@ function Navbar() {
                     FinSim
                 </Link>
                 <nav className="nav-links">
-                    <a href="#how-it-works">Cum funcționează</a>
-                    <a href="#scenarios">Scenarii</a>
-                    <a href="#reviews">Recenzii</a>
+                    <Link to="/" hash="how-it-works">Cum funcționează</Link>
+                    <Link to="/" hash="scenarios">Scenarii</Link>
+                    <Link to="/faq">FAQ</Link>
                     <a href="#contact">Contact</a>
                 </nav>
                 <div className="nav-actions">

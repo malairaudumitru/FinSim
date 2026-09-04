@@ -1,4 +1,5 @@
-﻿import './HomePage.css'
+﻿import { Link } from '@tanstack/react-router'
+import './HomePage.css'
 
 const scenarios = [
     {
@@ -72,8 +73,12 @@ function HomePage() {
                             consecințele lor, fără să riști vreun leu.
                         </p>
                         <div className="hero-actions">
-                            <button className="btn btn-primary btn-lg">Începe simularea</button>
-                            <button className="btn btn-ghost btn-lg">Vezi cum funcționează</button>
+                            <Link to="/" hash="scenarios" className="btn btn-primary btn-lg">
+                                Începe simularea
+                            </Link>
+                            <Link to="/" hash="how-it-works" className="btn btn-ghost btn-lg">
+                                Vezi cum funcționează
+                            </Link>
                         </div>
                     </div>
 
