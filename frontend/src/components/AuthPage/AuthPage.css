@@ -1,0 +1,157 @@
+﻿.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 36px;
+}
+
+.auth-logo {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--text-h);
+    text-decoration: none;
+    margin-bottom: 28px;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 10px;
+    background: var(--accent-bg);
+    margin-bottom: 20px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.auth-tab.active {
+    background: var(--accent);
+    color: #fff;
+}
+
+.auth-subtitle {
+    margin: 0 0 28px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-row {
+    display: flex;
+    gap: 14px;
+}
+
+.form-row .form-field {
+    flex: 1;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.form-field input {
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-h);
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.field-error {
+    font-size: 13px;
+    color: #e5484d;
+}
+
+.password-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.password-input input {
+    flex: 1;
+}
+
+.password-toggle {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.auth-extra-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+}
+
+.forgot-password {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.auth-success {
+    padding: 16px;
+    border-radius: 10px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    text-align: center;
+    line-height: 1.5;
+}

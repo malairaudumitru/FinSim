@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Core\" />
+      <Folder Include="Interfaces\" />
+      <Folder Include="Structure\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FinSim.DataAccessLayer\FinSim.DataAccessLayer.csproj" />
+      <ProjectReference Include="..\FinSim.Domain\FinSim.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
