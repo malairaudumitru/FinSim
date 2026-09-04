@@ -1,10 +1,27 @@
 ﻿.auth-page {
+    position: relative;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
     background: var(--paper);
+}
+
+.auth-home-link {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.auth-home-link:hover {
+    color: var(--gold);
 }
 
 .auth-card {
@@ -15,6 +32,14 @@
     padding: 40px 36px;
 }
 
+.auth-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
 .auth-logo {
     display: inline-block;
     font-family: var(--heading);
@@ -22,7 +47,6 @@
     font-size: 20px;
     color: var(--text-h);
     text-decoration: none;
-    margin-bottom: 28px;
 }
 
 .auth-tabs {
@@ -45,11 +69,34 @@
     cursor: pointer;
     transition: all 0.15s;
     margin-bottom: -1px;
+    outline-offset: -3px;
+}
+
+.auth-tab:focus-visible {
+    outline: 2px solid var(--gold);
 }
 
 .auth-tab.active {
     color: var(--text-h);
     border-bottom-color: var(--gold);
+}
+
+.auth-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.auth-back:hover {
+    color: var(--gold);
 }
 
 .auth-subtitle {
@@ -71,12 +118,14 @@
 
 .form-row .form-field {
     flex: 1;
+    min-width: 0;
 }
 
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
 }
 
 .form-field label {
@@ -86,6 +135,7 @@
 }
 
 .form-field input {
+    width: 100%;
     font-family: var(--sans);
     font-size: 15px;
     padding: 10px 12px;
@@ -116,12 +166,18 @@
 }
 
 .password-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
-    color: var(--gold);
-    font-size: 13px;
+    color: var(--text);
     cursor: pointer;
-    white-space: nowrap;
+    padding: 4px;
+}
+
+.password-toggle:hover {
+    color: var(--gold);
 }
 
 .auth-extra-row {
@@ -136,11 +192,58 @@
     align-items: center;
     gap: 8px;
     color: var(--text);
+    cursor: pointer;
+}
+
+.remember-me input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.remember-me input[type='checkbox']:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+}
+
+.remember-me input[type='checkbox']:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.remember-me input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
 }
 
 .forgot-password {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--sans);
     color: var(--gold);
     text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
 }
 
 .auth-submit {
