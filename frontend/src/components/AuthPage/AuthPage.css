@@ -4,20 +4,22 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
+    background: var(--paper);
 }
 
 .auth-card {
     width: 100%;
     max-width: 420px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
     padding: 40px 36px;
 }
 
 .auth-logo {
     display: inline-block;
+    font-family: var(--heading);
     font-weight: 600;
-    font-size: 18px;
+    font-size: 20px;
     color: var(--text-h);
     text-decoration: none;
     margin-bottom: 28px;
@@ -26,29 +28,28 @@
 .auth-tabs {
     display: flex;
     gap: 4px;
-    padding: 4px;
-    border-radius: 10px;
-    background: var(--accent-bg);
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
 }
 
 .auth-tab {
     flex: 1;
     padding: 10px;
     border: none;
-    border-radius: 8px;
+    border-bottom: 2px solid transparent;
     background: transparent;
     color: var(--text);
     font-family: var(--sans);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    margin-bottom: -1px;
 }
 
 .auth-tab.active {
-    background: var(--accent);
-    color: #fff;
+    color: var(--text-h);
+    border-bottom-color: var(--gold);
 }
 
 .auth-subtitle {
@@ -88,20 +89,20 @@
     font-family: var(--sans);
     font-size: 15px;
     padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: transparent;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
     color: var(--text-h);
 }
 
 .form-field input:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--gold);
 }
 
 .field-error {
     font-size: 13px;
-    color: #e5484d;
+    color: var(--rust);
 }
 
 .password-input {
@@ -117,7 +118,7 @@
 .password-toggle {
     background: none;
     border: none;
-    color: var(--accent);
+    color: var(--gold);
     font-size: 13px;
     cursor: pointer;
     white-space: nowrap;
@@ -138,7 +139,7 @@
 }
 
 .forgot-password {
-    color: var(--accent);
+    color: var(--gold);
     text-decoration: none;
 }
 
@@ -149,9 +150,9 @@
 
 .auth-success {
     padding: 16px;
-    border-radius: 10px;
-    background: var(--accent-bg);
-    color: var(--accent);
+    border: 1px solid var(--forest);
+    background: transparent;
+    color: var(--forest);
     text-align: center;
     line-height: 1.5;
 }

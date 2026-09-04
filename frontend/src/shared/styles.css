@@ -1,11 +1,12 @@
 ﻿.btn {
     font-family: var(--sans);
     font-size: 15px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 2px solid transparent;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 3px;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -13,33 +14,40 @@
 }
 
 .btn-primary {
-    background: var(--accent);
-    color: #fff;
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
 }
 
 .btn-primary:hover {
-    opacity: 0.9;
+    background: transparent;
+    color: var(--gold);
 }
 
 .btn-ghost {
-    background: var(--accent-bg);
-    color: var(--accent);
-    border-color: transparent;
+    background: transparent;
+    color: var(--text-h);
+    border-color: var(--rule);
 }
 
 .btn-ghost:hover {
-    border-color: var(--accent-border);
+    border-color: var(--text-h);
 }
 
 .btn-link {
     background: none;
     border: none;
-    color: var(--accent);
+    color: var(--gold);
     padding: 0;
-    font-weight: 600;
+    font-weight: 500;
+    border-radius: 0;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
 }
 
 .btn-lg {
-    padding: 14px 28px;
+    padding: 15px 30px;
     font-size: 16px;
 }

@@ -1,141 +1,174 @@
 ﻿import './HomePage.css'
 
-const products = [
+const scenarios = [
     {
-        name: 'Credit Ipotecar',
-        desc: 'Finanțează achiziția locuinței tale cu dobânzi avantajoase pe termen lung.',
-        rate: 'de la 4.9%',
+        name: 'Primul salariu',
+        desc: 'Primești primul salariu și trebuie să-l împarți pe chirie, mâncare, transport și economii.',
+        difficulty: 'Ușor',
     },
     {
-        name: 'Credit Auto',
-        desc: 'Cumpără mașina dorită acum și plătește în rate flexibile.',
-        rate: 'de la 6.2%',
+        name: 'Chirie și facturi',
+        desc: 'Te muți singur și afli cât de repede se adună facturile lunare peste chirie.',
+        difficulty: 'Mediu',
     },
     {
-        name: 'Credit Nevoi Personale',
-        desc: 'Bani rapizi pentru orice proiect, fără garanții suplimentare.',
-        rate: 'de la 7.5%',
+        name: 'Urgență medicală',
+        desc: 'O cheltuială neprevăzută îți testează fondul de urgență — sau lipsa lui.',
+        difficulty: 'Mediu',
     },
     {
-        name: 'Credit pentru Afaceri',
-        desc: 'Susține-ți afacerea cu finanțare adaptată nevoilor tale.',
-        rate: 'de la 5.8%',
+        name: 'Primul credit',
+        desc: 'Ai nevoie de bani în plus. Alegi un credit — dar știi cât te costă cu adevărat?',
+        difficulty: 'Avansat',
     },
 ]
 
 const steps = [
     {
-        title: 'Completezi cererea online',
-        desc: 'Alegi produsul financiar și introduci datele necesare în câteva minute.',
+        title: 'Alegi un scenariu',
+        desc: 'Selectezi o situație financiară reală, de la primul salariu până la primul credit.',
     },
     {
-        title: 'Analizăm cererea',
-        desc: 'Echipa noastră evaluează cererea și îți răspunde în maxim 24 de ore.',
+        title: 'Iei decizii pas cu pas',
+        desc: 'La fiecare etapă alegi cum cheltuiești, economisești sau împrumuți — și vezi efectul imediat.',
     },
     {
-        title: 'Primești banii',
-        desc: 'După aprobare, suma solicitată ajunge direct în contul tău.',
+        title: 'Primești un scor și sfaturi',
+        desc: 'La final vezi ce ai făcut bine, ce ai putea îmbunătăți și cum arată un buget echilibrat.',
     },
 ]
 
 const testimonials = [
     {
-        name: 'Andreea M.',
-        text: 'Am obținut creditul auto în doar două zile. Procesul online a fost extrem de simplu.',
-        rating: 5,
+        name: 'Alexandru, 19 ani',
+        text: 'Prima dată când am înțeles de ce nu-mi ajungeau banii până la finalul lunii.',
     },
     {
-        name: 'Vlad T.',
-        text: 'Calculatorul de credit m-a ajutat să înțeleg exact cât voi plăti lunar. Recomand!',
-        rating: 5,
+        name: 'Diana, 22 ani',
+        text: 'Scenariul cu creditul m-a făcut să calculez de două ori înainte să iau unul real.',
     },
     {
-        name: 'Cristina D.',
-        text: 'Suport rapid și transparență totală în privința dobânzilor și a comisioanelor.',
-        rating: 4,
+        name: 'Mihai, 17 ani',
+        text: 'E ca un joc, dar chiar am învățat ce înseamnă fond de urgență.',
     },
 ]
 
 const stats = [
-    { value: '15+', label: 'ani de experiență' },
-    { value: '50.000+', label: 'clienți mulțumiți' },
-    { value: '€200M', label: 'valoare creditată' },
-    { value: '24h', label: 'timp mediu de răspuns' },
+    { value: '4', label: 'scenarii disponibile' },
+    { value: '100%', label: 'gratuit' },
+    { value: '0 lei', label: 'risc real' },
+    { value: '~10 min', label: 'per scenariu' },
 ]
 
 function HomePage() {
     return (
         <>
             <section className="hero">
-                <h1>Creditul potrivit, fără bătăi de cap.</h1>
-                <p className="hero-subtitle">
-                    Aplică online, urmărește-ți cererea în timp real și gestionează-ți
-                    creditele dintr-un singur loc.
-                </p>
-                <div className="hero-actions">
-                    <button className="btn btn-primary btn-lg">Depune o cerere</button>
-                    <button className="btn btn-ghost btn-lg">Calculează rata</button>
+                <div className="container hero-inner">
+                    <div className="hero-text">
+                        <h1>Învață să-ți gestionezi banii înainte să conteze cu adevărat.</h1>
+                        <p className="hero-subtitle">
+                            Simulează decizii financiare reale — salariu, chirie, credite — și vezi
+                            consecințele lor, fără să riști vreun leu.
+                        </p>
+                        <div className="hero-actions">
+                            <button className="btn btn-primary btn-lg">Începe simularea</button>
+                            <button className="btn btn-ghost btn-lg">Vezi cum funcționează</button>
+                        </div>
+                    </div>
+
+                    <div className="ledger-card" aria-hidden="true">
+                        <div className="ledger-card-title">Extras lunar — simulare</div>
+                        <div className="ledger-row">
+                            <span>Salariu</span>
+                            <span className="figure positive">+8 500 lei</span>
+                        </div>
+                        <div className="ledger-row">
+                            <span>Chirie</span>
+                            <span className="figure negative">−2 200 lei</span>
+                        </div>
+                        <div className="ledger-row">
+                            <span>Facturi</span>
+                            <span className="figure negative">−650 lei</span>
+                        </div>
+                        <div className="ledger-row">
+                            <span>Economii</span>
+                            <span className="figure positive">+1 200 lei</span>
+                        </div>
+                        <div className="ledger-row ledger-total">
+                            <span>Rămas la final de lună</span>
+                            <span className="figure">4 450 lei</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <section className="stats">
-                {stats.map((s) => (
-                    <div className="stat" key={s.label}>
-                        <span className="stat-value">{s.value}</span>
-                        <span className="stat-label">{s.label}</span>
+                <div className="container stats-inner">
+                    {stats.map((s) => (
+                        <div className="stat" key={s.label}>
+                            <span className="stat-value figure">{s.value}</span>
+                            <span className="stat-label">{s.label}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section id="scenarios" className="scenarios">
+                <div className="container">
+                    <div className="section-heading">
+                        <h2>Scenarii de simulare</h2>
+                        <p className="section-subtitle">
+                            Alege o situație și vezi cum s-ar descurca bugetul tău.
+                        </p>
                     </div>
-                ))}
-            </section>
-
-            <section id="products" className="products">
-                <div className="section-heading">
-                    <h2>Produse financiare</h2>
-                    <p className="section-subtitle">
-                        Alege creditul potrivit nevoilor tale.
-                    </p>
-                </div>
-                <div className="products-grid">
-                    {products.map((p) => (
-                        <div className="product-card" key={p.name}>
-                            <h3>{p.name}</h3>
-                            <p>{p.desc}</p>
-                            <span className="product-rate">{p.rate}</span>
-                            <button className="btn btn-link">Vezi detalii →</button>
-                        </div>
-                    ))}
+                    <div className="scenario-list">
+                        {scenarios.map((s) => (
+                            <div className="scenario-row" key={s.name}>
+                                <div className="scenario-info">
+                                    <h3>{s.name}</h3>
+                                    <p>{s.desc}</p>
+                                </div>
+                                <span className="scenario-tag">{s.difficulty}</span>
+                                <button className="btn btn-link">Joacă scenariul →</button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            <section className="how-it-works">
-                <div className="section-heading">
-                    <h2>Cum funcționează</h2>
-                </div>
-                <div className="steps">
-                    {steps.map((step, i) => (
-                        <div className="step" key={step.title}>
-                            <span className="step-number">{i + 1}</span>
-                            <h3>{step.title}</h3>
-                            <p>{step.desc}</p>
-                        </div>
-                    ))}
+            <section id="how-it-works" className="how-it-works">
+                <div className="container">
+                    <div className="section-heading">
+                        <h2>Cum funcționează</h2>
+                    </div>
+                    <div className="timeline">
+                        {steps.map((step, i) => (
+                            <div className="timeline-step" key={step.title}>
+                                <span className="timeline-number figure">{String(i + 1).padStart(2, '0')}</span>
+                                <div>
+                                    <h3>{step.title}</h3>
+                                    <p>{step.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
             <section id="reviews" className="reviews">
-                <div className="section-heading">
-                    <h2>Ce spun clienții noștri</h2>
-                </div>
-                <div className="reviews-grid">
-                    {testimonials.map((t) => (
-                        <div className="review-card" key={t.name}>
-                            <div className="review-rating">
-                                {'★'.repeat(t.rating)}
-                                {'☆'.repeat(5 - t.rating)}
-                            </div>
-                            <p className="review-text">"{t.text}"</p>
-                            <span className="review-author">{t.name}</span>
-                        </div>
-                    ))}
+                <div className="container">
+                    <div className="section-heading">
+                        <h2>Ce spun cei care au încercat</h2>
+                    </div>
+                    <div className="reviews-grid">
+                        {testimonials.map((t) => (
+                            <blockquote className="review-card" key={t.name}>
+                                <p className="review-text">{t.text}</p>
+                                <cite className="review-author">{t.name}</cite>
+                            </blockquote>
+                        ))}
+                    </div>
                 </div>
             </section>
         </>

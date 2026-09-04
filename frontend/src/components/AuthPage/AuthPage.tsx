@@ -113,7 +113,7 @@ function AuthPage() {
 
                 <p className="auth-subtitle">
                     {isRegister
-                        ? 'Câteva date și ești gata să aplici pentru primul tău credit.'
+                        ? 'Câteva date și ești gata să începi prima simulare.'
                         : 'Introdu datele contului pentru a continua.'}
                 </p>
 
