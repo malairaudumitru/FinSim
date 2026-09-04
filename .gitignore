@@ -1,0 +1,20 @@
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# .NET / backend
+bin/
+obj/
+*.user
+*.suo
+
+# Editor / IDE
+.idea/
+.vs/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
