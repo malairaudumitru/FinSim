@@ -24,6 +24,12 @@
     color: var(--gold);
 }
 
+.auth-theme-toggle {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+}
+
 .auth-card {
     width: 100%;
     max-width: 420px;

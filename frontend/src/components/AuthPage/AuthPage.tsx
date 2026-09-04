@@ -1,5 +1,6 @@
 ﻿import { useState, type FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
+import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -112,6 +113,9 @@ function AuthPage() {
             <Link to="/" className="auth-home-link">
                 ← Înapoi la pagina principală
             </Link>
+            <div className="auth-theme-toggle">
+                <ThemeToggle />
+            </div>
             <div className="auth-card">
                 <div className="auth-header">
                     <Link to="/" className="auth-logo">

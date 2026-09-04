@@ -1,4 +1,5 @@
 ﻿import { Link } from '@tanstack/react-router'
+import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import './Navbar.css'
 
 function Navbar() {
@@ -15,6 +16,7 @@ function Navbar() {
                     <a href="#contact">Contact</a>
                 </nav>
                 <div className="nav-actions">
+                    <ThemeToggle />
                     <Link to="/login" className="btn btn-primary">
                         Autentificare
                     </Link>

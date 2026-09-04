@@ -34,19 +34,18 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #10160f;
-    --surface: #182019;
-    --ink: #eef1ea;
-    --text: #a9b6a4;
-    --text-h: #eef1ea;
-    --rule: #2c3a2c;
-    --gold: #d9a545;
-    --gold-soft: rgba(217, 165, 69, 0.14);
-    --forest: #5da97e;
-    --rust: #d97362;
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #10160f;
+  --surface: #182019;
+  --ink: #eef1ea;
+  --text: #a9b6a4;
+  --text-h: #eef1ea;
+  --rule: #2c3a2c;
+  --gold: #d9a545;
+  --gold-soft: rgba(217, 165, 69, 0.14);
+  --forest: #5da97e;
+  --rust: #d97362;
 }
 
 * {
