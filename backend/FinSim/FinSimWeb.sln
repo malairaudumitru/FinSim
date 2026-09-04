@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSim.Api", "FinSim.Api\FinSim.Api.csproj", "{ACA925E6-39D7-4698-A3A9-53D57DA1D125}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSimWeb.Api", "FinSimWeb.Api\FinSimWeb.Api.csproj", "{ACA925E6-39D7-4698-A3A9-53D57DA1D125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSim.BusinessLayer", "FinSim.BusinessLayer\FinSim.BusinessLayer.csproj", "{E04A8BF3-6B6C-4D0C-A4C9-531E4E341A16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSimWeb.BusinessLayer", "FinSimWeb.BusinessLayer\FinSimWeb.BusinessLayer.csproj", "{E04A8BF3-6B6C-4D0C-A4C9-531E4E341A16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSim.Domain", "FinSim.Domain\FinSim.Domain.csproj", "{3AD9BAB5-B09C-4B0A-8FC3-18BA12998063}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSimWeb.Domain", "FinSimWeb.Domain\FinSimWeb.Domain.csproj", "{3AD9BAB5-B09C-4B0A-8FC3-18BA12998063}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSim.DataAccessLayer", "FinSim.DataAccessLayer\FinSim.DataAccessLayer.csproj", "{F4B3CC2A-1351-47F9-AFB5-F2764EB91675}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinSimWeb.DataAccessLayer", "FinSimWeb.DataAccessLayer\FinSimWeb.DataAccessLayer.csproj", "{F4B3CC2A-1351-47F9-AFB5-F2764EB91675}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

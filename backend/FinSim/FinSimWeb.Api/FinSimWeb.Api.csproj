@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>FinSim.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,8 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FinSim.BusinessLayer\FinSim.BusinessLayer.csproj" />
-      <ProjectReference Include="..\FinSim.Domain\FinSim.Domain.csproj" />
+      <ProjectReference Include="..\FinSimWeb.BusinessLayer\FinSimWeb.BusinessLayer.csproj" />
+      <ProjectReference Include="..\FinSimWeb.Domain\FinSimWeb.Domain.csproj" />
     </ItemGroup>
 
 </Project>
