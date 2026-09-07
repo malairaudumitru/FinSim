@@ -6,6 +6,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { initTheme } from './shared/theme'
 import { AuthProvider } from './shared/AuthContext'
+import { NotificationsProvider } from './shared/NotificationsContext'
 
 initTheme()
 
@@ -20,7 +21,9 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthProvider>
-            <RouterProvider router={router} />
+            <NotificationsProvider>
+                <RouterProvider router={router} />
+            </NotificationsProvider>
         </AuthProvider>
     </StrictMode>,
 )

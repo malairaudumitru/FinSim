@@ -15,6 +15,7 @@ import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppAboutRouteImport } from './routes/_app.about'
 import { Route as AppContactRouteImport } from './routes/_app.contact'
 import { Route as AppFaqRouteImport } from './routes/_app.faq'
+import { Route as AppNotificationsRouteImport } from './routes/_app.notifications'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppTermsRouteImport } from './routes/_app.terms'
 
@@ -47,6 +48,11 @@ const AppFaqRoute = AppFaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AppAboutRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
+  '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
 }
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/about': typeof AppAboutRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
+  '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/_app/about': typeof AppAboutRoute
   '/_app/contact': typeof AppContactRoute
   '/_app/faq': typeof AppFaqRoute
+  '/_app/notifications': typeof AppNotificationsRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
@@ -90,9 +99,24 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/about' | '/contact' | '/faq' | '/profile' | '/terms'
+    | '/'
+    | '/login'
+    | '/about'
+    | '/contact'
+    | '/faq'
+    | '/notifications'
+    | '/profile'
+    | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/contact' | '/faq' | '/profile' | '/terms' | '/'
+  to:
+    | '/login'
+    | '/about'
+    | '/contact'
+    | '/faq'
+    | '/notifications'
+    | '/profile'
+    | '/terms'
+    | '/'
   id:
     | '__root__'
     | '/_app'
@@ -100,6 +124,7 @@ export interface FileRouteTypes {
     | '/_app/about'
     | '/_app/contact'
     | '/_app/faq'
+    | '/_app/notifications'
     | '/_app/profile'
     | '/_app/terms'
     | '/_app/'
@@ -154,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFaqRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/profile': {
       id: '/_app/profile'
       path: '/profile'
@@ -175,6 +207,7 @@ interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppContactRoute: typeof AppContactRoute
   AppFaqRoute: typeof AppFaqRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppProfileRoute: typeof AppProfileRoute
   AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -184,6 +217,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppContactRoute: AppContactRoute,
   AppFaqRoute: AppFaqRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppProfileRoute: AppProfileRoute,
   AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
