@@ -8,6 +8,8 @@ interface ContactForm {
     mesaj: string
 }
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
 const initialState: ContactForm = {
     nume: '',
     email: '',
@@ -32,14 +34,14 @@ function ContactPage() {
 
         if (!form.email.trim()) {
             newErrors.email = 'Email-ul este obligatoriu.'
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        } else if (!EMAIL_REGEX.test(form.email.trim())) {
             newErrors.email = 'Introdu o adresă de email validă.'
         }
 
         if (!form.mesaj.trim()) {
             newErrors.mesaj = 'Mesajul este obligatoriu.'
-        } else if (form.mesaj.trim().length < 10) {
-            newErrors.mesaj = 'Mesajul trebuie să aibă cel puțin 10 caractere.'
+        } else if (form.mesaj.trim().length < 25) {
+            newErrors.mesaj = 'Mesajul trebuie să aibă cel puțin 25 caractere.'
         }
 
         setErrors(newErrors)

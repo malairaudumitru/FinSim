@@ -23,6 +23,17 @@ const initialState: FormState = {
     confirmaParola: '',
 }
 
+function sanitizePhoneInput(raw: string): string {
+    let value = raw.replace(/[^\d+]/g, '')
+    if (value.includes('+')) {
+        value = '+' + value.replace(/\+/g, '')
+    }
+    return value
+}
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const PHONE_REGEX = /^(0[67]\d{7}|\+373[67]\d{7})$/
+
 function EyeIcon({ open }: { open: boolean }) {
     if (open) {
         return (
@@ -58,7 +69,8 @@ function AuthPage() {
     }
 
     const handleChange = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm((prev) => ({ ...prev, [field]: e.target.value }))
+        const value = field === 'telefon' ? sanitizePhoneInput(e.target.value) : e.target.value
+        setForm((prev) => ({ ...prev, [field]: value }))
     }
 
     const validate = (): boolean => {
@@ -66,7 +78,7 @@ function AuthPage() {
 
         if (!form.email.trim()) {
             newErrors.email = 'Email-ul este obligatoriu.'
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        } else if (!EMAIL_REGEX.test(form.email.trim())) {
             newErrors.email = 'Introdu o adresă de email validă.'
         }
 
@@ -80,15 +92,15 @@ function AuthPage() {
             if (!form.prenume.trim()) newErrors.prenume = 'Prenumele este obligatoriu.'
             if (!form.telefon.trim()) {
                 newErrors.telefon = 'Numărul de telefon este obligatoriu.'
-            } else if (!/^0\d{8,9}$/.test(form.telefon.replace(/\s/g, ''))) {
-                newErrors.telefon = 'Introdu un număr de telefon valid.'
+            } else if (!PHONE_REGEX.test(form.telefon)) {
+                newErrors.telefon = 'Introdu un număr valid (ex: 069123456 sau +37369123456).'
             }
         }
 
         if (!form.parola) {
             newErrors.parola = 'Parola este obligatorie.'
-        } else if (form.parola.length < 6) {
-            newErrors.parola = 'Parola trebuie să aibă cel puțin 6 caractere.'
+        } else if (form.parola.length < 8) {
+            newErrors.parola = 'Parola trebuie să aibă cel puțin 8 caractere.'
         }
 
         if (isRegister && form.parola !== form.confirmaParola) {
@@ -174,7 +186,7 @@ function AuthPage() {
                                         type="text"
                                         value={form.nume}
                                         onChange={handleChange('nume')}
-                                        placeholder="Olaru"
+                                        placeholder="Popescu"
                                     />
                                     {errors.nume && <span className="field-error">{errors.nume}</span>}
                                 </div>
@@ -185,7 +197,7 @@ function AuthPage() {
                                         type="text"
                                         value={form.prenume}
                                         onChange={handleChange('prenume')}
-                                        placeholder="Vladislav"
+                                        placeholder="Ion"
                                     />
                                     {errors.prenume && <span className="field-error">{errors.prenume}</span>}
                                 </div>
@@ -210,9 +222,11 @@ function AuthPage() {
                                 <input
                                     id="telefon"
                                     type="tel"
+                                    inputMode="tel"
+                                    maxLength={13}
                                     value={form.telefon}
                                     onChange={handleChange('telefon')}
-                                    placeholder="+37364578421"
+                                    placeholder="069123456"
                                 />
                                 {errors.telefon && <span className="field-error">{errors.telefon}</span>}
                             </div>
