@@ -27,6 +27,7 @@ function Navbar() {
                 <nav className="nav-links">
                     <Link to="/" hash="how-it-works">Cum funcționează</Link>
                     <Link to="/" hash="scenarios">Scenarii</Link>
+                    <Link to="/leaderboard">Clasament</Link>
                     <Link to="/faq">FAQ</Link>
                     <Link to="/contact">Contact</Link>
                 </nav>

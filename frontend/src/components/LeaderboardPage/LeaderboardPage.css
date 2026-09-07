@@ -1,0 +1,233 @@
+﻿.leaderboard-podium-section {
+    padding: 56px 0 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.leaderboard-podium {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+    gap: 20px;
+}
+
+.podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.podium-item.rank-1 {
+    order: 2;
+}
+
+.podium-item.rank-2 {
+    order: 1;
+}
+
+.podium-item.rank-3 {
+    order: 3;
+}
+
+@media (max-width: 720px) {
+    .leaderboard-podium {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .podium-item.rank-1,
+    .podium-item.rank-2,
+    .podium-item.rank-3 {
+        order: initial;
+    }
+
+    .podium-base {
+        height: 56px !important;
+    }
+}
+
+.podium-person {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding-bottom: 20px;
+}
+
+.podium-you-badge {
+    position: absolute;
+    top: -10px;
+    right: -6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--forest);
+    border: 1px solid var(--forest);
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: var(--paper);
+}
+
+.podium-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--rank-gray);
+    color: var(--rank-gray);
+    font-family: var(--heading);
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.rank-1 .podium-avatar {
+    width: 68px;
+    height: 68px;
+    font-size: 24px;
+    background: var(--gold-soft);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.rank-3 .podium-avatar {
+    border-color: var(--rank-bronze);
+    color: var(--rank-bronze);
+}
+
+.podium-name {
+    font-size: 16px;
+}
+
+.podium-score {
+    font-size: 22px;
+    color: var(--rank-gray);
+}
+
+.rank-1 .podium-score {
+    font-size: 28px;
+    color: var(--gold);
+}
+
+.rank-3 .podium-score {
+    color: var(--rank-bronze);
+}
+
+.podium-base {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-top: 3px solid var(--rank-gray);
+    background-color: color-mix(in srgb, var(--rank-gray) 8%, transparent);
+}
+
+.rank-1 .podium-base {
+    height: 108px;
+    border-top-color: var(--gold);
+    background-color: color-mix(in srgb, var(--gold) 10%, transparent);
+}
+
+.rank-2 .podium-base {
+    height: 76px;
+}
+
+.rank-3 .podium-base {
+    height: 48px;
+    border-top-color: var(--rank-bronze);
+    background-color: color-mix(in srgb, var(--rank-bronze) 10%, transparent);
+}
+
+.podium-base-rank {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--rank-gray);
+}
+
+.rank-1 .podium-base-rank {
+    color: var(--gold);
+    font-size: 38px;
+}
+
+.rank-3 .podium-base-rank {
+    color: var(--rank-bronze);
+}
+
+.leaderboard-rest-section {
+    padding: 40px 0 96px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule);
+}
+
+.leaderboard-row:last-child {
+    border-bottom: 1px solid var(--rule);
+}
+
+.leaderboard-row.is-you {
+    background: var(--gold-soft);
+}
+
+.leaderboard-rank {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.leaderboard-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.leaderboard-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--text-h);
+    font-family: var(--heading);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.leaderboard-name {
+    font-size: 15px;
+    color: var(--text-h);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.leaderboard-you-badge {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--forest);
+    border: 1px solid var(--forest);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.leaderboard-score {
+    font-size: 16px;
+    color: var(--text-h);
+}

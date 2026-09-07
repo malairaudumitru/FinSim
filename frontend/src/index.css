@@ -11,6 +11,9 @@
   --gold-soft: rgba(184, 134, 43, 0.12);
   --forest: #2b6b4a;
   --rust: #a63d2f;
+  --rank-gray: #6b7269;
+  --rank-silver: #a9b3ac;
+  --rank-bronze: #9c5a2e;
   --shadow: none;
 
   --sans: 'Work Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -46,6 +49,9 @@
   --gold-soft: rgba(217, 165, 69, 0.14);
   --forest: #5da97e;
   --rust: #d97362;
+  --rank-gray: #9aa39a;
+  --rank-silver: #c7d0c7;
+  --rank-bronze: #c98a52;
 }
 
 * {

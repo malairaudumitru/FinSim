@@ -1,5 +1,5 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../../shared/AuthContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './ProfilePage.css'
@@ -267,6 +267,9 @@ function ProfilePage() {
                             <span className="stat-label">{s.label}</span>
                         </div>
                     ))}
+                </div>
+                <div className="container profile-leaderboard-link">
+                    <Link to="/leaderboard">Vezi clasamentul utilizatorilor →</Link>
                 </div>
             </section>
 
