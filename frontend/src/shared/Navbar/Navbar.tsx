@@ -13,7 +13,7 @@ function Navbar() {
                     <Link to="/" hash="how-it-works">Cum funcționează</Link>
                     <Link to="/" hash="scenarios">Scenarii</Link>
                     <Link to="/faq">FAQ</Link>
-                    <a href="#contact">Contact</a>
+                    <a href="/contact">Contact</a>
                 </nav>
                 <div className="nav-actions">
                     <ThemeToggle />

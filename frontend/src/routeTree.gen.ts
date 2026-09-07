@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppAboutRouteImport } from './routes/_app.about'
+import { Route as AppContactRouteImport } from './routes/_app.contact'
 import { Route as AppFaqRouteImport } from './routes/_app.faq'
 import { Route as AppTermsRouteImport } from './routes/_app.terms'
 
@@ -35,6 +36,11 @@ const AppAboutRoute = AppAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContactRoute = AppContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFaqRoute = AppFaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -50,12 +56,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
   '/about': typeof AppAboutRoute
+  '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
   '/terms': typeof AppTermsRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof AppAboutRoute
+  '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
   '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
@@ -65,20 +73,22 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/about': typeof AppAboutRoute
+  '/_app/contact': typeof AppContactRoute
   '/_app/faq': typeof AppFaqRoute
   '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/about' | '/faq' | '/terms'
+  fullPaths: '/' | '/login' | '/about' | '/contact' | '/faq' | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/faq' | '/terms' | '/'
+  to: '/login' | '/about' | '/contact' | '/faq' | '/terms' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/login'
     | '/_app/about'
+    | '/_app/contact'
     | '/_app/faq'
     | '/_app/terms'
     | '/_app/'
@@ -119,6 +129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAboutRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/contact': {
+      id: '/_app/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof AppContactRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/faq': {
       id: '/_app/faq'
       path: '/faq'
@@ -138,6 +155,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
+  AppContactRoute: typeof AppContactRoute
   AppFaqRoute: typeof AppFaqRoute
   AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -145,6 +163,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
+  AppContactRoute: AppContactRoute,
   AppFaqRoute: AppFaqRoute,
   AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
