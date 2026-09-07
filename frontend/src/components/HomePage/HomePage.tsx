@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './HomePage.css'
 
 const scenarios = [
@@ -254,7 +255,9 @@ function HomePage() {
                 <div className="container stats-inner">
                     {stats.map((s) => (
                         <div className="stat" key={s.label}>
-                            <span className="stat-value figure">{s.value}</span>
+                            <span className="stat-value">
+                                <AnimatedNumber value={s.value} />
+                            </span>
                             <span className="stat-label">{s.label}</span>
                         </div>
                     ))}

@@ -1,6 +1,7 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../../shared/AuthContext'
+import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './ProfilePage.css'
 
 interface UserInfo {
@@ -260,7 +261,9 @@ function ProfilePage() {
                 <div className="container profile-stats-inner">
                     {stats.map((s) => (
                         <div className="stat" key={s.label}>
-                            <span className="stat-value figure">{s.value}</span>
+                            <span className="stat-value">
+                                <AnimatedNumber value={s.value} />
+                            </span>
                             <span className="stat-label">{s.label}</span>
                         </div>
                     ))}
