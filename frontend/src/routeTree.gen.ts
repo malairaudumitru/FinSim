@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppAboutRouteImport } from './routes/_app.about'
 import { Route as AppFaqRouteImport } from './routes/_app.faq'
+import { Route as AppTermsRouteImport } from './routes/_app.terms'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -28,35 +30,58 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAboutRoute = AppAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFaqRoute = AppFaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTermsRoute = AppTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
+  '/about': typeof AppAboutRoute
   '/faq': typeof AppFaqRoute
+  '/terms': typeof AppTermsRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/about': typeof AppAboutRoute
   '/faq': typeof AppFaqRoute
+  '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/_app/about': typeof AppAboutRoute
   '/_app/faq': typeof AppFaqRoute
+  '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/faq'
+  fullPaths: '/' | '/login' | '/about' | '/faq' | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/faq' | '/'
-  id: '__root__' | '/_app' | '/login' | '/_app/faq' | '/_app/'
+  to: '/login' | '/about' | '/faq' | '/terms' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/login'
+    | '/_app/about'
+    | '/_app/faq'
+    | '/_app/terms'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/about': {
+      id: '/_app/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AppAboutRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/faq': {
       id: '/_app/faq'
       path: '/faq'
@@ -94,16 +126,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFaqRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/terms': {
+      id: '/_app/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof AppTermsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAboutRoute: typeof AppAboutRoute
   AppFaqRoute: typeof AppFaqRoute
+  AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAboutRoute: AppAboutRoute,
   AppFaqRoute: AppFaqRoute,
+  AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
