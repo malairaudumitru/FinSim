@@ -15,6 +15,7 @@ import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppAboutRouteImport } from './routes/_app.about'
 import { Route as AppContactRouteImport } from './routes/_app.contact'
 import { Route as AppFaqRouteImport } from './routes/_app.faq'
+import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppTermsRouteImport } from './routes/_app.terms'
 
 const AppRoute = AppRouteImport.update({
@@ -46,6 +47,11 @@ const AppFaqRoute = AppFaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTermsRoute = AppTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AppAboutRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
+  '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
 }
 export interface FileRoutesByTo {
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/about': typeof AppAboutRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
+  '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
 }
@@ -75,14 +83,16 @@ export interface FileRoutesById {
   '/_app/about': typeof AppAboutRoute
   '/_app/contact': typeof AppContactRoute
   '/_app/faq': typeof AppFaqRoute
+  '/_app/profile': typeof AppProfileRoute
   '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/about' | '/contact' | '/faq' | '/terms'
+  fullPaths:
+    '/' | '/login' | '/about' | '/contact' | '/faq' | '/profile' | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/contact' | '/faq' | '/terms' | '/'
+  to: '/login' | '/about' | '/contact' | '/faq' | '/profile' | '/terms' | '/'
   id:
     | '__root__'
     | '/_app'
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/_app/about'
     | '/_app/contact'
     | '/_app/faq'
+    | '/_app/profile'
     | '/_app/terms'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -143,6 +154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFaqRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/terms': {
       id: '/_app/terms'
       path: '/terms'
@@ -157,6 +175,7 @@ interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppContactRoute: typeof AppContactRoute
   AppFaqRoute: typeof AppFaqRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -165,6 +184,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppContactRoute: AppContactRoute,
   AppFaqRoute: AppFaqRoute,
+  AppProfileRoute: AppProfileRoute,
   AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
 }

@@ -43,7 +43,7 @@
     background: var(--surface);
     border: 1px solid var(--rule);
     padding: 28px 26px;
-    animation: ledgerFade 0.5s ease;
+    animation: ledgerFade 1.1s cubic-bezier(0.22, 1, 0.36, 1);;
 }
 
 @keyframes ledgerFade {
@@ -271,11 +271,11 @@
 }
 
 .review-page.slide-right {
-    animation: slideInRight 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: slideInRight 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .review-page.slide-left {
-    animation: slideInLeft 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: slideInLeft 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes slideInRight {

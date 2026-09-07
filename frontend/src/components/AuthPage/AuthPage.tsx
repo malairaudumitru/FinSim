@@ -1,6 +1,7 @@
-﻿import { useState, type FormEvent } from 'react'
-import { Link } from '@tanstack/react-router'
+﻿import { useEffect, useState, type FormEvent } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
+import { useAuth } from '../../shared/AuthContext'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -53,6 +54,8 @@ function EyeIcon({ open }: { open: boolean }) {
 }
 
 function AuthPage() {
+    const { login } = useAuth()
+    const navigate = useNavigate()
     const [mode, setMode] = useState<Mode>('login')
     const isRegister = mode === 'register'
     const isForgot = mode === 'forgot'
@@ -61,6 +64,15 @@ function AuthPage() {
     const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
     const [showPassword, setShowPassword] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+
+    useEffect(() => {
+        if (submitted && mode === 'login') {
+            const id = setTimeout(() => {
+                navigate({ to: '/' })
+            }, 1200)
+            return () => clearTimeout(id)
+        }
+    }, [submitted, mode, navigate])
 
     const switchMode = (next: Mode) => {
         setMode(next)
@@ -116,7 +128,14 @@ function AuthPage() {
 
         if (!validate()) return
 
-        console.log(`[${mode}] date trimise:`, form)
+        if (!isForgot) {
+            login({
+                email: form.email,
+                nume: isRegister ? form.nume : undefined,
+                prenume: isRegister ? form.prenume : undefined,
+            })
+        }
+
         setSubmitted(true)
     }
 

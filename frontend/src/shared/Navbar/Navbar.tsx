@@ -1,8 +1,12 @@
 ﻿import { Link } from '@tanstack/react-router'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
+import AvatarMenu from '../AvatarMenu/AvatarMenu'
+import { useAuth } from '../AuthContext'
 import './Navbar.css'
 
 function Navbar() {
+    const { isLoggedIn } = useAuth()
+
     return (
         <header className="navbar">
             <div className="container navbar-inner">
@@ -13,13 +17,17 @@ function Navbar() {
                     <Link to="/" hash="how-it-works">Cum funcționează</Link>
                     <Link to="/" hash="scenarios">Scenarii</Link>
                     <Link to="/faq">FAQ</Link>
-                    <a href="/contact">Contact</a>
+                    <Link to="/contact">Contact</Link>
                 </nav>
                 <div className="nav-actions">
                     <ThemeToggle />
-                    <Link to="/login" className="btn btn-primary">
-                        Autentificare
-                    </Link>
+                    {isLoggedIn ? (
+                        <AvatarMenu />
+                    ) : (
+                        <Link to="/login" className="btn btn-primary">
+                            Autentificare
+                        </Link>
+                    )}
                 </div>
             </div>
         </header>
