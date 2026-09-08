@@ -1,30 +1,9 @@
 ﻿import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
+import { scenarios } from '../../shared/scenariosData'
+import { useAuth } from '../../shared/AuthContext'
 import './HomePage.css'
-
-const scenarios = [
-    {
-        name: 'Primul salariu',
-        desc: 'Primești primul salariu și trebuie să-l împarți pe chirie, mâncare, transport și economii.',
-        difficulty: 'Ușor',
-    },
-    {
-        name: 'Chirie și facturi',
-        desc: 'Te muți singur și afli cât de repede se adună facturile lunare peste chirie.',
-        difficulty: 'Mediu',
-    },
-    {
-        name: 'Urgență medicală',
-        desc: 'O cheltuială neprevăzută îți testează fondul de urgență — sau lipsa lui.',
-        difficulty: 'Mediu',
-    },
-    {
-        name: 'Primul credit',
-        desc: 'Ai nevoie de bani în plus. Alegi un credit — dar știi cât te costă cu adevărat?',
-        difficulty: 'Avansat',
-    },
-]
 
 const steps = [
     {
@@ -227,6 +206,8 @@ function ReviewCarousel() {
 }
 
 function HomePage() {
+    const { isLoggedIn } = useAuth()
+
     return (
         <>
             <section className="hero">
@@ -274,13 +255,22 @@ function HomePage() {
                     </div>
                     <div className="scenario-list">
                         {scenarios.map((s) => (
-                            <div className="scenario-row" key={s.name}>
+                            <div className="scenario-row" key={s.slug}>
                                 <div className="scenario-info">
-                                    <h3>{s.name}</h3>
-                                    <p>{s.desc}</p>
+                                    <h3>{s.nume}</h3>
+                                    <p>{s.descriere}</p>
                                 </div>
-                                <span className="scenario-tag">{s.difficulty}</span>
-                                <button className="btn btn-link">Joacă scenariul →</button>
+                                <span className="scenario-tag">
+                                    {s.dificultate}
+                                    {s.necesitaCont && !isLoggedIn && (
+                                        <span className="scenario-lock" title="Necesită cont">
+                                            🔒
+                                        </span>
+                                    )}
+                                </span>
+                                <Link to="/scenarios/$slug" params={{ slug: s.slug }} className="btn btn-link">
+                                    Joacă scenariul →
+                                </Link>
                             </div>
                         ))}
                     </div>

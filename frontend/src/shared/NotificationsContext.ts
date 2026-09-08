@@ -1,4 +1,4 @@
-﻿import { createContext, useContext, useState, type ReactNode } from 'react'
+﻿import { createContext, useContext } from 'react'
 
 export type NotificationType = 'scenariu' | 'cont' | 'sistem'
 
@@ -10,7 +10,7 @@ export interface NotificationItem {
     citit: boolean
 }
 
-const initialNotifications: NotificationItem[] = [
+export const initialNotifications: NotificationItem[] = [
     {
         id: '1',
         tip: 'scenariu',
@@ -48,34 +48,14 @@ const initialNotifications: NotificationItem[] = [
     },
 ]
 
-interface NotificationsContextValue {
+export interface NotificationsContextValue {
     notifications: NotificationItem[]
     unreadCount: number
     markAsRead: (id: string) => void
     markAllAsRead: () => void
 }
 
-const NotificationsContext = createContext<NotificationsContextValue | undefined>(undefined)
-
-export function NotificationsProvider({ children }: { children: ReactNode }) {
-    const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications)
-
-    const markAsRead = (id: string) => {
-        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, citit: true } : n)))
-    }
-
-    const markAllAsRead = () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, citit: true })))
-    }
-
-    const unreadCount = notifications.filter((n) => !n.citit).length
-
-    return (
-        <NotificationsContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
-            {children}
-        </NotificationsContext.Provider>
-    )
-}
+export const NotificationsContext = createContext<NotificationsContextValue | undefined>(undefined)
 
 export function useNotifications() {
     const ctx = useContext(NotificationsContext)

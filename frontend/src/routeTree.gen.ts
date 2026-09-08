@@ -19,6 +19,7 @@ import { Route as AppLeaderboardRouteImport } from './routes/_app.leaderboard'
 import { Route as AppNotificationsRouteImport } from './routes/_app.notifications'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppTermsRouteImport } from './routes/_app.terms'
+import { Route as AppScenariosSlugRouteImport } from './routes/_app.scenarios.$slug'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -69,6 +70,11 @@ const AppTermsRoute = AppTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => AppRoute,
 } as any)
+const AppScenariosSlugRoute = AppScenariosSlugRouteImport.update({
+  id: '/scenarios/$slug',
+  path: '/scenarios/$slug',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
+  '/scenarios/$slug': typeof AppScenariosSlugRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
+  '/scenarios/$slug': typeof AppScenariosSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/scenarios/$slug': typeof AppScenariosSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/terms'
+    | '/scenarios/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/terms'
     | '/'
+    | '/scenarios/$slug'
   id:
     | '__root__'
     | '/_app'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/terms'
     | '/_app/'
+    | '/_app/scenarios/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTermsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/scenarios/$slug': {
+      id: '/_app/scenarios/$slug'
+      path: '/scenarios/$slug'
+      fullPath: '/scenarios/$slug'
+      preLoaderRoute: typeof AppScenariosSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -231,6 +250,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppScenariosSlugRoute: typeof AppScenariosSlugRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -242,6 +262,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppScenariosSlugRoute: AppScenariosSlugRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

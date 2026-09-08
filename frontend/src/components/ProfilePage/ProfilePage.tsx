@@ -1,6 +1,8 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../../shared/AuthContext'
+import { useScenarioHistory } from '../../shared/ScenarioHistoryContext'
+import { scenarios } from '../../shared/scenariosData'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './ProfilePage.css'
 
@@ -25,23 +27,14 @@ const stats = [
     { value: '3', label: 'zile consecutive' },
 ]
 
-interface HistoryEntry {
-    scenariu: string
-    data: string
-    scor: number
-}
-
-const history: HistoryEntry[] = [
-    { scenariu: 'Primul salariu', data: '02.09.2026', scor: 82 },
-    { scenariu: 'Chirie și facturi', data: '28.08.2026', scor: 65 },
-    { scenariu: 'Urgență medicală', data: '20.08.2026', scor: 74 },
-    { scenariu: 'Primul salariu', data: '16.08.2026', scor: 58 },
-]
-
 function scoreClass(scor: number) {
     if (scor >= 70) return 'positive'
     if (scor < 50) return 'negative'
     return ''
+}
+
+function slugForScenario(nume: string) {
+    return scenarios.find((s) => s.nume === nume)?.slug
 }
 
 type NameField = 'nume' | 'prenume'
@@ -78,6 +71,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 function ProfilePage() {
     const { user: authUser, logout } = useAuth()
+    const { history } = useScenarioHistory()
     const navigate = useNavigate()
 
     const [user, setUser] = useState<UserInfo>(() => ({
@@ -364,18 +358,31 @@ function ProfilePage() {
                     </div>
 
                     <div className="history-list">
-                        {history.map((entry, i) => (
-                            <div className="history-row" key={i}>
-                                <div className="history-info">
-                                    <h3>{entry.scenariu}</h3>
-                                    <span className="history-date">{entry.data}</span>
+                        {history.map((entry) => {
+                            const slug = slugForScenario(entry.scenariu)
+                            return (
+                                <div className="history-row" key={entry.id}>
+                                    <div className="history-info">
+                                        <h3>{entry.scenariu}</h3>
+                                        <span className="history-date">{entry.data}</span>
+                                    </div>
+                                    <span className={`figure history-score ${scoreClass(entry.scor)}`}>
+                                        {entry.scor}/100
+                                    </span>
+                                    {slug ? (
+                                        <Link
+                                            to="/scenarios/$slug"
+                                            params={{ slug }}
+                                            className="btn btn-link"
+                                        >
+                                            Rejoacă →
+                                        </Link>
+                                    ) : (
+                                        <span className="history-unavailable">indisponibil</span>
+                                    )}
                                 </div>
-                                <span className={`figure history-score ${scoreClass(entry.scor)}`}>
-                                    {entry.scor}/100
-                                </span>
-                                <button className="btn btn-link">Rejoacă →</button>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
             </section>

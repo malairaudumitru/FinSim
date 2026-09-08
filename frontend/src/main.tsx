@@ -5,8 +5,9 @@ import './shared/styles.css'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { initTheme } from './shared/theme'
-import { AuthProvider } from './shared/AuthContext'
-import { NotificationsProvider } from './shared/NotificationsContext'
+import { AuthProvider } from './shared/AuthProvider'
+import { NotificationsProvider } from './shared/NotificationsProvider'
+import { ScenarioHistoryProvider } from './shared/ScenarioHistoryProvider'
 
 initTheme()
 
@@ -22,7 +23,9 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthProvider>
             <NotificationsProvider>
-                <RouterProvider router={router} />
+                <ScenarioHistoryProvider>
+                    <RouterProvider router={router} />
+                </ScenarioHistoryProvider>
             </NotificationsProvider>
         </AuthProvider>
     </StrictMode>,

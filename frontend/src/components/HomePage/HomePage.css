@@ -208,6 +208,11 @@
     white-space: nowrap;
 }
 
+.scenario-lock {
+    margin-left: 6px;
+    font-size: 12px;
+}
+
 @media (max-width: 720px) {
     .scenario-row {
         grid-template-columns: 1fr;
