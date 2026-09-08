@@ -4,6 +4,8 @@
     bani: number
     puncte: number
     stres?: number
+    scorCredit?: number
+    scorMinim?: number
     feedback: string
 }
 
@@ -40,15 +42,48 @@ export interface TimePressureStepDef {
     optiuneTimeout: ScenarioOption
 }
 
+export interface OfertaCredit {
+    id: string
+    eticheta: string
+    dobanda: number
+    durataLuni: number
+    rataLunara: number
+    costTotal: number
+    bani: number
+    puncte: number
+    scorCredit?: number
+    stres?: number
+    feedback: string
+}
+
+export interface ComparatieOferteStepDef {
+    suma: number
+    oferte: OfertaCredit[]
+}
+
+export interface AdevaratFalsIntrebare {
+    id: string
+    afirmatie: string
+    raspunsCorect: boolean
+    explicatie: string
+    puncte: number
+}
+
+export interface AdevaratFalsStepDef {
+    intrebari: AdevaratFalsIntrebare[]
+}
+
 export interface ScenarioStep {
     id: string
     intrebare: string
     context?: string
-    tip?: 'alegere' | 'alocare' | 'selectie-multipla' | 'presiune-timp'
+    tip?: 'alegere' | 'alocare' | 'selectie-multipla' | 'presiune-timp' | 'comparatie-oferte' | 'adevarat-fals'
     optiuni: ScenarioOption[]
     alocare?: AllocationStepDef
     selectieMultipla?: MultiSelectStepDef
     presiuneTimp?: TimePressureStepDef
+    comparatieOferte?: ComparatieOferteStepDef
+    adevaratFals?: AdevaratFalsStepDef
 }
 
 export interface ScenarioDef {
@@ -58,6 +93,7 @@ export interface ScenarioDef {
     dificultate: string
     soldInitial: number
     necesitaCont: boolean
+    scorCreditInitial?: number
     pasi: ScenarioStep[]
 }
 
@@ -440,14 +476,14 @@ export const scenarios: ScenarioDef[] = [
                 tip: 'presiune-timp',
                 optiuni: [],
                 presiuneTimp: {
-                    secunde: 20,
+                    secunde: 15,
                     optiuni: [
                         {
                             id: 'stat',
                             eticheta: 'Internare de urgență, secție de stat',
                             bani: -300,
                             puncte: 25,
-                            stres: 5,
+                            stres: 0,
                             feedback: 'Cost minim, tratament garantat — exact ce trebuie într-o urgență.',
                         },
                         {
@@ -598,9 +634,276 @@ export const scenarios: ScenarioDef[] = [
         nume: 'Primul credit',
         descriere: 'Ai nevoie de bani în plus. Alegi un credit — dar știi cât te costă cu adevărat?',
         dificultate: 'Avansat',
-        soldInitial: 0,
+        soldInitial: 4000,
         necesitaCont: true,
-        pasi: [],
+        scorCreditInitial: 50,
+        pasi: [
+            {
+                id: 'motiv',
+                intrebare: 'Ai nevoie de un credit de 15 000 lei. De ce, de fapt?',
+                optiuni: [
+                    {
+                        id: 'necesitate',
+                        eticheta: 'Laptop nou, necesar pentru serviciu',
+                        bani: 0,
+                        puncte: 25,
+                        scorCredit: 10,
+                        feedback: 'O necesitate reală — exact semnalul pe care orice creditor îl vrea să-l vadă.',
+                    },
+                    {
+                        id: 'cheltuiala-neasteptata',
+                        eticheta: 'O reparație urgentă la mașină',
+                        bani: 0,
+                        puncte: 20,
+                        scorCredit: 5,
+                        feedback: 'Rezonabil — tot o necesitate, deși neplanificată.',
+                    },
+                    {
+                        id: 'vacanta',
+                        eticheta: 'O vacanță pe care ți-o dorești de mult',
+                        bani: 0,
+                        puncte: 5,
+                        scorCredit: -10,
+                        stres: 10,
+                        feedback: 'Împrumuturile pentru dorințe, nu pentru nevoi, sunt cel mai riscant tip de datorie.',
+                    },
+                ],
+            },
+            {
+                id: 'comparatie-oferte',
+                intrebare: 'Compară trei oferte de credit pentru cei 15 000 lei.',
+                context: 'Rata lunară mică nu înseamnă automat cel mai ieftin credit — uită-te la costul total.',
+                tip: 'comparatie-oferte',
+                optiuni: [],
+                comparatieOferte: {
+                    suma: 15000,
+                    oferte: [
+                        {
+                            id: 'banca-traditionala',
+                            eticheta: 'Bancă tradițională',
+                            dobanda: 8.9,
+                            durataLuni: 24,
+                            rataLunara: 685,
+                            costTotal: 16440,
+                            puncte: 25,
+                            scorCredit: 15,
+                            bani: -685,
+                            feedback:
+                                'Cea mai ieftină variantă per total — deși actele durează ceva mai mult.',
+                        },
+                        {
+                            id: 'credit-rapid-online',
+                            eticheta: 'Credit rapid online',
+                            dobanda: 15.5,
+                            durataLuni: 24,
+                            rataLunara: 730,
+                            costTotal: 17520,
+                            puncte: 15,
+                            scorCredit: 5,
+                            bani: -730,
+                            feedback: 'Aprobare instant, dar costă cu aproape 1 100 lei mai mult pe total.',
+                        },
+                        {
+                            id: 'cumparaturi-in-rate',
+                            eticheta: 'Cumpărături în rate (magazin)',
+                            dobanda: 22,
+                            durataLuni: 18,
+                            rataLunara: 1010,
+                            costTotal: 18180,
+                            puncte: 5,
+                            scorCredit: -5,
+                            stres: 5,
+                            bani: -1010,
+                            feedback:
+                                'Rata pare similară, dar fără garanții dobânda reală e mult mai mare — cea mai scumpă opțiune.',
+                        },
+                    ],
+                },
+            },
+            {
+                id: 'garantie',
+                intrebare: 'Ce tip de garanție alegi pentru credit?',
+                optiuni: [
+                    {
+                        id: 'asigurare',
+                        eticheta: 'Asigurare de viață pe durata creditului, +45 lei/lună',
+                        bani: -45,
+                        puncte: 20,
+                        scorCredit: 10,
+                        feedback: 'Cost mic în plus, dar te protejează pe tine și familia în caz de imprevizibil.',
+                    },
+                    {
+                        id: 'girant',
+                        eticheta: 'Aduci un girant, fără cost suplimentar',
+                        bani: 0,
+                        puncte: 15,
+                        scorCredit: 5,
+                        feedback: 'Reduce riscul băncii, dar pune presiune pe altcineva dacă nu poți plăti.',
+                    },
+                    {
+                        id: 'fara-garantie',
+                        eticheta: 'Fără nimic suplimentar',
+                        bani: 0,
+                        puncte: 8,
+                        scorCredit: -5,
+                        stres: 10,
+                        feedback: 'Mai simplu acum, dar cea mai riscantă variantă — și de multe ori, mai scumpă per total.',
+                    },
+                ],
+            },
+            {
+                id: 'quiz-credit',
+                intrebare: 'Adevărat sau fals? Testează-ți cunoștințele despre credite.',
+                tip: 'adevarat-fals',
+                optiuni: [],
+                adevaratFals: {
+                    intrebari: [
+                        {
+                            id: 'dae',
+                            afirmatie: 'DAE (dobânda anuală efectivă) include toate comisioanele, nu doar dobânda nominală.',
+                            raspunsCorect: true,
+                            explicatie: 'Corect — DAE e singura cifră care arată costul real al unui credit.',
+                            puncte: 9,
+                        },
+                        {
+                            id: 'intarziere',
+                            afirmatie: 'Dacă întârzii o rată, doar acea rată crește — restul creditului rămâne neschimbat.',
+                            raspunsCorect: false,
+                            explicatie:
+                                'Fals — întârzierile pot genera penalizări și îți pot scădea scorul de credit pentru ani de zile.',
+                            puncte: 8,
+                        },
+                        {
+                            id: 'rata-mica',
+                            afirmatie: 'Un credit cu rată lunară mai mică este întotdeauna mai ieftin pe termen lung.',
+                            raspunsCorect: false,
+                            explicatie:
+                                'Fals — o rată mai mică vine adesea dintr-o durată mai lungă, ceea ce poate crește costul total.',
+                            puncte: 8,
+                        },
+                    ],
+                },
+            },
+            {
+                id: 'eveniment-rata',
+                intrebare: 'La a 6-a rată, pierzi temporar o parte din venit. Ce faci?',
+                optiuni: [
+                    {
+                        id: 'reesalonare',
+                        eticheta: 'Suni banca și ceri reeșalonarea temporară',
+                        bani: 0,
+                        puncte: 25,
+                        scorCredit: 5,
+                        stres: 0,
+                        feedback: 'Exact procedura corectă — băncile preferă să reeșaloneze decât să piardă clientul.',
+                    },
+                    {
+                        id: 'sari-rata',
+                        eticheta: 'Sari peste rată fără să anunți banca',
+                        bani: 0,
+                        puncte: 0,
+                        scorCredit: -25,
+                        stres: 20,
+                        feedback: 'Cel mai dăunător — îți afectează scorul de credit pentru ani de zile.',
+                    },
+                    {
+                        id: 'imprumut-cineva',
+                        eticheta: 'Împrumuți bani de la cineva apropiat, ca să acoperi rata',
+                        bani: 0,
+                        puncte: 15,
+                        stres: 10,
+                        feedback: 'Rezolvi pe termen scurt, dar transformi o problemă financiară într-una și personală.',
+                    },
+                ],
+            },
+            {
+                id: 'dobanda-variabila',
+                intrebare: 'Dobânda variabilă crește neașteptat cu 2%. Ce faci?',
+                optiuni: [
+                    {
+                        id: 'refinantezi',
+                        eticheta: 'Cauți refinanțare la altă bancă, cu dobândă fixă',
+                        bani: -150,
+                        puncte: 25,
+                        scorCredit: 10,
+                        feedback: 'Cost mic acum (comisioane), dar te protejează de creșteri viitoare.',
+                    },
+                    {
+                        id: 'accepti',
+                        eticheta: 'Accepți creșterea și continui cu rate mai mari',
+                        bani: -380,
+                        puncte: 12,
+                        stres: 15,
+                        feedback: 'Simplu, dar plătești cu aproape 400 lei mai mult per total.',
+                    },
+                    {
+                        id: 'negociezi',
+                        eticheta: 'Suni banca actuală și negociezi o dobândă mai bună',
+                        bani: 0,
+                        puncte: 20,
+                        scorCredit: 5,
+                        feedback: 'Nu costă nimic să încerci — multe bănci oferă condiții mai bune clienților buni platnici.',
+                    },
+                ],
+            },
+            {
+                id: 'credit-suplimentar',
+                intrebare: 'Ai nevoie de un credit suplimentar mic, pentru o urgență. Ce opțiuni ai?',
+                context: 'Unele opțiuni depind de scorul tău de credit acumulat până acum.',
+                optiuni: [
+                    {
+                        id: 'consolidare-avantajoasa',
+                        eticheta: 'Consolidare avantajoasă la banca ta, cu dobândă redusă',
+                        bani: 500,
+                        puncte: 25,
+                        scorMinim: 60,
+                        feedback: 'Disponibilă doar clienților cu istoric bun — exact răsplata unui scor de credit sănătos.',
+                    },
+                    {
+                        id: 'credit-rapid-suplimentar',
+                        eticheta: 'Iei un mic credit rapid, cu dobândă mare',
+                        bani: 500,
+                        puncte: 10,
+                        stres: 10,
+                        feedback: 'Acoperă urgența, dar la un cost mare pe termen scurt.',
+                    },
+                    {
+                        id: 'astepti-salariul',
+                        eticheta: 'Aștepți până la salariu, fără credit nou',
+                        bani: 0,
+                        puncte: 18,
+                        feedback: 'Cea mai sigură variantă, deși mai puțin comodă pe moment.',
+                    },
+                ],
+            },
+            {
+                id: 'reflectie-finala',
+                intrebare: 'Ai terminat de plătit creditul. Ce concluzie tragi?',
+                optiuni: [
+                    {
+                        id: 'lectie-buna',
+                        eticheta: 'Data viitoare compar mai atent DAE-ul, nu doar rata lunară',
+                        bani: 0,
+                        puncte: 25,
+                        feedback: 'Exact lecția centrală a unui credit responsabil.',
+                    },
+                    {
+                        id: 'evita-creditul',
+                        eticheta: 'Evit complet creditele pe viitor, orice ar fi',
+                        bani: 0,
+                        puncte: 15,
+                        feedback: 'Prudent, dar un credit folosit corect poate fi un instrument util, nu doar un risc.',
+                    },
+                    {
+                        id: 'nu-schimb-nimic',
+                        eticheta: 'Nu cred că aș face ceva diferit',
+                        bani: 0,
+                        puncte: 5,
+                        feedback: 'Fără reflecție, riscul de a repeta aceleași greșeli rămâne mare.',
+                    },
+                ],
+            },
+        ],
     },
 ]
 
@@ -618,6 +921,14 @@ export function maxScoreFor(scenario: ScenarioDef): number {
         }
         if (step.tip === 'presiune-timp' && step.presiuneTimp) {
             const max = Math.max(...step.presiuneTimp.optiuni.map((o) => o.puncte))
+            return sum + max
+        }
+        if (step.tip === 'comparatie-oferte' && step.comparatieOferte) {
+            const max = Math.max(...step.comparatieOferte.oferte.map((o) => o.puncte))
+            return sum + max
+        }
+        if (step.tip === 'adevarat-fals' && step.adevaratFals) {
+            const max = step.adevaratFals.intrebari.reduce((s, q) => s + q.puncte, 0)
             return sum + max
         }
         const max = Math.max(...step.optiuni.map((o) => o.puncte))

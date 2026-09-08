@@ -81,6 +81,19 @@
     gap: 20px;
 }
 
+.scenario-scor-credit {
+    font-size: 14px;
+    color: var(--forest);
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--forest) 10%, transparent);
+}
+
+.scenario-scor-credit.low {
+    color: var(--rust);
+    background: color-mix(in srgb, var(--rust) 10%, transparent);
+}
+
 .scenario-stres {
     font-size: 14px;
     color: var(--rust);
@@ -411,6 +424,139 @@
 .scenario-result-stres {
     color: var(--rust);
     font-size: 14px;
+}
+
+.scenario-result-scor-credit {
+    color: var(--forest);
+    font-size: 14px;
+}
+
+.offer-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.offer-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--sans);
+}
+
+.offer-card:hover {
+    border-color: var(--gold);
+}
+
+.offer-title {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.offer-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.offer-row .figure {
+    color: var(--text-h);
+}
+
+.offer-total {
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    font-weight: 500;
+}
+
+.offer-total .figure {
+    color: var(--gold);
+}
+
+.truefalse-step {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.truefalse-item {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+}
+
+.truefalse-statement {
+    font-size: 15px;
+    color: var(--text-h);
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+
+.truefalse-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.truefalse-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--text-h);
+    font-family: var(--sans);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.truefalse-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+}
+
+.truefalse-btn.selected {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+}
+
+.truefalse-btn.correct {
+    border-color: var(--forest);
+    background: color-mix(in srgb, var(--forest) 12%, transparent);
+    color: var(--forest);
+}
+
+.truefalse-btn.incorrect {
+    border-color: var(--rust);
+    background: color-mix(in srgb, var(--rust) 12%, transparent);
+    color: var(--rust);
+}
+
+.truefalse-btn:disabled {
+    cursor: default;
+}
+
+.truefalse-explicatie {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.scenario-option.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.scenario-option-lock {
+    display: block;
+    font-size: 12px;
+    color: var(--rust);
+    margin-top: 4px;
+    font-family: var(--mono);
 }
 
 .scenario-result-actions {

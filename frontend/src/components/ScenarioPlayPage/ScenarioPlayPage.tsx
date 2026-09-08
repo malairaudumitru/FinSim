@@ -6,6 +6,8 @@ import {
     type AllocationStepDef,
     type MultiSelectStepDef,
     type TimePressureStepDef,
+    type ComparatieOferteStepDef,
+    type AdevaratFalsStepDef,
     type ScenarioOption,
 } from '../../shared/scenarios/scenariosData'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
@@ -219,7 +221,136 @@ function TimePressureStep({
     )
 }
 
+function OfferComparisonStep({
+                                 def,
+                                 onConfirm,
+                             }: {
+    def: ComparatieOferteStepDef
+    onConfirm: (option: ScenarioOption) => void
+}) {
+    const choose = (oferta: (typeof def.oferte)[number]) => {
+        onConfirm({
+            id: oferta.id,
+            eticheta: oferta.eticheta,
+            bani: oferta.bani,
+            puncte: oferta.puncte,
+            stres: oferta.stres,
+            scorCredit: oferta.scorCredit,
+            feedback: oferta.feedback,
+        })
+    }
+
+    return (
+        <div className="offer-comparison">
+            {def.oferte.map((oferta) => (
+                <button type="button" className="offer-card" key={oferta.id} onClick={() => choose(oferta)}>
+                    <h3 className="offer-title">{oferta.eticheta}</h3>
+                    <div className="offer-row">
+                        <span>Dobândă anuală</span>
+                        <span className="figure">{oferta.dobanda}%</span>
+                    </div>
+                    <div className="offer-row">
+                        <span>Durată</span>
+                        <span className="figure">{oferta.durataLuni} luni</span>
+                    </div>
+                    <div className="offer-row">
+                        <span>Rată lunară</span>
+                        <span className="figure">{oferta.rataLunara} lei</span>
+                    </div>
+                    <div className="offer-row offer-total">
+                        <span>Cost total</span>
+                        <span className="figure">{oferta.costTotal} lei</span>
+                    </div>
+                </button>
+            ))}
+        </div>
+    )
+}
+
+function TrueFalseStep({
+                           def,
+                           onConfirm,
+                       }: {
+    def: AdevaratFalsStepDef
+    onConfirm: (option: ScenarioOption) => void
+}) {
+    const [answers, setAnswers] = useState<Record<string, boolean>>({})
+    const [revealed, setRevealed] = useState(false)
+
+    const answer = (id: string, value: boolean) => {
+        if (revealed) return
+        setAnswers((prev) => ({ ...prev, [id]: value }))
+    }
+
+    const allAnswered = def.intrebari.every((q) => answers[q.id] !== undefined)
+
+    const finish = () => {
+        if (!revealed) {
+            setRevealed(true)
+            return
+        }
+        const puncte = def.intrebari.reduce(
+            (sum, q) => sum + (answers[q.id] === q.raspunsCorect ? q.puncte : 0),
+            0
+        )
+        const corecte = def.intrebari.filter((q) => answers[q.id] === q.raspunsCorect).length
+        onConfirm({
+            id: 'quiz-credit',
+            eticheta: 'Quiz credite',
+            bani: 0,
+            puncte,
+            feedback: `Ai răspuns corect la ${corecte} din ${def.intrebari.length} afirmații.`,
+        })
+    }
+
+    return (
+        <div className="truefalse-step">
+            {def.intrebari.map((q) => {
+                const chosen = answers[q.id]
+                const isCorrect = chosen === q.raspunsCorect
+                return (
+                    <div className="truefalse-item" key={q.id}>
+                        <p className="truefalse-statement">{q.afirmatie}</p>
+                        <div className="truefalse-buttons">
+                            <button
+                                type="button"
+                                className={`truefalse-btn ${chosen === true ? 'selected' : ''} ${
+                                    revealed && q.raspunsCorect === true ? 'correct' : ''
+                                } ${revealed && chosen === true && !isCorrect ? 'incorrect' : ''}`}
+                                onClick={() => answer(q.id, true)}
+                                disabled={revealed}
+                            >
+                                Adevărat
+                            </button>
+                            <button
+                                type="button"
+                                className={`truefalse-btn ${chosen === false ? 'selected' : ''} ${
+                                    revealed && q.raspunsCorect === false ? 'correct' : ''
+                                } ${revealed && chosen === false && !isCorrect ? 'incorrect' : ''}`}
+                                onClick={() => answer(q.id, false)}
+                                disabled={revealed}
+                            >
+                                Fals
+                            </button>
+                        </div>
+                        {revealed && <p className="truefalse-explicatie">{q.explicatie}</p>}
+                    </div>
+                )
+            })}
+            <button
+                type="button"
+                className="btn btn-primary btn-lg"
+                onClick={finish}
+                disabled={!allAnswered}
+            >
+                {revealed ? 'Continuă' : 'Verifică răspunsurile'}
+            </button>
+        </div>
+    )
+}
+
 function ScenarioPlayPage() {
+
     const { slug } = useParams({ from: '/_app/scenarios/$slug' })
     const scenario = getScenarioBySlug(slug)
     const { addEntry } = useScenarioHistory()
@@ -230,6 +361,7 @@ function ScenarioPlayPage() {
     const [bani, setBani] = useState(scenario?.soldInitial ?? 0)
     const [puncte, setPuncte] = useState(0)
     const [stres, setStres] = useState(0)
+    const [scorCredit, setScorCredit] = useState(scenario?.scorCreditInitial ?? 0)
     const [lastChoice, setLastChoice] = useState<ScenarioOption | null>(null)
     const hasSaved = useRef(false)
 
@@ -243,6 +375,8 @@ function ScenarioPlayPage() {
         [steps]
     )
 
+    const hasScorCredit = scenario?.scorCreditInitial !== undefined
+
     const isFirstRender = useRef(true)
 
     useEffect(() => {
@@ -255,6 +389,7 @@ function ScenarioPlayPage() {
         setBani(scenario?.soldInitial ?? 0)
         setPuncte(0)
         setStres(0)
+        setScorCredit(scenario?.scorCreditInitial ?? 0)
         setLastChoice(null)
         hasSaved.current = false
     }, [slug, scenario])
@@ -321,6 +456,7 @@ function ScenarioPlayPage() {
         setBani((prev) => prev + option.bani)
         setPuncte((prev) => prev + option.puncte)
         setStres((prev) => prev + (option.stres ?? 0))
+        setScorCredit((prev) => prev + (option.scorCredit ?? 0))
         setLastChoice(option)
     }
 
@@ -363,6 +499,11 @@ function ScenarioPlayPage() {
                             Pasul {stepIndex + 1} din {steps.length}
                         </span>
                         <div className="scenario-header-stats">
+                            {hasScorCredit && (
+                                <span className={`scenario-scor-credit figure ${scorCredit < 60 ? 'low' : ''}`}>
+                                    Scor credit: {scorCredit}
+                                </span>
+                            )}
                             {hasStres && (
                                 <span className="scenario-stres figure">Stres: {stres}</span>
                             )}
@@ -398,23 +539,44 @@ function ScenarioPlayPage() {
                                     <MultiSelectStep def={currentStep.selectieMultipla} onConfirm={chooseOption} />
                                 ) : currentStep.tip === 'presiune-timp' && currentStep.presiuneTimp ? (
                                     <TimePressureStep def={currentStep.presiuneTimp} onConfirm={chooseOption} />
+                                ) : currentStep.tip === 'comparatie-oferte' && currentStep.comparatieOferte ? (
+                                    <OfferComparisonStep def={currentStep.comparatieOferte} onConfirm={chooseOption} />
+                                ) : currentStep.tip === 'adevarat-fals' && currentStep.adevaratFals ? (
+                                    <TrueFalseStep def={currentStep.adevaratFals} onConfirm={chooseOption} />
                                 ) : (
                                     <div className="scenario-options">
-                                        {currentStep.optiuni.map((opt) => (
-                                            <button
-                                                type="button"
-                                                key={opt.id}
-                                                className="scenario-option"
-                                                onClick={() => chooseOption(opt)}
-                                            >
-                                                <span>{opt.eticheta}</span>
-                                                <span
-                                                    className={`figure ${opt.bani < 0 ? 'negative' : opt.bani > 0 ? 'positive' : ''}`}
-                                                >
-                                                    {opt.bani === 0 ? '0 lei' : `${opt.bani > 0 ? '+' : ''}${opt.bani} lei`}
-                                                </span>
-                                            </button>
-                                        ))}
+                                        {(() => {
+                                            const areBaniRelevant = currentStep.optiuni.some((o) => o.bani !== 0)
+                                            return currentStep.optiuni.map((opt) => {
+                                                const locked = opt.scorMinim !== undefined && scorCredit < opt.scorMinim
+                                                return (
+                                                    <button
+                                                        type="button"
+                                                        key={opt.id}
+                                                        className={`scenario-option ${locked ? 'locked' : ''}`}
+                                                        onClick={() => !locked && chooseOption(opt)}
+                                                        disabled={locked}
+                                                    >
+                                                        <span>
+                                                            {opt.eticheta}
+                                                            {locked && (
+                                                                <span className="scenario-option-lock">
+                                                                    Necesită scor de credit minim: {opt.scorMinim} (ai:{' '}
+                                                                    {scorCredit})
+                                                                </span>
+                                                            )}
+                                                        </span>
+                                                        {areBaniRelevant && (
+                                                            <span
+                                                                className={`figure ${opt.bani < 0 ? 'negative' : opt.bani > 0 ? 'positive' : ''}`}
+                                                            >
+                                                                {opt.bani === 0 ? '0 lei' : `${opt.bani > 0 ? '+' : ''}${opt.bani} lei`}
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                )
+                                            })
+                                        })()}
                                     </div>
                                 )}
                             </div>
@@ -447,6 +609,9 @@ function ScenarioPlayPage() {
                         <p className="scenario-result-stres figure">
                             Nivel de stres acumulat: {stres} (scăzut direct din scor)
                         </p>
+                    )}
+                    {hasScorCredit && (
+                        <p className="scenario-result-scor-credit figure">Scor de credit final: {scorCredit}</p>
                     )}
                     <div className="scenario-result-actions">
                         <Link to="/profile" className="btn btn-primary">
