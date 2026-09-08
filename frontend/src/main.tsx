@@ -4,10 +4,11 @@ import './index.css'
 import './shared/styles/styles.css'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import { initTheme } from './shared/theme/theme.ts'
-import { AuthProvider } from './shared/AuthContext/AuthProvider.tsx'
-import { NotificationsProvider } from './shared/NotificationsContext/NotificationsProvider.tsx'
-import { ScenarioHistoryProvider } from './shared/ScenarioHistoryContext/ScenarioHistoryProvider.tsx'
+import { initTheme } from './shared/theme/theme'
+import { AuthProvider } from './shared/AuthContext/AuthProvider'
+import { NotificationsProvider } from './shared/NotificationsContext/NotificationsProvider'
+import { ScenarioHistoryProvider } from './shared/ScenarioHistoryContext/ScenarioHistoryProvider'
+import { ReviewsProvider } from './shared/ReviewsContext/ReviewsProvider'
 
 initTheme()
 
@@ -24,7 +25,9 @@ createRoot(document.getElementById('root')!).render(
         <AuthProvider>
             <NotificationsProvider>
                 <ScenarioHistoryProvider>
-                    <RouterProvider router={router} />
+                    <ReviewsProvider>
+                        <RouterProvider router={router} />
+                    </ReviewsProvider>
                 </ScenarioHistoryProvider>
             </NotificationsProvider>
         </AuthProvider>

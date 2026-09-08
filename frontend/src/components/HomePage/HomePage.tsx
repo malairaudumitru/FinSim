@@ -1,8 +1,10 @@
 ﻿import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
-import { scenarios } from '../../shared/scenarios/scenariosData.ts'
-import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
+import { scenarios } from '../../shared/scenarios/scenariosData'
+import { useAuth } from '../../shared/AuthContext/AuthContext'
+import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
+import StarRating from '../../shared/StarRating/StarRating'
 import './HomePage.css'
 
 const steps = [
@@ -17,33 +19,6 @@ const steps = [
     {
         title: 'Primești un scor și sfaturi',
         desc: 'La final vezi ce ai făcut bine, ce ai putea îmbunătăți și cum arată un buget echilibrat.',
-    },
-]
-
-const testimonials = [
-    {
-        name: 'Alexandru, 19 ani',
-        text: 'Prima dată când am înțeles de ce nu-mi ajungeau banii până la finalul lunii.',
-    },
-    {
-        name: 'Diana, 22 ani',
-        text: 'Scenariul cu creditul m-a făcut să calculez de două ori înainte să iau unul real.',
-    },
-    {
-        name: 'Mihai, 17 ani',
-        text: 'E ca un joc, dar chiar am învățat ce înseamnă fond de urgență.',
-    },
-    {
-        name: 'Cristina, 20 ani',
-        text: 'Mi-a fost util mai ales scenariul cu chiria — nu credeam că facturile se adună atât de repede.',
-    },
-    {
-        name: 'Vlad, 24 ani',
-        text: 'Mi-a schimbat felul în care mă gândesc la economii înainte să-mi iau propriul apartament.',
-    },
-    {
-        name: 'Ana, 18 ani',
-        text: 'L-am recomandat colegilor de liceu — e mult mai practic decât orele de educație financiară.',
     },
 ]
 
@@ -137,7 +112,8 @@ function chunk<T>(items: T[], size: number): T[][] {
 }
 
 function ReviewCarousel() {
-    const pages = chunk(testimonials, 3)
+    const { reviews } = useReviews()
+    const pages = chunk(reviews, 3)
     const [pageIndex, setPageIndex] = useState(0)
     const [direction, setDirection] = useState<'left' | 'right'>('right')
 
@@ -165,7 +141,7 @@ function ReviewCarousel() {
         setPageIndex((i) => (i + 1) % pages.length)
     }
 
-    const currentPage = pages[pageIndex]
+    const currentPage = pages[pageIndex] ?? []
 
     return (
         <div className="review-carousel-wrap">
@@ -175,10 +151,11 @@ function ReviewCarousel() {
                 </button>
 
                 <div className={`review-page slide-${direction}`} key={pageIndex}>
-                    {currentPage.map((t) => (
-                        <blockquote className="review-card" key={t.name}>
-                            <p className="review-text">{t.text}</p>
-                            <cite className="review-author">{t.name}</cite>
+                    {currentPage.map((r) => (
+                        <blockquote className="review-card" key={r.id}>
+                            <StarRating rating={r.rating} size={20} />
+                            <p className="review-text">{r.mesaj}</p>
+                            <cite className="review-author">{r.autor}</cite>
                         </blockquote>
                     ))}
                 </div>

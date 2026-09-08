@@ -48,6 +48,14 @@
     font-family: var(--mono);
 }
 
+.profile-birthdate {
+    display: block;
+    font-size: 13px;
+    color: var(--text);
+    font-family: var(--mono);
+    margin-bottom: 4px;
+}
+
 .profile-email-static {
     color: var(--text);
     font-size: 14px;
@@ -61,14 +69,63 @@
     margin-top: 4px;
 }
 
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .btn-danger:hover {
     border-color: var(--rust);
     color: var(--rust);
 }
 
-.profile-security {
+.profile-secondary {
     padding: 56px 0;
     border-bottom: 1px solid var(--rule);
+}
+
+.profile-secondary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+}
+
+@media (max-width: 800px) {
+    .profile-secondary-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 380px;
+}
+
+.review-cooldown {
+    color: var(--text);
+    font-size: 14px;
+    max-width: 380px;
+}
+
+.review-form textarea {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--text-h);
+    resize: vertical;
+}
+
+.review-form textarea:focus {
+    outline: none;
+    border-color: var(--gold);
 }
 
 .password-summary {
@@ -135,6 +192,12 @@
     min-width: 0;
 }
 
+.profile-edit-row > input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
 .form-field {
     display: flex;
     flex-direction: column;
@@ -147,7 +210,8 @@
     font-weight: 500;
 }
 
-.form-field input {
+.form-field input,
+.profile-edit-row > input {
     width: 100%;
     font-family: var(--sans);
     font-size: 15px;
@@ -158,7 +222,8 @@
     color: var(--text-h);
 }
 
-.form-field input:focus {
+.form-field input:focus,
+.profile-edit-row > input:focus {
     outline: none;
     border-color: var(--gold);
 }

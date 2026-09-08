@@ -341,6 +341,11 @@
     text-align: center;
 }
 
+.review-card .star-rating {
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
 .review-dots {
     display: flex;
     gap: 10px;

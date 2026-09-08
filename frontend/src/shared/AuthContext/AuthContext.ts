@@ -4,6 +4,9 @@ export interface AuthUser {
     email: string
     nume?: string
     prenume?: string
+    zi?: number
+    luna?: number
+    an?: number
 }
 
 export interface AuthContextValue {

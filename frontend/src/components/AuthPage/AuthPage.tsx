@@ -1,7 +1,9 @@
 ﻿import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
-import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
+import Dropdown from '../../shared/Dropdown/Dropdown'
+import { useAuth } from '../../shared/AuthContext/AuthContext'
+import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -10,7 +12,9 @@ interface FormState {
     nume: string
     prenume: string
     email: string
-    telefon: string
+    zi: string
+    luna: string
+    an: string
     parola: string
     confirmaParola: string
 }
@@ -19,21 +23,14 @@ const initialState: FormState = {
     nume: '',
     prenume: '',
     email: '',
-    telefon: '',
+    zi: '',
+    luna: '',
+    an: '',
     parola: '',
     confirmaParola: '',
 }
 
-function sanitizePhoneInput(raw: string): string {
-    let value = raw.replace(/[^\d+]/g, '')
-    if (value.includes('+')) {
-        value = '+' + value.replace(/\+/g, '')
-    }
-    return value
-}
-
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-const PHONE_REGEX = /^(0[67]\d{7}|\+373[67]\d{7})$/
 
 function EyeIcon({ open }: { open: boolean }) {
     if (open) {
@@ -65,6 +62,14 @@ function AuthPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [submitted, setSubmitted] = useState(false)
 
+    const anCurent = new Date().getFullYear()
+    const aniDisponibili = Array.from(
+        { length: VARSTA_MAXIMA - VARSTA_MINIMA + 1 },
+        (_, i) => anCurent - VARSTA_MINIMA - i
+    )
+    const maxZile = daysInMonth(Number(form.luna) || undefined, Number(form.an) || undefined)
+    const ziledisponibile = Array.from({ length: maxZile }, (_, i) => i + 1)
+
     useEffect(() => {
         if (submitted && mode === 'login') {
             const id = setTimeout(() => {
@@ -81,8 +86,22 @@ function AuthPage() {
     }
 
     const handleChange = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = field === 'telefon' ? sanitizePhoneInput(e.target.value) : e.target.value
-        setForm((prev) => ({ ...prev, [field]: value }))
+        setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    }
+
+    const handleZiChange = (value: string) => {
+        setForm((prev) => ({ ...prev, zi: value }))
+    }
+
+    const handleDateFieldChange = (field: 'luna' | 'an') => (value: string) => {
+        setForm((prev) => {
+            const next = { ...prev, [field]: value }
+            const maxDays = daysInMonth(Number(next.luna) || undefined, Number(next.an) || undefined)
+            if (Number(next.zi) > maxDays) {
+                next.zi = ''
+            }
+            return next
+        })
     }
 
     const validate = (): boolean => {
@@ -102,10 +121,21 @@ function AuthPage() {
         if (isRegister) {
             if (!form.nume.trim()) newErrors.nume = 'Numele este obligatoriu.'
             if (!form.prenume.trim()) newErrors.prenume = 'Prenumele este obligatoriu.'
-            if (!form.telefon.trim()) {
-                newErrors.telefon = 'Numărul de telefon este obligatoriu.'
-            } else if (!PHONE_REGEX.test(form.telefon)) {
-                newErrors.telefon = 'Introdu un număr valid (ex: 069123456 sau +37369123456).'
+
+            const zi = Number(form.zi)
+            const luna = Number(form.luna)
+            const an = Number(form.an)
+
+            if (!form.zi || !form.luna || !form.an) {
+                newErrors.zi = 'Data nașterii este obligatorie.'
+            } else if (zi < 1 || zi > 31) {
+                newErrors.zi = 'Ziua trebuie să fie între 1 și 31.'
+            } else if (luna < 1 || luna > 12) {
+                newErrors.luna = 'Luna trebuie să fie între 1 și 12.'
+            } else if (an < anCurent - VARSTA_MAXIMA || an > anCurent - VARSTA_MINIMA) {
+                newErrors.an = 'Introdu un an de naștere valid.'
+            } else if (!isValidBirthDate(zi, luna, an)) {
+                newErrors.zi = 'Data introdusă nu este validă.'
             }
         }
 
@@ -133,6 +163,9 @@ function AuthPage() {
                 email: form.email,
                 nume: isRegister ? form.nume : undefined,
                 prenume: isRegister ? form.prenume : undefined,
+                zi: isRegister ? Number(form.zi) : undefined,
+                luna: isRegister ? Number(form.luna) : undefined,
+                an: isRegister ? Number(form.an) : undefined,
             })
         }
 
@@ -237,17 +270,30 @@ function AuthPage() {
 
                         {isRegister && (
                             <div className="form-field">
-                                <label htmlFor="telefon">Telefon</label>
-                                <input
-                                    id="telefon"
-                                    type="tel"
-                                    inputMode="tel"
-                                    maxLength={13}
-                                    value={form.telefon}
-                                    onChange={handleChange('telefon')}
-                                    placeholder="069123456"
-                                />
-                                {errors.telefon && <span className="field-error">{errors.telefon}</span>}
+                                <label>Data nașterii</label>
+                                <div className="form-row">
+                                    <Dropdown
+                                        value={form.zi}
+                                        onChange={handleZiChange}
+                                        options={ziledisponibile.map((d) => ({ value: String(d), label: String(d) }))}
+                                        placeholder="Ziua"
+                                    />
+                                    <Dropdown
+                                        value={form.luna}
+                                        onChange={handleDateFieldChange('luna')}
+                                        options={LUNI.map((nume, i) => ({ value: String(i + 1), label: nume }))}
+                                        placeholder="Luna"
+                                    />
+                                    <Dropdown
+                                        value={form.an}
+                                        onChange={handleDateFieldChange('an')}
+                                        options={aniDisponibili.map((an) => ({ value: String(an), label: String(an) }))}
+                                        placeholder="Anul"
+                                    />
+                                </div>
+                                {(errors.zi || errors.luna || errors.an) && (
+                                    <span className="field-error">{errors.zi || errors.luna || errors.an}</span>
+                                )}
                             </div>
                         )}
 

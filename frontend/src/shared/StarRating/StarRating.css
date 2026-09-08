@@ -1,0 +1,28 @@
+﻿.star-rating {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.star {
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+    font-size: inherit;
+    color: var(--text);
+    opacity: 0.4;
+    cursor: default;
+}
+
+.star.filled {
+    color: var(--gold);
+    opacity: 1;
+}
+
+.star-rating.interactive .star {
+    cursor: pointer;
+}
+
+.star-rating.interactive .star:hover {
+    color: var(--gold);
+}
