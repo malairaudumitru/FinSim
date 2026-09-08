@@ -5,6 +5,7 @@ import {
     maxScoreFor,
     type AllocationStepDef,
     type MultiSelectStepDef,
+    type TimePressureStepDef,
     type ScenarioOption,
 } from '../../shared/scenarios/scenariosData'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
@@ -159,6 +160,61 @@ function MultiSelectStep({
             <button type="button" className="btn btn-primary btn-lg" onClick={confirm}>
                 Confirmă reducerile
             </button>
+        </div>
+    )
+}
+
+function TimePressureStep({
+                              def,
+                              onConfirm,
+                          }: {
+    def: TimePressureStepDef
+    onConfirm: (option: ScenarioOption) => void
+}) {
+    const [timpRamas, setTimpRamas] = useState(def.secunde)
+    const hasResolved = useRef(false)
+
+    useEffect(() => {
+        if (timpRamas <= 0) {
+            if (!hasResolved.current) {
+                hasResolved.current = true
+                onConfirm(def.optiuneTimeout)
+            }
+            return
+        }
+        const id = setTimeout(() => setTimpRamas((t) => t - 1), 1000)
+        return () => clearTimeout(id)
+    }, [timpRamas, def, onConfirm])
+
+    const handleChoose = (opt: ScenarioOption) => {
+        if (hasResolved.current) return
+        hasResolved.current = true
+        onConfirm(opt)
+    }
+
+    const urgent = timpRamas <= 3
+
+    return (
+        <div className="timepressure-step">
+            <div className={`timepressure-clock ${urgent ? 'urgent' : ''}`}>
+                <span className="figure">{timpRamas}</span>
+                <span className="timepressure-clock-label">secunde rămase</span>
+            </div>
+            <div className="scenario-options">
+                {def.optiuni.map((opt) => (
+                    <button
+                        type="button"
+                        key={opt.id}
+                        className="scenario-option"
+                        onClick={() => handleChoose(opt)}
+                    >
+                        <span>{opt.eticheta}</span>
+                        <span className={`figure ${opt.bani < 0 ? 'negative' : opt.bani > 0 ? 'positive' : ''}`}>
+                            {opt.bani === 0 ? '0 lei' : `${opt.bani > 0 ? '+' : ''}${opt.bani} lei`}
+                        </span>
+                    </button>
+                ))}
+            </div>
         </div>
     )
 }
@@ -340,6 +396,8 @@ function ScenarioPlayPage() {
                                     <AllocationStep def={currentStep.alocare} onConfirm={chooseOption} />
                                 ) : currentStep.tip === 'selectie-multipla' && currentStep.selectieMultipla ? (
                                     <MultiSelectStep def={currentStep.selectieMultipla} onConfirm={chooseOption} />
+                                ) : currentStep.tip === 'presiune-timp' && currentStep.presiuneTimp ? (
+                                    <TimePressureStep def={currentStep.presiuneTimp} onConfirm={chooseOption} />
                                 ) : (
                                     <div className="scenario-options">
                                         {currentStep.optiuni.map((opt) => (

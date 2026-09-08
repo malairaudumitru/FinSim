@@ -34,14 +34,21 @@ export interface MultiSelectStepDef {
     puncteMaxime: number
 }
 
+export interface TimePressureStepDef {
+    secunde: number
+    optiuni: ScenarioOption[]
+    optiuneTimeout: ScenarioOption
+}
+
 export interface ScenarioStep {
     id: string
     intrebare: string
     context?: string
-    tip?: 'alegere' | 'alocare' | 'selectie-multipla'
+    tip?: 'alegere' | 'alocare' | 'selectie-multipla' | 'presiune-timp'
     optiuni: ScenarioOption[]
     alocare?: AllocationStepDef
     selectieMultipla?: MultiSelectStepDef
+    presiuneTimp?: TimePressureStepDef
 }
 
 export interface ScenarioDef {
@@ -308,7 +315,7 @@ export const scenarios: ScenarioDef[] = [
                             id: 'gatit',
                             eticheta: 'Gătești mai mult acasă în loc să comanzi (300 lei)',
                             bani: 300,
-                            puncte: 10,
+                            puncte: 19,
                             stres: 0,
                         },
                         {
@@ -322,7 +329,7 @@ export const scenarios: ScenarioDef[] = [
                             id: 'streaming',
                             eticheta: 'Anulezi un abonament de streaming nefolosit (60 lei)',
                             bani: 60,
-                            puncte: 3,
+                            puncte: 6,
                             stres: 0,
                         },
                     ],
@@ -393,9 +400,198 @@ export const scenarios: ScenarioDef[] = [
         nume: 'Urgență medicală',
         descriere: 'O cheltuială neprevăzută îți testează fondul de urgență — sau lipsa lui.',
         dificultate: 'Mediu',
-        soldInitial: 0,
+        soldInitial: 5500,
         necesitaCont: true,
-        pasi: [],
+        pasi: [
+            {
+                id: 'declansare',
+                intrebare: 'Cineva apropiat se simte brusc foarte rău. Ce faci?',
+                optiuni: [
+                    {
+                        id: 'suni-salvarea',
+                        eticheta: 'Suni serviciul de urgență (112)',
+                        bani: 0,
+                        puncte: 25,
+                        stres: 0,
+                        feedback: 'Gratuit, rapid și exact procedura corectă într-o urgență reală.',
+                    },
+                    {
+                        id: 'duci-tu',
+                        eticheta: 'Îl duci tu, cu mașina, direct la spital',
+                        bani: -100,
+                        puncte: 15,
+                        stres: 15,
+                        feedback: 'Poate ajungi la fel de repede, dar riști mult conducând stresat, fără pregătire medicală la bord.',
+                    },
+                    {
+                        id: 'astepti',
+                        eticheta: 'Aștepți să vezi dacă îi trece',
+                        bani: 0,
+                        puncte: 0,
+                        stres: 25,
+                        feedback: 'Amânarea într-o urgență reală poate agrava mult situația.',
+                    },
+                ],
+            },
+            {
+                id: 'internare',
+                intrebare: 'La camera de gardă, medicul are nevoie de decizia ta acum — pentru internare.',
+                context: 'Ai la dispoziție doar câteva secunde să alegi — exact cum se simte o urgență reală.',
+                tip: 'presiune-timp',
+                optiuni: [],
+                presiuneTimp: {
+                    secunde: 20,
+                    optiuni: [
+                        {
+                            id: 'stat',
+                            eticheta: 'Internare de urgență, secție de stat',
+                            bani: -300,
+                            puncte: 25,
+                            stres: 5,
+                            feedback: 'Cost minim, tratament garantat — exact ce trebuie într-o urgență.',
+                        },
+                        {
+                            id: 'privat',
+                            eticheta: 'Internare privată, imediat',
+                            bani: -1800,
+                            puncte: 15,
+                            stres: 0,
+                            feedback: 'Confort maxim, dar costă de șase ori mai mult decât varianta de stat.',
+                        },
+                        {
+                            id: 'gandire',
+                            eticheta: 'Ceri câteva minute să suni pe cineva',
+                            bani: 0,
+                            puncte: 10,
+                            stres: 10,
+                            feedback: 'Ai câștigat timp de gândire, dar personalul medical așteaptă un răspuns.',
+                        },
+                    ],
+                    optiuneTimeout: {
+                        id: 'timeout',
+                        eticheta: 'Timp expirat',
+                        bani: -1800,
+                        puncte: 0,
+                        stres: 30,
+                        feedback: 'Timpul a expirat — personalul a decis pentru tine, la varianta cea mai scumpă disponibilă.',
+                    },
+                },
+            },
+            {
+                id: 'investigatii',
+                intrebare: 'Medicul recomandă un set de analize suplimentare. Ce alegi?',
+                optiuni: [
+                    {
+                        id: 'complete',
+                        eticheta: 'Faci toate analizele recomandate, 600 lei',
+                        bani: -600,
+                        puncte: 25,
+                        feedback: 'Cost mai mare acum, dar diagnostic complet, fără riscuri ascunse.',
+                    },
+                    {
+                        id: 'minime',
+                        eticheta: 'Doar analizele esențiale, 250 lei',
+                        bani: -250,
+                        puncte: 18,
+                        feedback: 'Rezonabil — acoperă principalele riscuri fără cheltuieli inutile.',
+                    },
+                    {
+                        id: 'refuzi',
+                        eticheta: 'Refuzi analizele suplimentare, ca să economisești',
+                        bani: 0,
+                        puncte: 5,
+                        stres: 15,
+                        feedback: 'Economisești acum, dar rișți să ratezi o problemă reală, nedescoperită la timp.',
+                    },
+                ],
+            },
+            {
+                id: 'medicamente',
+                intrebare: 'Ce cumperi din lista prescrisă de medic? (poți alege mai multe)',
+                context: 'Nu tot ce e pe listă e strict necesar — alege cu grijă.',
+                tip: 'selectie-multipla',
+                optiuni: [],
+                selectieMultipla: {
+                    puncteMaxime: 22,
+                    itemi: [
+                        {
+                            id: 'antibiotic',
+                            eticheta: 'Antibiotic prescris — necesar, 120 lei',
+                            bani: -120,
+                            puncte: 10,
+                        },
+                        {
+                            id: 'fizioterapie',
+                            eticheta: 'Ședințe de recuperare fizioterapie, 350 lei',
+                            bani: -350,
+                            puncte: 12,
+                        },
+                        {
+                            id: 'suplimente',
+                            eticheta: 'Suplimente recomandate, dar opționale, 200 lei',
+                            bani: -200,
+                            puncte: 0,
+                        },
+                    ],
+                },
+            },
+            {
+                id: 'recuperare',
+                intrebare: 'Cum abordezi perioada de recuperare?',
+                optiuni: [
+                    {
+                        id: 'concediu',
+                        eticheta: 'Iei concediu medical, te odihnești complet',
+                        bani: -100,
+                        puncte: 25,
+                        feedback: 'Recuperare corectă — corpul are nevoie de timp real, nu doar de tratament.',
+                    },
+                    {
+                        id: 'part-time',
+                        eticheta: 'Revii treptat, cu program redus',
+                        bani: 0,
+                        puncte: 18,
+                        feedback: 'Un compromis rezonabil între recuperare și venit.',
+                    },
+                    {
+                        id: 'imediat',
+                        eticheta: 'Revii imediat la programul normal',
+                        bani: 0,
+                        puncte: 5,
+                        stres: 20,
+                        feedback: 'Rișți o recădere — corpul nu s-a refăcut complet încă.',
+                    },
+                ],
+            },
+            {
+                id: 'reflectie-finala',
+                intrebare: 'Fondul de urgență s-a golit mult. Ce faci acum?',
+                optiuni: [
+                    {
+                        id: 'reconstruiesti',
+                        eticheta: 'Începi imediat să reconstruiești fondul de urgență',
+                        bani: -200,
+                        puncte: 25,
+                        feedback: 'Exact instinctul corect — completezi din nou rezerva, cât mai curând.',
+                    },
+                    {
+                        id: 'amani',
+                        eticheta: 'Amâni economisirea — ai alte priorități acum',
+                        bani: 0,
+                        puncte: 8,
+                        feedback: 'Ok pe termen scurt, dar rămâi vulnerabil la o nouă urgență.',
+                    },
+                    {
+                        id: 'imprumuti',
+                        eticheta: 'Iei un mic împrumut, ca să acoperi golul din buget',
+                        bani: -150,
+                        puncte: 5,
+                        stres: 10,
+                        feedback: 'Rezolvi golul imediat, dar adaugi o datorie nouă peste o urgență deja costisitoare.',
+                    },
+                ],
+            },
+        ],
     },
     {
         slug: 'primul-credit',
@@ -419,6 +615,10 @@ export function maxScoreFor(scenario: ScenarioDef): number {
         }
         if (step.tip === 'selectie-multipla' && step.selectieMultipla) {
             return sum + step.selectieMultipla.puncteMaxime
+        }
+        if (step.tip === 'presiune-timp' && step.presiuneTimp) {
+            const max = Math.max(...step.presiuneTimp.optiuni.map((o) => o.puncte))
+            return sum + max
         }
         const max = Math.max(...step.optiuni.map((o) => o.puncte))
         return sum + max
