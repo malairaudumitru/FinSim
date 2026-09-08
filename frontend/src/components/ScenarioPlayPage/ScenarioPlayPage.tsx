@@ -1,8 +1,8 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
-import { getScenarioBySlug, maxScoreFor, type ScenarioOption } from '../../shared/scenariosData'
-import { useScenarioHistory } from '../../shared/ScenarioHistoryContext'
-import { useAuth } from '../../shared/AuthContext'
+import { getScenarioBySlug, maxScoreFor, type ScenarioOption } from '../../shared/scenarios/scenariosData.ts'
+import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext.ts'
+import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './ScenarioPlayPage.css'
 

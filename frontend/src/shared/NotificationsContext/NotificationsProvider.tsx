@@ -1,5 +1,5 @@
 ﻿import { useState, type ReactNode } from 'react'
-import { NotificationsContext, initialNotifications, type NotificationItem } from './NotificationsContext'
+import { NotificationsContext, initialNotifications, type NotificationItem } from './NotificationsContext.ts'
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
     const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications)

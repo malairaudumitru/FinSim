@@ -1,13 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import './shared/styles.css'
+import './shared/styles/styles.css'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import { initTheme } from './shared/theme'
-import { AuthProvider } from './shared/AuthProvider'
-import { NotificationsProvider } from './shared/NotificationsProvider'
-import { ScenarioHistoryProvider } from './shared/ScenarioHistoryProvider'
+import { initTheme } from './shared/theme/theme.ts'
+import { AuthProvider } from './shared/AuthContext/AuthProvider.tsx'
+import { NotificationsProvider } from './shared/NotificationsContext/NotificationsProvider.tsx'
+import { ScenarioHistoryProvider } from './shared/ScenarioHistoryContext/ScenarioHistoryProvider.tsx'
 
 initTheme()
 

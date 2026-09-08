@@ -1,5 +1,5 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
-import '../../shared/ContentPage.css'
+import '../../shared/ContentPage/ContentPage.css'
 import './ContactPage.css'
 
 interface ContactForm {

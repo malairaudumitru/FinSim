@@ -1,8 +1,8 @@
 ﻿import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
-import { scenarios } from '../../shared/scenariosData'
-import { useAuth } from '../../shared/AuthContext'
+import { scenarios } from '../../shared/scenarios/scenariosData.ts'
+import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
 import './HomePage.css'
 
 const steps = [

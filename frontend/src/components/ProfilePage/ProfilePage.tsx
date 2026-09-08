@@ -1,8 +1,8 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { useAuth } from '../../shared/AuthContext'
-import { useScenarioHistory } from '../../shared/ScenarioHistoryContext'
-import { scenarios } from '../../shared/scenariosData'
+import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
+import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext.ts'
+import { scenarios } from '../../shared/scenarios/scenariosData.ts'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import './ProfilePage.css'
 

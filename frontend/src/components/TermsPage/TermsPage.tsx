@@ -1,4 +1,4 @@
-﻿import '../../shared/ContentPage.css'
+﻿import '../../shared/ContentPage/ContentPage.css'
 
 function TermsPage() {
     return (

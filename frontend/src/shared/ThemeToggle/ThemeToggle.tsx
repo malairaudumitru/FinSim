@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { applyTheme, getStoredTheme, getSystemTheme, type Theme } from '../theme'
+import { applyTheme, getStoredTheme, getSystemTheme, type Theme } from '../theme/theme.ts'
 import './ThemeToggle.css'
 
 function SunIcon() {

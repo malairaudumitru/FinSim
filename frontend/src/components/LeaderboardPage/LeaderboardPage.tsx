@@ -1,5 +1,5 @@
 ﻿import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
-import '../../shared/ContentPage.css'
+import '../../shared/ContentPage/ContentPage.css'
 import './LeaderboardPage.css'
 
 interface LeaderboardEntry {

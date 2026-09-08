@@ -1,8 +1,8 @@
 ﻿import { Link } from '@tanstack/react-router'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import AvatarMenu from '../AvatarMenu/AvatarMenu'
-import { useAuth } from '../AuthContext'
-import { useNotifications } from '../NotificationsContext'
+import { useAuth } from '../AuthContext/AuthContext.ts'
+import { useNotifications } from '../NotificationsContext/NotificationsContext.ts'
 import './Navbar.css'
 
 function BellIcon() {

@@ -1,4 +1,4 @@
-﻿import { useNotifications } from '../../shared/NotificationsContext'
+﻿import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext.ts'
 import './NotificationsPage.css'
 
 const typeLabel: Record<string, string> = {

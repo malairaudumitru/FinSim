@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
-import { useAuth } from '../../shared/AuthContext'
+import { useAuth } from '../../shared/AuthContext/AuthContext.ts'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'

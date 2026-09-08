@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { useAuth } from '../AuthContext'
+import { useAuth } from '../AuthContext/AuthContext.ts'
 import './AvatarMenu.css'
 
 function AvatarMenu() {

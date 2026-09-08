@@ -1,5 +1,5 @@
 ﻿import { useState, type ReactNode } from 'react'
-import { ScenarioHistoryContext, initialHistory, type HistoryEntry } from './ScenarioHistoryContext'
+import { ScenarioHistoryContext, initialHistory, type HistoryEntry } from './ScenarioHistoryContext.ts'
 
 export function ScenarioHistoryProvider({ children }: { children: ReactNode }) {
     const [history, setHistory] = useState<HistoryEntry[]>(initialHistory)
