@@ -75,6 +75,20 @@
     font-family: var(--mono);
 }
 
+.scenario-header-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.scenario-stres {
+    font-size: 14px;
+    color: var(--rust);
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--rust) 10%, transparent);
+}
+
 .scenario-balance {
     font-size: 15px;
     color: var(--text-h);
@@ -219,9 +233,122 @@
     color: var(--text);
 }
 
+.scenario-context {
+    color: var(--text);
+    font-size: 15px;
+    text-align: center;
+    margin-top: -16px;
+    margin-bottom: 28px;
+}
+
+.allocation-step {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.allocation-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.allocation-row-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: var(--text-h);
+}
+
+.allocation-slider {
+    width: 100%;
+    accent-color: var(--gold);
+}
+
+.allocation-remaining {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    font-size: 15px;
+    color: var(--text-h);
+}
+
+.allocation-remaining.negative {
+    border-color: var(--rust);
+    color: var(--rust);
+}
+
+.multiselect-step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.multiselect-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    cursor: pointer;
+}
+
+.multiselect-item:has(input:checked) {
+    border-color: var(--gold);
+}
+
+.multiselect-item input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    cursor: pointer;
+    position: relative;
+}
+
+.multiselect-item input[type='checkbox']:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+}
+
+.multiselect-item input[type='checkbox']:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: solid var(--ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.multiselect-label {
+    flex: 1;
+    font-size: 15px;
+    color: var(--text-h);
+}
+
+.multiselect-item .figure.positive {
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
 .scenario-result-balance {
     color: var(--text);
     font-size: 15px;
+}
+
+.scenario-result-stres {
+    color: var(--rust);
+    font-size: 14px;
 }
 
 .scenario-result-actions {

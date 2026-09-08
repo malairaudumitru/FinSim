@@ -24,6 +24,16 @@
     color: var(--gold);
 }
 
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary:disabled:hover {
+    background: var(--gold);
+    color: var(--ink);
+}
+
 .btn-ghost {
     background: transparent;
     color: var(--text-h);
