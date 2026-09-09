@@ -281,8 +281,6 @@ function HomePage() {
                             consecințele lor, fără să riști vreun leu.
                         </p>
                     </div>
-
-                    <HeroLedgerCard />
                 </div>
             </section>
 
@@ -329,21 +327,25 @@ function HomePage() {
             </section>
 
             <section id="how-it-works" className="how-it-works">
-                <div className="container">
-                    <div className="section-heading">
-                        <h2>Cum funcționează</h2>
-                    </div>
-                    <div className="timeline">
-                        {steps.map((step, i) => (
-                            <div className="timeline-step" key={step.title}>
-                                <span className="timeline-number figure">{String(i + 1).padStart(2, '0')}</span>
-                                <div>
-                                    <h3>{step.title}</h3>
-                                    <p>{step.desc}</p>
+                <div className="container how-it-works-inner">
+                    <div className="how-it-works-text">
+                        <div className="section-heading">
+                            <h2>Cum funcționează</h2>
+                        </div>
+                        <div className="timeline">
+                            {steps.map((step, i) => (
+                                <div className="timeline-step" key={step.title}>
+                                    <span className="timeline-number figure">{String(i + 1).padStart(2, '0')}</span>
+                                    <div>
+                                        <h3>{step.title}</h3>
+                                        <p>{step.desc}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
+
+                    <HeroLedgerCard />
                 </div>
             </section>
 
