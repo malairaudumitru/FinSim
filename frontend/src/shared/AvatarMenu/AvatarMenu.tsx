@@ -53,6 +53,9 @@ function AvatarMenu() {
                     <Link to="/profile" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
                         Profilul meu
                     </Link>
+                    <Link to="/progress" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
+                        Progresul meu
+                    </Link>
                     <button type="button" className="avatar-dropdown-item avatar-dropdown-logout" onClick={handleLogout}>
                         Deconectare
                     </button>

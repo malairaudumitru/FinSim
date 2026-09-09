@@ -18,6 +18,7 @@ import { Route as AppFaqRouteImport } from './routes/_app/faq'
 import { Route as AppLeaderboardRouteImport } from './routes/_app/leaderboard'
 import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppProgressRouteImport } from './routes/_app/progress'
 import { Route as AppTermsRouteImport } from './routes/_app/terms'
 import { Route as AppScenariosIndexRouteImport } from './routes/_app/scenarios/index'
 import { Route as AppScenariosSlugRouteImport } from './routes/_app/scenarios/$slug'
@@ -66,6 +67,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProgressRoute = AppProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTermsRoute = AppTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof AppLeaderboardRoute
   '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
+  '/progress': typeof AppProgressRoute
   '/terms': typeof AppTermsRoute
   '/scenarios/$slug': typeof AppScenariosSlugRoute
   '/scenarios/': typeof AppScenariosIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof AppLeaderboardRoute
   '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
+  '/progress': typeof AppProgressRoute
   '/terms': typeof AppTermsRoute
   '/': typeof AppIndexRoute
   '/scenarios/$slug': typeof AppScenariosSlugRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/_app/leaderboard': typeof AppLeaderboardRoute
   '/_app/notifications': typeof AppNotificationsRoute
   '/_app/profile': typeof AppProfileRoute
+  '/_app/progress': typeof AppProgressRoute
   '/_app/terms': typeof AppTermsRoute
   '/_app/': typeof AppIndexRoute
   '/_app/scenarios/$slug': typeof AppScenariosSlugRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
+    | '/progress'
     | '/terms'
     | '/scenarios/$slug'
     | '/scenarios/'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
+    | '/progress'
     | '/terms'
     | '/'
     | '/scenarios/$slug'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/_app/leaderboard'
     | '/_app/notifications'
     | '/_app/profile'
+    | '/_app/progress'
     | '/_app/terms'
     | '/_app/'
     | '/_app/scenarios/$slug'
@@ -236,6 +248,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/progress': {
+      id: '/_app/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AppProgressRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/terms': {
       id: '/_app/terms'
       path: '/terms'
@@ -267,6 +286,7 @@ interface AppRouteChildren {
   AppLeaderboardRoute: typeof AppLeaderboardRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppProgressRoute: typeof AppProgressRoute
   AppTermsRoute: typeof AppTermsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppScenariosSlugRoute: typeof AppScenariosSlugRoute
@@ -280,6 +300,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLeaderboardRoute: AppLeaderboardRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppProfileRoute: AppProfileRoute,
+  AppProgressRoute: AppProgressRoute,
   AppTermsRoute: AppTermsRoute,
   AppIndexRoute: AppIndexRoute,
   AppScenariosSlugRoute: AppScenariosSlugRoute,
