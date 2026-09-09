@@ -1,8 +1,8 @@
 ﻿import { Link } from '@tanstack/react-router'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import AvatarMenu from '../AvatarMenu/AvatarMenu'
-import { useAuth } from '../AuthContext/AuthContext.ts'
-import { useNotifications } from '../NotificationsContext/NotificationsContext.ts'
+import { useAuth } from '../AuthContext/AuthContext'
+import { useNotifications } from '../NotificationsContext/NotificationsContext'
 import './Navbar.css'
 
 function BellIcon() {
@@ -26,7 +26,7 @@ function Navbar() {
                 </Link>
                 <nav className="nav-links">
                     <Link to="/" hash="how-it-works">Cum funcționează</Link>
-                    <Link to="/" hash="scenarios">Scenarii</Link>
+                    <Link to="/scenarios">Scenarii</Link>
                     <Link to="/leaderboard">Clasament</Link>
                     <Link to="/faq">FAQ</Link>
                     <Link to="/contact">Contact</Link>

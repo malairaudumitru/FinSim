@@ -1,0 +1,51 @@
+﻿.scenarios-list-section {
+    padding: 56px 0 96px;
+}
+
+.scenario-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.scenario-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 24px;
+    padding: 26px 0;
+    border-top: 1px solid var(--rule);
+}
+
+.scenario-row:last-child {
+    border-bottom: 1px solid var(--rule);
+}
+
+.scenario-info h3 {
+    font-size: 19px;
+    margin-bottom: 6px;
+}
+
+.scenario-info p {
+    color: var(--text);
+    line-height: 1.5;
+    max-width: 480px;
+}
+
+.scenario-tag {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.scenario-lock {
+    margin-left: 6px;
+    font-size: 12px;
+}
+
+@media (max-width: 720px) {
+    .scenario-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}

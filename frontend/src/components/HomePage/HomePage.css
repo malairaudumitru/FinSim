@@ -29,21 +29,14 @@
     color: var(--text);
     line-height: 1.6;
     max-width: 480px;
-    margin-bottom: 32px;
     font-size: 18px;
-}
-
-.hero-actions {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
 }
 
 .ledger-card {
     background: var(--surface);
     border: 1px solid var(--rule);
     padding: 28px 26px;
-    animation: ledgerFade 1.1s cubic-bezier(0.22, 1, 0.36, 1);;
+    animation: ledgerFade 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes ledgerFade {
@@ -172,51 +165,62 @@
     font-size: 16px;
 }
 
-.scenario-list {
+.scenario-teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.scenario-teaser-card {
+    position: relative;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    padding: 28px 24px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.scenario-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    gap: 24px;
-    padding: 26px 0;
-    border-top: 1px solid var(--rule);
+.scenario-teaser-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
 }
 
-.scenario-row:last-child {
-    border-bottom: 1px solid var(--rule);
+.scenario-teaser-icon {
+    color: var(--gold);
+    margin-bottom: 4px;
 }
 
-.scenario-info h3 {
-    font-size: 19px;
-    margin-bottom: 6px;
+.scenario-teaser-card h3 {
+    font-size: 18px;
+    margin: 0;
 }
 
-.scenario-info p {
+.scenario-teaser-card p {
     color: var(--text);
+    font-size: 14px;
     line-height: 1.5;
-    max-width: 480px;
+    flex: 1;
 }
 
-.scenario-tag {
-    font-family: var(--mono);
-    font-size: 13px;
+.features-footer-note {
+    text-align: center;
     color: var(--text);
-    white-space: nowrap;
+    font-size: 14px;
+    margin-top: 32px;
 }
 
-.scenario-lock {
-    margin-left: 6px;
-    font-size: 12px;
+.scenario-teaser-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 @media (max-width: 720px) {
-    .scenario-row {
+    .scenario-teaser-grid {
         grid-template-columns: 1fr;
-        gap: 10px;
     }
 }
 
@@ -390,11 +394,11 @@
 }
 
 .review-text::before {
-    content: '"';
+    content: '“';
 }
 
 .review-text::after {
-    content: '"';
+    content: '”';
 }
 
 .review-author {

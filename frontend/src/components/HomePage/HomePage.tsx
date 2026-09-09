@@ -1,11 +1,78 @@
-﻿import { useEffect, useState } from 'react'
+﻿import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
-import { scenarios } from '../../shared/scenarios/scenariosData'
-import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import StarRating from '../../shared/StarRating/StarRating'
 import './HomePage.css'
+
+const features = [
+    {
+        title: 'Compari inteligent',
+        text: 'Nu doar rata lunară — vezi costul total, exact ca la o comparație reală de oferte de credit.',
+        icon: 'compara',
+    },
+    {
+        title: 'Decizii sub presiune',
+        text: 'Exersezi cum reacționezi când timpul e limitat — exact cum se simte o urgență reală.',
+        icon: 'timp',
+    },
+    {
+        title: 'Buget flexibil',
+        text: 'Muți bani între categorii cu un slider și vezi impactul instant asupra soldului.',
+        icon: 'slider',
+    },
+    {
+        title: 'Testezi ce știi',
+        text: 'Verifici rapid cât de bine înțelegi dobânzi, credite și economii — cu răspuns imediat.',
+        icon: 'quiz',
+    },
+]
+
+function IconCompara() {
+    return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M4 6h7M4 12h5M4 18h9" />
+            <path d="M15 6h5M17 6v12M20 15l-3 3-3-3" />
+        </svg>
+    )
+}
+
+function IconTimp() {
+    return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <circle cx="12" cy="13" r="8" />
+            <path d="M12 9v4l3 2" />
+            <path d="M9 2h6" />
+        </svg>
+    )
+}
+
+function IconSlider() {
+    return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M4 7h16M4 17h16" />
+            <circle cx="9" cy="7" r="2.2" fill="currentColor" stroke="none" />
+            <circle cx="16" cy="17" r="2.2" fill="currentColor" stroke="none" />
+        </svg>
+    )
+}
+
+function IconQuiz() {
+    return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M9 10a3 3 0 1 1 4 2.8c-.8.4-1 1-1 1.7" />
+            <circle cx="12" cy="17.5" r="0.9" fill="currentColor" stroke="none" />
+            <circle cx="12" cy="12" r="9" />
+        </svg>
+    )
+}
+
+const featureIcons: Record<string, ReactNode> = {
+    compara: <IconCompara />,
+    timp: <IconTimp />,
+    slider: <IconSlider />,
+    quiz: <IconQuiz />,
+}
 
 const steps = [
     {
@@ -183,8 +250,6 @@ function ReviewCarousel() {
 }
 
 function HomePage() {
-    const { isLoggedIn } = useAuth()
-
     return (
         <>
             <section className="hero">
@@ -195,14 +260,6 @@ function HomePage() {
                             Simulează decizii financiare reale — salariu, chirie, credite — și vezi
                             consecințele lor, fără să riști vreun leu.
                         </p>
-                        <div className="hero-actions">
-                            <Link to="/" hash="scenarios" className="btn btn-primary btn-lg">
-                                Începe simularea
-                            </Link>
-                            <Link to="/" hash="how-it-works" className="btn btn-ghost btn-lg">
-                                Vezi cum funcționează
-                            </Link>
-                        </div>
                     </div>
 
                     <HeroLedgerCard />
@@ -222,34 +279,31 @@ function HomePage() {
                 </div>
             </section>
 
-            <section id="scenarios" className="scenarios">
+            <section id="features" className="scenarios">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Scenarii de simulare</h2>
+                        <h2>Nu doar teorie</h2>
                         <p className="section-subtitle">
-                            Alege o situație și vezi cum s-ar descurca bugetul tău.
+                            Fie că tocmai ai primit primul salariu, fie că te pregătești pentru primul credit —
+                            exersezi decizii reale, în situații construite să semene cu viața de zi cu zi.
                         </p>
                     </div>
-                    <div className="scenario-list">
-                        {scenarios.map((s) => (
-                            <div className="scenario-row" key={s.slug}>
-                                <div className="scenario-info">
-                                    <h3>{s.nume}</h3>
-                                    <p>{s.descriere}</p>
-                                </div>
-                                <span className="scenario-tag">
-                                    {s.dificultate}
-                                    {s.necesitaCont && !isLoggedIn && (
-                                        <span className="scenario-lock" title="Necesită cont">
-                                            🔒
-                                        </span>
-                                    )}
-                                </span>
-                                <Link to="/scenarios/$slug" params={{ slug: s.slug }} className="btn btn-link">
-                                    Joacă scenariul →
-                                </Link>
+                    <div className="scenario-teaser-grid">
+                        {features.map((f) => (
+                            <div className="scenario-teaser-card" key={f.title}>
+                                <div className="scenario-teaser-icon">{featureIcons[f.icon]}</div>
+                                <h3>{f.title}</h3>
+                                <p>{f.text}</p>
                             </div>
                         ))}
+                    </div>
+                    <p className="features-footer-note">
+                        Toate simulările sunt gratuite și nu necesită bani reali — greșelile costă doar în joc.
+                    </p>
+                    <div className="scenario-teaser-footer">
+                        <Link to="/scenarios" className="btn btn-ghost">
+                            Vezi toate scenariile →
+                        </Link>
                     </div>
                 </div>
             </section>

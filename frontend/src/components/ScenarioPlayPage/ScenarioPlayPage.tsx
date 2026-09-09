@@ -363,6 +363,7 @@ function ScenarioPlayPage() {
     const [stres, setStres] = useState(0)
     const [scorCredit, setScorCredit] = useState(scenario?.scorCreditInitial ?? 0)
     const [lastChoice, setLastChoice] = useState<ScenarioOption | null>(null)
+    const [showInfo, setShowInfo] = useState(false)
     const hasSaved = useRef(false)
 
     const steps = useMemo(() => {
@@ -391,6 +392,7 @@ function ScenarioPlayPage() {
         setStres(0)
         setScorCredit(scenario?.scorCreditInitial ?? 0)
         setLastChoice(null)
+        setShowInfo(false)
         hasSaved.current = false
     }, [slug, scenario])
 
@@ -408,7 +410,7 @@ function ScenarioPlayPage() {
         return (
             <div className="scenario-missing">
                 <p>Acest scenariu nu există.</p>
-                <Link to="/" hash="scenarios" className="btn btn-primary">
+                <Link to="/scenarios" className="btn btn-primary">
                     Înapoi la scenarii
                 </Link>
             </div>
@@ -425,7 +427,7 @@ function ScenarioPlayPage() {
                     <Link to="/login" className="btn btn-primary">
                         Autentificare / Înregistrare
                     </Link>
-                    <Link to="/" hash="scenarios" className="btn btn-ghost">
+                    <Link to="/scenarios" className="btn btn-ghost">
                         Înapoi la scenarii
                     </Link>
                 </div>
@@ -438,7 +440,7 @@ function ScenarioPlayPage() {
             <div className="scenario-missing">
                 <h1>{scenario.nume}</h1>
                 <p>Acest scenariu este în lucru — revino curând.</p>
-                <Link to="/" hash="scenarios" className="btn btn-primary">
+                <Link to="/scenarios" className="btn btn-primary">
                     Înapoi la scenarii
                 </Link>
             </div>
@@ -495,10 +497,19 @@ function ScenarioPlayPage() {
             <div className="scenario-play">
                 <section className="scenario-header">
                     <div className="container scenario-header-inner">
-                        <span className="scenario-step-count">
+                                                <span className="scenario-step-count">
                             Pasul {stepIndex + 1} din {steps.length}
                         </span>
                         <div className="scenario-header-stats">
+                            <button
+                                type="button"
+                                className="scenario-info-toggle"
+                                onClick={() => setShowInfo((v) => !v)}
+                                aria-expanded={showInfo}
+                            >
+                                <span className="scenario-info-toggle-icon">ⓘ</span>
+                                Ce înseamnă?
+                            </button>
                             {hasScorCredit && (
                                 <span className={`scenario-scor-credit figure ${scorCredit < 60 ? 'low' : ''}`}>
                                     Scor credit: {scorCredit}
@@ -523,6 +534,37 @@ function ScenarioPlayPage() {
                         </div>
                     </div>
                 </section>
+
+                {showInfo && (
+                    <section className="scenario-info-panel">
+                        <div className="container scenario-info-panel-inner">
+                            <div>
+                                <strong>Sold</strong> — banii tăi disponibili. Se modifică automat, în plus sau în
+                                minus, cu fiecare decizie pe care o iei.
+                            </div>
+                            {hasStres && (
+                                <div>
+                                    <strong>Stres</strong> — reflectă cât de tensionate sunt deciziile tale. La
+                                    final, stresul acumulat se scade direct din scor.
+                                </div>
+                            )}
+                            {hasScorCredit && (
+                                <div>
+                                    <strong>Scor de credit</strong> — arată cât de responsabile sunt deciziile tale
+                                    legate de împrumut. Unele opțiuni sunt disponibile doar dacă scorul tău trece
+                                    de un prag minim.
+                                </div>
+                            )}
+                            <button
+                                type="button"
+                                className="scenario-info-close"
+                                onClick={() => setShowInfo(false)}
+                            >
+                                Am înțeles
+                            </button>
+                        </div>
+                    </section>
+                )}
 
                 <section className="scenario-body">
                     <div className="container">
@@ -617,7 +659,7 @@ function ScenarioPlayPage() {
                         <Link to="/profile" className="btn btn-primary">
                             Vezi în profil
                         </Link>
-                        <Link to="/" hash="scenarios" className="btn btn-ghost">
+                        <Link to="/scenarios" className="btn btn-ghost">
                             Alte scenarii
                         </Link>
                     </div>

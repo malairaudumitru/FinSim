@@ -75,6 +75,69 @@
     font-family: var(--mono);
 }
 
+.scenario-info-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 20px;
+    padding: 6px 14px 6px 10px;
+    color: var(--text-h);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.scenario-info-toggle-icon {
+    font-size: 16px;
+    color: var(--gold);
+    line-height: 1;
+}
+
+.scenario-info-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.scenario-info-panel {
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 0;
+}
+
+.scenario-info-panel-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    max-width: 640px;
+}
+
+.scenario-info-panel-inner strong {
+    color: var(--text-h);
+}
+
+.scenario-info-close {
+    align-self: flex-start;
+    margin-top: 4px;
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 6px 14px;
+    color: var(--text-h);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.scenario-info-close:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
 .scenario-header-stats {
     display: flex;
     align-items: center;
