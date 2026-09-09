@@ -28,6 +28,12 @@
     order: 3;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .podium-item {
+        animation: none;
+    }
+}
+
 @media (max-width: 720px) {
     .leaderboard-podium {
         grid-template-columns: 1fr;
@@ -126,17 +132,14 @@
 }
 
 .rank-1 .podium-base {
-    height: 108px;
     border-top-color: var(--gold);
     background-color: color-mix(in srgb, var(--gold) 10%, transparent);
 }
 
 .rank-2 .podium-base {
-    height: 76px;
 }
 
 .rank-3 .podium-base {
-    height: 48px;
     border-top-color: var(--rank-bronze);
     background-color: color-mix(in srgb, var(--rank-bronze) 10%, transparent);
 }

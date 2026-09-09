@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
+import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import StarRating from '../../shared/StarRating/StarRating'
@@ -96,6 +97,92 @@ const stats = [
     { value: '~10 min', label: 'per scenariu' },
 ]
 
+
+function chunk<T>(items: T[], size: number): T[][] {
+    const result: T[][] = []
+    for (let i = 0; i < items.length; i += size) {
+        result.push(items.slice(i, i + size))
+    }
+    return result
+}
+
+function ReviewCarousel() {
+    const { reviews } = useReviews()
+    const pages = chunk(reviews, 3)
+    const [pageIndex, setPageIndex] = useState(0)
+
+    useEffect(() => {
+        if (pages.length <= 1) return
+        const id = setInterval(() => {
+            setPageIndex((i) => (i + 1) % pages.length)
+        }, 6000)
+        return () => clearInterval(id)
+    }, [pageIndex, pages.length])
+
+    const goTo = (target: number) => {
+        setPageIndex(target)
+    }
+
+    const prev = () => {
+        setPageIndex((i) => (i - 1 + pages.length) % pages.length)
+    }
+
+    const next = () => {
+        setPageIndex((i) => (i + 1) % pages.length)
+    }
+
+    const currentPage = pages[pageIndex] ?? []
+
+    return (
+        <div className="review-carousel-wrap">
+            <div className="review-carousel">
+                <button type="button" className="review-nav" onClick={prev} aria-label="Pagina anterioară">
+                    ‹
+                </button>
+
+                <div className="review-page">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            className="review-page-inner"
+                            key={pageIndex}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: 'easeInOut' }}
+                        >
+                            {currentPage.map((r) => (
+                                <blockquote className="review-card" key={r.id}>
+                                    <StarRating rating={r.rating} size={20} />
+                                    <p className="review-text">{r.mesaj}</p>
+                                    <cite className="review-author">{r.autor}</cite>
+                                </blockquote>
+                            ))}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                <button type="button" className="review-nav" onClick={next} aria-label="Pagina următoare">
+                    ›
+                </button>
+            </div>
+
+            {pages.length > 1 && (
+                <div className="review-dots">
+                    {pages.map((_, i) => (
+                        <button
+                            type="button"
+                            key={i}
+                            className={`review-dot ${i === pageIndex ? 'active' : ''}`}
+                            onClick={() => goTo(i)}
+                            aria-label={`Pagina ${i + 1}`}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    )
+}
+
 interface LedgerRow {
     label: string
     value: string
@@ -154,97 +241,30 @@ function HeroLedgerCard() {
     const card = ledgerCards[index]
 
     return (
-        <div className="ledger-card" key={index} aria-hidden="true">
-            <div className="ledger-card-title">{card.title}</div>
-            {card.rows.map((row) => (
-                <div className="ledger-row" key={row.label}>
-                    <span>{row.label}</span>
-                    <span className={`figure ${row.sign ?? ''}`}>{row.value}</span>
-                </div>
-            ))}
-            <div className="ledger-row ledger-total">
-                <span>{card.total.label}</span>
-                <span className="figure">{card.total.value}</span>
-            </div>
-        </div>
-    )
-}
-
-function chunk<T>(items: T[], size: number): T[][] {
-    const result: T[][] = []
-    for (let i = 0; i < items.length; i += size) {
-        result.push(items.slice(i, i + size))
-    }
-    return result
-}
-
-function ReviewCarousel() {
-    const { reviews } = useReviews()
-    const pages = chunk(reviews, 3)
-    const [pageIndex, setPageIndex] = useState(0)
-    const [direction, setDirection] = useState<'left' | 'right'>('right')
-
-    useEffect(() => {
-        if (pages.length <= 1) return
-        const id = setInterval(() => {
-            setDirection('right')
-            setPageIndex((i) => (i + 1) % pages.length)
-        }, 6000)
-        return () => clearInterval(id)
-    }, [pageIndex, pages.length])
-
-    const goTo = (target: number) => {
-        setDirection(target > pageIndex ? 'right' : 'left')
-        setPageIndex(target)
-    }
-
-    const prev = () => {
-        setDirection('left')
-        setPageIndex((i) => (i - 1 + pages.length) % pages.length)
-    }
-
-    const next = () => {
-        setDirection('right')
-        setPageIndex((i) => (i + 1) % pages.length)
-    }
-
-    const currentPage = pages[pageIndex] ?? []
-
-    return (
-        <div className="review-carousel-wrap">
-            <div className="review-carousel">
-                <button type="button" className="review-nav" onClick={prev} aria-label="Pagina anterioară">
-                    ‹
-                </button>
-
-                <div className={`review-page slide-${direction}`} key={pageIndex}>
-                    {currentPage.map((r) => (
-                        <blockquote className="review-card" key={r.id}>
-                            <StarRating rating={r.rating} size={20} />
-                            <p className="review-text">{r.mesaj}</p>
-                            <cite className="review-author">{r.autor}</cite>
-                        </blockquote>
-                    ))}
-                </div>
-
-                <button type="button" className="review-nav" onClick={next} aria-label="Pagina următoare">
-                    ›
-                </button>
-            </div>
-
-            {pages.length > 1 && (
-                <div className="review-dots">
-                    {pages.map((_, i) => (
-                        <button
-                            type="button"
-                            key={i}
-                            className={`review-dot ${i === pageIndex ? 'active' : ''}`}
-                            onClick={() => goTo(i)}
-                            aria-label={`Pagina ${i + 1}`}
-                        />
-                    ))}
-                </div>
-            )}
+        <div className="ledger-card-wrap">
+            <AnimatePresence>
+                <motion.div
+                    className="ledger-card"
+                    key={index}
+                    aria-hidden="true"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                >
+                <div className="ledger-card-title">{card.title}</div>
+                {card.rows.map((row) => (
+                    <div className="ledger-row" key={row.label}>
+                        <span>{row.label}</span>
+                        <span className={`figure ${row.sign ?? ''}`}>{row.value}</span>
+                    </div>
+                ))}
+                    <div className="ledger-row ledger-total">
+                        <span>{card.total.label}</span>
+                        <span className="figure">{card.total.value}</span>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
         </div>
     )
 }
