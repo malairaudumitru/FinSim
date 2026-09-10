@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
+import Typewriter from 'typewriter-effect'
 import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
@@ -275,7 +276,27 @@ function HomePage() {
             <section className="hero">
                 <div className="container hero-inner">
                     <div className="hero-text">
-                        <h1>Învață să-ți gestionezi banii înainte să conteze cu adevărat.</h1>
+                        <h1>
+                            Învață să-ți gestionezi banii{' '}
+                            <span className="hero-typewriter">
+                                <Typewriter
+                                    options={{
+                                        strings: [
+                                            'înainte să conteze cu adevărat.',
+                                            'fără să riști vreun leu real.',
+                                            'cu scenarii, nu doar teorie.',
+                                        ],
+                                        autoStart: true,
+                                        loop: true,
+                                        delay: 45,
+                                        deleteSpeed: 25,
+                                        wrapperClassName: 'hero-typewriter-text',
+                                        cursorClassName: 'hero-typewriter-cursor',
+                                    }}
+                                    component="span"
+                                />
+                            </span>
+                        </h1>
                         <p className="hero-subtitle">
                             Simulează decizii financiare reale — salariu, chirie, credite — și vezi
                             consecințele lor, fără să riști vreun leu.

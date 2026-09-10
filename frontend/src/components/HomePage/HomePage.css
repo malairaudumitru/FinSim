@@ -58,6 +58,21 @@
 
 .hero-text h1 {
     margin-bottom: 22px;
+    min-height: 3.3em;
+}
+
+.hero-typewriter {
+    color: var(--gold);
+    display: inline;
+}
+
+.hero-typewriter-text {
+    display: inline;
+}
+
+.hero-typewriter-cursor {
+    color: var(--gold);
+    font-weight: 400;
 }
 
 .hero-subtitle {
