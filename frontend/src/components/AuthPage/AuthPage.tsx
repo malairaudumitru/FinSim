@@ -178,6 +178,9 @@ function AuthPage() {
                 dataInregistrare: new Date().toLocaleDateString('ro-RO'),
                 scenariiFinalizate: 0,
                 scorTotal: 0,
+                zi: Number(form.zi),
+                luna: Number(form.luna),
+                an: Number(form.an),
             })
             login({
                 email: created.email,

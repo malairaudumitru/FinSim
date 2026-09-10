@@ -2,7 +2,14 @@
 import { useUsers, type AppUser, type UserRole, type UserStatus } from '../../shared/UsersContext/UsersContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
-import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
+import {
+    isValidBirthDate,
+    daysInMonth,
+    formatBirthDate,
+    LUNI,
+    VARSTA_MINIMA,
+    VARSTA_MAXIMA,
+} from '../../shared/birthDate/birthDate'
 
 type FormState = {
     nume: string
@@ -167,6 +174,7 @@ function UsersSection() {
                             <th>Rol</th>
                             <th>Status</th>
                             <th>Înregistrat</th>
+                            <th>Data nașterii</th>
                             <th>Scor</th>
                             <th></th>
                         </tr>
@@ -174,7 +182,7 @@ function UsersSection() {
                     <tbody>
                         {users.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={7}>Niciun utilizator momentan.</td>
+                                <td colSpan={8}>Niciun utilizator momentan.</td>
                             </tr>
                         )}
                         {users.map((u) => (
@@ -192,6 +200,9 @@ function UsersSection() {
                                     </span>
                                 </td>
                                 <td className="admin-cell-muted">{u.dataInregistrare}</td>
+                                <td className="admin-cell-muted">
+                                    {u.zi && u.luna && u.an ? formatBirthDate(u.zi, u.luna, u.an) : '—'}
+                                </td>
                                 <td>{u.scorTotal}</td>
                                 <td>
                                     <div className="admin-row-actions">
