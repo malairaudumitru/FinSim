@@ -1,11 +1,12 @@
 ﻿import { Link } from '@tanstack/react-router'
-import { scenarios } from '../../shared/scenarios/scenariosData'
+import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ScenariosListPage.css'
 
 function ScenariosListPage() {
     const { isLoggedIn } = useAuth()
+    const { scenarios } = useScenarios()
 
     return (
         <div className="scenarios-list-page">

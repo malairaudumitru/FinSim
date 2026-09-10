@@ -169,6 +169,11 @@
     color: var(--rust);
 }
 
+.auth-form-error {
+    display: block;
+    margin-top: -4px;
+}
+
 .password-input {
     display: flex;
     align-items: center;

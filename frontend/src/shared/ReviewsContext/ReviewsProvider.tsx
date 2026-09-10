@@ -8,8 +8,16 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
         setReviews((prev) => [{ ...review, id: `r${Date.now()}` }, ...prev])
     }
 
+    const updateReview = (id: string, patch: Partial<Omit<Review, 'id'>>) => {
+        setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)))
+    }
+
+    const deleteReview = (id: string) => {
+        setReviews((prev) => prev.filter((r) => r.id !== id))
+    }
+
     return (
-        <ReviewsContext.Provider value={{ reviews, addReview }}>
+        <ReviewsContext.Provider value={{ reviews, addReview, updateReview, deleteReview }}>
             {children}
         </ReviewsContext.Provider>
     )

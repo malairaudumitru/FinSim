@@ -7,6 +7,7 @@ export interface AuthUser {
     zi?: number
     luna?: number
     an?: number
+    rol?: 'user' | 'admin'
 }
 
 export interface AuthContextValue {

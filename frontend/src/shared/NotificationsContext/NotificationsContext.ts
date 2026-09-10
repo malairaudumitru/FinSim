@@ -53,6 +53,9 @@ export interface NotificationsContextValue {
     unreadCount: number
     markAsRead: (id: string) => void
     markAllAsRead: () => void
+    addNotification: (notification: Omit<NotificationItem, 'id'>) => void
+    updateNotification: (id: string, patch: Partial<Omit<NotificationItem, 'id'>>) => void
+    deleteNotification: (id: string) => void
 }
 
 export const NotificationsContext = createContext<NotificationsContextValue | undefined>(undefined)

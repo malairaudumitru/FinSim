@@ -1,6 +1,6 @@
 ﻿import { useMemo } from 'react'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
-import { scenarios } from '../../shared/scenarios/scenariosData'
+import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import '../../shared/ContentPage/ContentPage.css'
 import './ProgressPage.css'
@@ -75,6 +75,7 @@ function ScoreLineChart({ entries }: { entries: { id: string; data: string; scor
 
 function ProgressPage() {
     const { history } = useScenarioHistory()
+    const { scenarios } = useScenarios()
 
     const stats = useMemo(() => {
         if (history.length === 0) {
@@ -98,7 +99,7 @@ function ProgressPage() {
             const best = entries.length > 0 ? Math.max(...entries.map((e) => e.scor)) : null
             return { nume: s.nume, dificultate: s.dificultate, jucat: entries.length, best }
         })
-    }, [history])
+    }, [history, scenarios])
 
     const scenariiDistincte = new Set(history.map((h) => h.scenariu)).size
 

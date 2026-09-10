@@ -1,0 +1,313 @@
+﻿.admin-page {
+    padding: 48px 0 96px;
+}
+
+.admin-guard {
+    max-width: 480px;
+    margin: 96px auto;
+    text-align: center;
+    padding: 40px 32px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--surface);
+}
+
+.admin-guard h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.admin-guard p {
+    color: var(--text);
+    margin-bottom: 20px;
+}
+
+.admin-header {
+    margin-bottom: 32px;
+}
+
+.admin-header h1 {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.admin-header p {
+    color: var(--text);
+    font-size: 15px;
+}
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.admin-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.admin-stat-value {
+    display: block;
+    font-family: var(--mono);
+    font-size: 28px;
+    color: var(--gold);
+    margin-bottom: 4px;
+}
+
+.admin-stat-label {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 28px;
+}
+
+.admin-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.admin-tab:hover {
+    color: var(--text-h);
+}
+
+.admin-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+}
+
+.admin-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.admin-panel-header h2 {
+    font-size: 21px;
+}
+
+.admin-panel-header p {
+    color: var(--text);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.admin-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--surface);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 640px;
+}
+
+.admin-table th {
+    text-align: left;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--text-h);
+    vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table td.muted,
+.admin-cell-muted {
+    color: var(--text);
+}
+
+.admin-cell-truncate {
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-empty-row td {
+    text-align: center;
+    color: var(--text);
+    padding: 32px 16px;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+.admin-badge-gold {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: var(--gold-soft);
+}
+
+.admin-badge-green {
+    color: var(--forest);
+    border-color: var(--forest);
+}
+
+.admin-badge-red {
+    color: var(--rust);
+    border-color: var(--rust);
+}
+
+.admin-badge-gray {
+    color: var(--text);
+}
+
+.admin-row-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.admin-icon-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-family: var(--sans);
+    transition: all 0.15s;
+}
+
+.admin-icon-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.admin-icon-btn.danger:hover {
+    border-color: var(--rust);
+    color: var(--rust);
+}
+
+/* form */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 520px) {
+    .admin-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-field label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-h);
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 10px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--paper);
+    color: var(--text-h);
+}
+
+.admin-field textarea {
+    font-family: var(--mono);
+    font-size: 13px;
+    min-height: 140px;
+    resize: vertical;
+}
+
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.admin-checkbox-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-checkbox-field label {
+    order: 2;
+}
+
+.admin-form-error {
+    color: var(--rust);
+    font-size: 13px;
+}
+
+.admin-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.admin-form-hint {
+    font-size: 12px;
+    color: var(--text);
+    margin-top: -8px;
+}

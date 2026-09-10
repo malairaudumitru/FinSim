@@ -25,6 +25,8 @@ export const initialHistory: HistoryEntry[] = [
 export interface ScenarioHistoryContextValue {
     history: HistoryEntry[]
     addEntry: (entry: Omit<HistoryEntry, 'id'>) => void
+    updateEntry: (id: string, patch: Partial<Omit<HistoryEntry, 'id'>>) => void
+    deleteEntry: (id: string) => void
 }
 
 export const ScenarioHistoryContext = createContext<ScenarioHistoryContextValue | undefined>(undefined)

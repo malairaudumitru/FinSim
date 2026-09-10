@@ -8,8 +8,16 @@ export function ScenarioHistoryProvider({ children }: { children: ReactNode }) {
         setHistory((prev) => [{ ...entry, id: `h${Date.now()}` }, ...prev])
     }
 
+    const updateEntry = (id: string, patch: Partial<Omit<HistoryEntry, 'id'>>) => {
+        setHistory((prev) => prev.map((h) => (h.id === id ? { ...h, ...patch } : h)))
+    }
+
+    const deleteEntry = (id: string) => {
+        setHistory((prev) => prev.filter((h) => h.id !== id))
+    }
+
     return (
-        <ScenarioHistoryContext.Provider value={{ history, addEntry }}>
+        <ScenarioHistoryContext.Provider value={{ history, addEntry, updateEntry, deleteEntry }}>
             {children}
         </ScenarioHistoryContext.Provider>
     )

@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppAboutRouteImport } from './routes/_app/about'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppContactRouteImport } from './routes/_app/contact'
 import { Route as AppFaqRouteImport } from './routes/_app/faq'
 import { Route as AppLeaderboardRouteImport } from './routes/_app/leaderboard'
@@ -41,6 +42,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppAboutRoute = AppAboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContactRoute = AppContactRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
   '/about': typeof AppAboutRoute
+  '/admin': typeof AppAdminRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
   '/leaderboard': typeof AppLeaderboardRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof AppAboutRoute
+  '/admin': typeof AppAdminRoute
   '/contact': typeof AppContactRoute
   '/faq': typeof AppFaqRoute
   '/leaderboard': typeof AppLeaderboardRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/about': typeof AppAboutRoute
+  '/_app/admin': typeof AppAdminRoute
   '/_app/contact': typeof AppContactRoute
   '/_app/faq': typeof AppFaqRoute
   '/_app/leaderboard': typeof AppLeaderboardRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/faq'
     | '/leaderboard'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/faq'
     | '/leaderboard'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/login'
     | '/_app/about'
+    | '/_app/admin'
     | '/_app/contact'
     | '/_app/faq'
     | '/_app/leaderboard'
@@ -223,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AppAboutRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/contact': {
@@ -300,6 +319,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
+  AppAdminRoute: typeof AppAdminRoute
   AppContactRoute: typeof AppContactRoute
   AppFaqRoute: typeof AppFaqRoute
   AppLeaderboardRoute: typeof AppLeaderboardRoute
@@ -315,6 +335,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
+  AppAdminRoute: AppAdminRoute,
   AppContactRoute: AppContactRoute,
   AppFaqRoute: AppFaqRoute,
   AppLeaderboardRoute: AppLeaderboardRoute,

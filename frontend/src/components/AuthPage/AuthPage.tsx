@@ -3,6 +3,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
+import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
 import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 import './AuthPage.css'
 
@@ -52,6 +53,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 function AuthPage() {
     const { login } = useAuth()
+    const { addUser, findByEmail } = useUsers()
     const navigate = useNavigate()
     const [mode, setMode] = useState<Mode>('login')
     const isRegister = mode === 'register'
@@ -61,6 +63,7 @@ function AuthPage() {
     const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
     const [showPassword, setShowPassword] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [formError, setFormError] = useState('')
 
     const anCurent = new Date().getFullYear()
     const aniDisponibili = Array.from(
@@ -83,6 +86,7 @@ function AuthPage() {
         setMode(next)
         setErrors({})
         setSubmitted(false)
+        setFormError('')
     }
 
     const handleChange = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,15 +161,44 @@ function AuthPage() {
         e.preventDefault()
 
         if (!validate()) return
+        setFormError('')
 
-        if (!isForgot) {
+        if (isRegister) {
+            const exists = findByEmail(form.email)
+            if (exists) {
+                setFormError('Există deja un cont înregistrat cu acest email.')
+                return
+            }
+            const created = addUser({
+                nume: form.nume,
+                prenume: form.prenume,
+                email: form.email,
+                rol: form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user',
+                status: 'activ',
+                dataInregistrare: new Date().toLocaleDateString('ro-RO'),
+                scenariiFinalizate: 0,
+                scorTotal: 0,
+            })
+            login({
+                email: created.email,
+                nume: created.nume,
+                prenume: created.prenume,
+                zi: Number(form.zi),
+                luna: Number(form.luna),
+                an: Number(form.an),
+                rol: created.rol,
+            })
+        } else if (!isForgot) {
+            const existing = findByEmail(form.email)
+            if (existing && existing.status === 'blocat') {
+                setFormError('Acest cont a fost blocat de un administrator.')
+                return
+            }
             login({
                 email: form.email,
-                nume: isRegister ? form.nume : undefined,
-                prenume: isRegister ? form.prenume : undefined,
-                zi: isRegister ? Number(form.zi) : undefined,
-                luna: isRegister ? Number(form.luna) : undefined,
-                an: isRegister ? Number(form.an) : undefined,
+                nume: existing?.nume,
+                prenume: existing?.prenume,
+                rol: existing?.rol ?? (form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user'),
             })
         }
 
@@ -352,6 +385,8 @@ function AuthPage() {
                                 </button>
                             </div>
                         )}
+
+                        {formError && <span className="field-error auth-form-error">{formError}</span>}
 
                         <button type="submit" className="btn btn-primary btn-lg auth-submit">
                             {isForgot ? 'Trimite link de resetare' : isRegister ? 'Creează cont' : 'Autentificare'}

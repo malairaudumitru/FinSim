@@ -1,7 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import {
-    getScenarioBySlug,
     maxScoreFor,
     type AllocationStepDef,
     type MultiSelectStepDef,
@@ -10,6 +9,7 @@ import {
     type AdevaratFalsStepDef,
     type ScenarioOption,
 } from '../../shared/scenarios/scenariosData'
+import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
@@ -352,7 +352,8 @@ function TrueFalseStep({
 function ScenarioPlayPage() {
 
     const { slug } = useParams({ from: '/_app/scenarios/$slug' })
-    const scenario = getScenarioBySlug(slug)
+    const { getBySlug } = useScenarios()
+    const scenario = getBySlug(slug)
     const { addEntry } = useScenarioHistory()
     const { isLoggedIn } = useAuth()
 

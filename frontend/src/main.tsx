@@ -9,6 +9,10 @@ import { AuthProvider } from './shared/AuthContext/AuthProvider'
 import { NotificationsProvider } from './shared/NotificationsContext/NotificationsProvider'
 import { ScenarioHistoryProvider } from './shared/ScenarioHistoryContext/ScenarioHistoryProvider'
 import { ReviewsProvider } from './shared/ReviewsContext/ReviewsProvider'
+import { UsersProvider } from './shared/UsersContext/UsersProvider'
+import { LeaderboardProvider } from './shared/LeaderboardContext/LeaderboardProvider'
+import { ScenariosProvider } from './shared/ScenariosContext/ScenariosProvider'
+import { ResourcesProvider } from './shared/ResourcesContext/ResourcesProvider'
 
 initTheme()
 
@@ -22,14 +26,22 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <AuthProvider>
-            <NotificationsProvider>
-                <ScenarioHistoryProvider>
-                    <ReviewsProvider>
-                        <RouterProvider router={router} />
-                    </ReviewsProvider>
-                </ScenarioHistoryProvider>
-            </NotificationsProvider>
-        </AuthProvider>
+        <UsersProvider>
+            <AuthProvider>
+                <NotificationsProvider>
+                    <ScenarioHistoryProvider>
+                        <ReviewsProvider>
+                            <LeaderboardProvider>
+                                <ScenariosProvider>
+                                    <ResourcesProvider>
+                                        <RouterProvider router={router} />
+                                    </ResourcesProvider>
+                                </ScenariosProvider>
+                            </LeaderboardProvider>
+                        </ReviewsProvider>
+                    </ScenarioHistoryProvider>
+                </NotificationsProvider>
+            </AuthProvider>
+        </UsersProvider>
     </StrictMode>,
 )

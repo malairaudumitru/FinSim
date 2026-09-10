@@ -63,6 +63,8 @@ export const initialReviews: Review[] = [
 export interface ReviewsContextValue {
     reviews: Review[]
     addReview: (review: Omit<Review, 'id'>) => void
+    updateReview: (id: string, patch: Partial<Omit<Review, 'id'>>) => void
+    deleteReview: (id: string) => void
 }
 
 export const ReviewsContext = createContext<ReviewsContextValue | undefined>(undefined)

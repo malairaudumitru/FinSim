@@ -1,10 +1,11 @@
 ﻿import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
+import { useLeaderboard } from '../../shared/LeaderboardContext/LeaderboardContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './LeaderboardPage.css'
 
-interface LeaderboardEntry {
+interface RankedEntry {
     rang: number
     nume: string
     prenume: string
@@ -12,23 +13,7 @@ interface LeaderboardEntry {
     esteTu?: boolean
 }
 
-const leaderboard: LeaderboardEntry[] = [
-    { rang: 1, nume: 'Robu', prenume: 'Diana', scor: 968 },
-    { rang: 2, nume: 'Munteanu', prenume: 'Alexandru', scor: 942 },
-    { rang: 3, nume: 'Rusu', prenume: 'Cristina', scor: 915 },
-    { rang: 4, nume: 'Ceban', prenume: 'Vlad', scor: 887 },
-    { rang: 5, nume: 'Grosu', prenume: 'Ana', scor: 860 },
-    { rang: 6, nume: 'Cojocaru', prenume: 'Mihai', scor: 834 },
-    { rang: 7, nume: 'Bordei', prenume: 'Elena', scor: 812 },
-    { rang: 8, nume: 'Popescu', prenume: 'Ion', scor: 742, esteTu: true },
-    { rang: 9, nume: 'Fusu', prenume: 'Radu', scor: 705 },
-    { rang: 10, nume: 'Ivanov', prenume: 'Corina', scor: 668 },
-]
-
-const top3 = leaderboard.slice(0, 3)
-const rest = leaderboard.slice(3)
-
-function initialsOf(entry: LeaderboardEntry) {
+function initialsOf(entry: RankedEntry) {
     return `${entry.prenume[0]}${entry.nume[0]}`
 }
 
@@ -41,7 +26,7 @@ const podiumDelay: Record<number, number> = {
 
 const podiumBaseHeight: Record<number, number> = { 1: 108, 2: 76, 3: 48 }
 
-function PodiumCard({ entry, delay }: { entry: LeaderboardEntry; delay: number }) {
+function PodiumCard({ entry, delay }: { entry: RankedEntry; delay: number }) {
     const [revealed, setRevealed] = useState(false)
 
     useEffect(() => {
@@ -79,6 +64,14 @@ function PodiumCard({ entry, delay }: { entry: LeaderboardEntry; delay: number }
 }
 
 function LeaderboardPage() {
+    const { entries } = useLeaderboard()
+    const ranked: RankedEntry[] = [...entries]
+        .sort((a, b) => b.scor - a.scor)
+        .slice(0, 10)
+        .map((entry, index) => ({ ...entry, rang: index + 1 }))
+    const top3 = ranked.slice(0, 3)
+    const rest = ranked.slice(3)
+
     return (
         <div className="leaderboard-page">
             <section className="content-hero">

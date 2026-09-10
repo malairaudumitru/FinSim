@@ -56,6 +56,11 @@ function AvatarMenu() {
                     <Link to="/progress" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
                         Progresul meu
                     </Link>
+                    {user.rol === 'admin' && (
+                        <Link to="/admin" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
+                            Panou admin
+                        </Link>
+                    )}
                     <button type="button" className="avatar-dropdown-item avatar-dropdown-logout" onClick={handleLogout}>
                         Deconectare
                     </button>
