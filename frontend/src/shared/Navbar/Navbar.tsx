@@ -22,6 +22,7 @@ function Navbar() {
         <header className="navbar">
             <div className="container navbar-inner">
                 <Link to="/" className="logo">
+                    <img src="/logo.png" alt="" className="logo-mark" />
                     FinSim
                 </Link>
                 <nav className="nav-links">
