@@ -13,6 +13,7 @@ import { UsersProvider } from './shared/UsersContext/UsersProvider'
 import { LeaderboardProvider } from './shared/LeaderboardContext/LeaderboardProvider'
 import { ScenariosProvider } from './shared/ScenariosContext/ScenariosProvider'
 import { ResourcesProvider } from './shared/ResourcesContext/ResourcesProvider'
+import { MessagesProvider } from './shared/MessagesContext/MessagesProvider'
 
 initTheme()
 
@@ -34,7 +35,9 @@ createRoot(document.getElementById('root')!).render(
                             <LeaderboardProvider>
                                 <ScenariosProvider>
                                     <ResourcesProvider>
-                                        <RouterProvider router={router} />
+                                        <MessagesProvider>
+                                            <RouterProvider router={router} />
+                                        </MessagesProvider>
                                     </ResourcesProvider>
                                 </ScenariosProvider>
                             </LeaderboardProvider>

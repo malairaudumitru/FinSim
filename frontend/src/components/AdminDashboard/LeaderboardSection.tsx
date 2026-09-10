@@ -1,6 +1,7 @@
 ﻿import { useState, type FormEvent } from 'react'
 import { useLeaderboard, type LeaderboardEntry } from '../../shared/LeaderboardContext/LeaderboardContext'
 import Modal from '../../shared/Modal/Modal'
+import Checkbox from '../../shared/Checkbox/Checkbox'
 
 type FormState = {
     nume: string
@@ -156,13 +157,12 @@ function LeaderboardSection() {
                         </div>
 
                         <div className="admin-field admin-checkbox-field">
-                            <input
+                            <Checkbox
                                 id="lb-esteTu"
-                                type="checkbox"
                                 checked={form.esteTu}
-                                onChange={(e) => setForm((f) => ({ ...f, esteTu: e.target.checked }))}
+                                onChange={(v) => setForm((f) => ({ ...f, esteTu: v }))}
+                                label='Marchează ca „Tu" (utilizatorul curent)'
                             />
-                            <label htmlFor="lb-esteTu">Marchează ca „Tu" (utilizatorul curent)</label>
                         </div>
 
                         {error && <span className="admin-form-error">{error}</span>}

@@ -2,6 +2,14 @@
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import type { ScenarioDef, ScenarioStep } from '../../shared/scenarios/scenariosData'
 import Modal from '../../shared/Modal/Modal'
+import Dropdown from '../../shared/Dropdown/Dropdown'
+import Checkbox from '../../shared/Checkbox/Checkbox'
+
+const dificultateOptions = [
+    { value: 'Ușor', label: 'Ușor' },
+    { value: 'Mediu', label: 'Mediu' },
+    { value: 'Avansat', label: 'Avansat' },
+]
 
 type FormState = {
     slug: string
@@ -189,15 +197,12 @@ function ScenariosSection() {
                             </div>
                             <div className="admin-field">
                                 <label htmlFor="sc-dificultate">Dificultate</label>
-                                <select
-                                    id="sc-dificultate"
+                                <Dropdown
                                     value={form.dificultate}
-                                    onChange={(e) => setForm((f) => ({ ...f, dificultate: e.target.value }))}
-                                >
-                                    <option value="Ușor">Ușor</option>
-                                    <option value="Mediu">Mediu</option>
-                                    <option value="Avansat">Avansat</option>
-                                </select>
+                                    onChange={(v) => setForm((f) => ({ ...f, dificultate: v }))}
+                                    options={dificultateOptions}
+                                    placeholder="Dificultate"
+                                />
                             </div>
                         </div>
 
@@ -245,13 +250,12 @@ function ScenariosSection() {
                         </div>
 
                         <div className="admin-field admin-checkbox-field">
-                            <input
+                            <Checkbox
                                 id="sc-cont"
-                                type="checkbox"
                                 checked={form.necesitaCont}
-                                onChange={(e) => setForm((f) => ({ ...f, necesitaCont: e.target.checked }))}
+                                onChange={(v) => setForm((f) => ({ ...f, necesitaCont: v }))}
+                                label="Necesită cont autentificat"
                             />
-                            <label htmlFor="sc-cont">Necesită cont autentificat</label>
                         </div>
 
                         <div className="admin-field">

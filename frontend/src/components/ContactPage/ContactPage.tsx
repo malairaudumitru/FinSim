@@ -1,4 +1,5 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useMessages } from '../../shared/MessagesContext/MessagesContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ContactPage.css'
 
@@ -17,6 +18,7 @@ const initialState: ContactForm = {
 }
 
 function ContactPage() {
+    const { addMessage } = useMessages()
     const [form, setForm] = useState<ContactForm>(initialState)
     const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({})
     const [submitted, setSubmitted] = useState(false)
@@ -53,7 +55,11 @@ function ContactPage() {
 
         if (!validate()) return
 
-        console.log('mesaj trimis:', form)
+        addMessage({
+            nume: form.nume.trim(),
+            email: form.email.trim(),
+            mesaj: form.mesaj.trim(),
+        })
         setSubmitted(true)
         setForm(initialState)
     }

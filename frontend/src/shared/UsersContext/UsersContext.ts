@@ -13,6 +13,9 @@ export interface AppUser {
     dataInregistrare: string
     scenariiFinalizate: number
     scorTotal: number
+    zi?: number
+    luna?: number
+    an?: number
 }
 
 export const ADMIN_EMAIL = 'admin@finsim.md'
@@ -39,6 +42,9 @@ export const initialUsers: AppUser[] = [
         dataInregistrare: '15.06.2026',
         scenariiFinalizate: 12,
         scorTotal: 742,
+        zi: 15,
+        luna: 6,
+        an: 2000,
     },
     {
         id: 'u3',

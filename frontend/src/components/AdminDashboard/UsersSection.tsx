@@ -1,6 +1,8 @@
 ﻿import { useState, type FormEvent } from 'react'
 import { useUsers, type AppUser, type UserRole, type UserStatus } from '../../shared/UsersContext/UsersContext'
 import Modal from '../../shared/Modal/Modal'
+import Dropdown from '../../shared/Dropdown/Dropdown'
+import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 
 type FormState = {
     nume: string
@@ -10,6 +12,9 @@ type FormState = {
     status: UserStatus
     scenariiFinalizate: string
     scorTotal: string
+    zi: string
+    luna: string
+    an: string
 }
 
 const emptyForm: FormState = {
@@ -20,6 +25,9 @@ const emptyForm: FormState = {
     status: 'activ',
     scenariiFinalizate: '0',
     scorTotal: '0',
+    zi: '',
+    luna: '',
+    an: '',
 }
 
 function toForm(u: AppUser): FormState {
@@ -31,8 +39,21 @@ function toForm(u: AppUser): FormState {
         status: u.status,
         scenariiFinalizate: String(u.scenariiFinalizate),
         scorTotal: String(u.scorTotal),
+        zi: u.zi ? String(u.zi) : '',
+        luna: u.luna ? String(u.luna) : '',
+        an: u.an ? String(u.an) : '',
     }
 }
+
+const rolOptions = [
+    { value: 'user', label: 'Utilizator' },
+    { value: 'admin', label: 'Admin' },
+]
+
+const statusOptions = [
+    { value: 'activ', label: 'Activ' },
+    { value: 'blocat', label: 'Blocat' },
+]
 
 function UsersSection() {
     const { users, addUser, updateUser, deleteUser } = useUsers()
@@ -40,6 +61,14 @@ function UsersSection() {
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+
+    const anCurent = new Date().getFullYear()
+    const aniDisponibili = Array.from(
+        { length: VARSTA_MAXIMA - VARSTA_MINIMA + 1 },
+        (_, i) => anCurent - VARSTA_MINIMA - i
+    )
+    const maxZile = daysInMonth(Number(form.luna) || undefined, Number(form.an) || undefined)
+    const ziledisponibile = Array.from({ length: maxZile }, (_, i) => i + 1)
 
     const openAdd = () => {
         setEditingId(null)
@@ -57,6 +86,15 @@ function UsersSection() {
 
     const close = () => setShowForm(false)
 
+    const handleDateFieldChange = (field: 'luna' | 'an') => (value: string) => {
+        setForm((prev) => {
+            const next = { ...prev, [field]: value }
+            const maxDays = daysInMonth(Number(next.luna) || undefined, Number(next.an) || undefined)
+            if (Number(next.zi) > maxDays) next.zi = ''
+            return next
+        })
+    }
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.prenume.trim() || !form.email.trim()) {
@@ -71,6 +109,16 @@ function UsersSection() {
             return
         }
 
+        if (form.zi || form.luna || form.an) {
+            const zi = Number(form.zi)
+            const luna = Number(form.luna)
+            const an = Number(form.an)
+            if (!zi || !luna || !an || !isValidBirthDate(zi, luna, an)) {
+                setError('Data nașterii nu este validă sau este incompletă.')
+                return
+            }
+        }
+
         const payload = {
             nume: form.nume.trim(),
             prenume: form.prenume.trim(),
@@ -79,6 +127,9 @@ function UsersSection() {
             status: form.status,
             scenariiFinalizate: Math.max(0, Number(form.scenariiFinalizate) || 0),
             scorTotal: Math.max(0, Number(form.scorTotal) || 0),
+            zi: form.zi ? Number(form.zi) : undefined,
+            luna: form.luna ? Number(form.luna) : undefined,
+            an: form.an ? Number(form.an) : undefined,
         }
 
         if (editingId) {
@@ -194,28 +245,48 @@ function UsersSection() {
                             />
                         </div>
 
+                        <div className="admin-field">
+                            <label>Data nașterii</label>
+                            <div className="admin-date-row">
+                                <Dropdown
+                                    value={form.zi}
+                                    onChange={(v) => setForm((f) => ({ ...f, zi: v }))}
+                                    options={ziledisponibile.map((d) => ({ value: String(d), label: String(d) }))}
+                                    placeholder="Ziua"
+                                />
+                                <Dropdown
+                                    value={form.luna}
+                                    onChange={handleDateFieldChange('luna')}
+                                    options={LUNI.map((nume, i) => ({ value: String(i + 1), label: nume }))}
+                                    placeholder="Luna"
+                                />
+                                <Dropdown
+                                    value={form.an}
+                                    onChange={handleDateFieldChange('an')}
+                                    options={aniDisponibili.map((an) => ({ value: String(an), label: String(an) }))}
+                                    placeholder="Anul"
+                                />
+                            </div>
+                        </div>
+
                         <div className="admin-form-row">
                             <div className="admin-field">
                                 <label htmlFor="u-rol">Rol</label>
-                                <select
-                                    id="u-rol"
+                                <Dropdown
                                     value={form.rol}
-                                    onChange={(e) => setForm((f) => ({ ...f, rol: e.target.value as UserRole }))}
-                                >
-                                    <option value="user">Utilizator</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                    onChange={(v) => setForm((f) => ({ ...f, rol: v as UserRole }))}
+                                    options={rolOptions}
+                                    placeholder="Rol"
+                                />
                             </div>
                             <div className="admin-field">
                                 <label htmlFor="u-status">Status</label>
-                                <select
-                                    id="u-status"
+                                <Dropdown
                                     value={form.status}
-                                    onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as UserStatus }))}
-                                >
-                                    <option value="activ">Activ</option>
-                                    <option value="blocat">Blocat</option>
-                                </select>
+                                    onChange={(v) => setForm((f) => ({ ...f, status: v as UserStatus }))}
+                                    options={statusOptions}
+                                    placeholder="Status"
+                                />
                             </div>
                         </div>
 

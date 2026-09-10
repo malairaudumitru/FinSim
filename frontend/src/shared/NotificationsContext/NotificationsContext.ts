@@ -8,6 +8,7 @@ export interface NotificationItem {
     mesaj: string
     data: string
     citit: boolean
+    email: string
 }
 
 export const initialNotifications: NotificationItem[] = [
@@ -17,6 +18,7 @@ export const initialNotifications: NotificationItem[] = [
         mesaj: 'Ai finalizat scenariul „Primul salariu" cu scorul 82/100.',
         data: '02.09.2026',
         citit: false,
+        email: 'ion.popescu@exemplu.com',
     },
     {
         id: '2',
@@ -24,6 +26,7 @@ export const initialNotifications: NotificationItem[] = [
         mesaj: 'Scenariu nou disponibil: „Primul credit".',
         data: '30.08.2026',
         citit: false,
+        email: 'ion.popescu@exemplu.com',
     },
     {
         id: '3',
@@ -31,6 +34,7 @@ export const initialNotifications: NotificationItem[] = [
         mesaj: 'Parola contului a fost schimbată cu succes.',
         data: '28.08.2026',
         citit: true,
+        email: 'ion.popescu@exemplu.com',
     },
     {
         id: '4',
@@ -38,6 +42,7 @@ export const initialNotifications: NotificationItem[] = [
         mesaj: 'Ai finalizat scenariul „Chirie și facturi" cu scorul 65/100.',
         data: '28.08.2026',
         citit: true,
+        email: 'ion.popescu@exemplu.com',
     },
     {
         id: '5',
@@ -45,6 +50,7 @@ export const initialNotifications: NotificationItem[] = [
         mesaj: 'Profilul tău a fost actualizat.',
         data: '20.08.2026',
         citit: true,
+        email: 'ion.popescu@exemplu.com',
     },
 ]
 

@@ -4,23 +4,25 @@ import {
     type NotificationItem,
     type NotificationType,
 } from '../../shared/NotificationsContext/NotificationsContext'
+import { useUsers } from '../../shared/UsersContext/UsersContext'
 import Modal from '../../shared/Modal/Modal'
+import Dropdown from '../../shared/Dropdown/Dropdown'
 
 type FormState = {
+    email: string
     tip: NotificationType
     mesaj: string
     data: string
-    citit: boolean
 }
 
 function todayLabel() {
     return new Date().toLocaleDateString('ro-RO')
 }
 
-const emptyForm: FormState = { tip: 'sistem', mesaj: '', data: todayLabel(), citit: false }
+const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: '', data: todayLabel() }
 
 function toForm(n: NotificationItem): FormState {
-    return { tip: n.tip, mesaj: n.mesaj, data: n.data, citit: n.citit }
+    return { email: n.email, tip: n.tip, mesaj: n.mesaj, data: n.data }
 }
 
 const tipLabel: Record<NotificationType, string> = {
@@ -29,12 +31,24 @@ const tipLabel: Record<NotificationType, string> = {
     sistem: 'Sistem',
 }
 
+const tipOptions = [
+    { value: 'scenariu', label: 'Scenariu' },
+    { value: 'cont', label: 'Cont' },
+    { value: 'sistem', label: 'Sistem' },
+]
+
 function NotificationsSection() {
     const { notifications, addNotification, updateNotification, deleteNotification } = useNotifications()
+    const { users } = useUsers()
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+
+    const emailOptions = users.map((u) => ({
+        value: u.email,
+        label: `${u.prenume} ${u.nume} (${u.email})`,
+    }))
 
     const openAdd = () => {
         setEditingId(null)
@@ -58,16 +72,26 @@ function NotificationsSection() {
             setError('Mesajul este obligatoriu.')
             return
         }
-        const payload = {
-            tip: form.tip,
-            mesaj: form.mesaj.trim(),
-            data: form.data.trim() || todayLabel(),
-            citit: form.citit,
+        if (!form.email.trim()) {
+            setError('Alege contul căruia îi trimiți notificarea.')
+            return
         }
+
         if (editingId) {
-            updateNotification(editingId, payload)
+            updateNotification(editingId, {
+                tip: form.tip,
+                mesaj: form.mesaj.trim(),
+                data: form.data.trim() || todayLabel(),
+                email: form.email.trim(),
+            })
         } else {
-            addNotification(payload)
+            addNotification({
+                tip: form.tip,
+                mesaj: form.mesaj.trim(),
+                data: form.data.trim() || todayLabel(),
+                email: form.email.trim(),
+                citit: false,
+            })
         }
         setShowForm(false)
     }
@@ -83,10 +107,10 @@ function NotificationsSection() {
             <div className="admin-panel-header">
                 <div>
                     <h2>Notificări</h2>
-                    <p>Notificările afișate în clopoțelul din navbar — {notifications.length} în total.</p>
+                    <p>Notificările trimise către conturile utilizatorilor — {notifications.length} în total.</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAdd}>
-                    + Adaugă notificare
+                    + Trimite notificare
                 </button>
             </div>
 
@@ -96,6 +120,7 @@ function NotificationsSection() {
                         <tr>
                             <th>Tip</th>
                             <th>Mesaj</th>
+                            <th>Trimisă către</th>
                             <th>Data</th>
                             <th>Citit</th>
                             <th></th>
@@ -104,13 +129,14 @@ function NotificationsSection() {
                     <tbody>
                         {notifications.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={5}>Nicio notificare momentan.</td>
+                                <td colSpan={6}>Nicio notificare momentan.</td>
                             </tr>
                         )}
                         {notifications.map((n) => (
                             <tr key={n.id}>
                                 <td><span className="admin-badge admin-badge-gray">{tipLabel[n.tip]}</span></td>
                                 <td className="admin-cell-truncate">{n.mesaj}</td>
+                                <td className="admin-cell-muted">{n.email}</td>
                                 <td className="admin-cell-muted">{n.data}</td>
                                 <td>
                                     <span className={`admin-badge ${n.citit ? 'admin-badge-green' : 'admin-badge-gold'}`}>
@@ -138,20 +164,27 @@ function NotificationsSection() {
             </div>
 
             {showForm && (
-                <Modal title={editingId ? 'Editează notificarea' : 'Adaugă notificare'} onClose={close}>
+                <Modal title={editingId ? 'Editează notificarea' : 'Trimite notificare'} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
+                        <div className="admin-field">
+                            <label htmlFor="nt-email">Trimite către (cont utilizator)</label>
+                            <Dropdown
+                                value={form.email}
+                                onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+                                options={emailOptions}
+                                placeholder="Alege utilizatorul"
+                            />
+                        </div>
+
                         <div className="admin-form-row">
                             <div className="admin-field">
                                 <label htmlFor="nt-tip">Tip</label>
-                                <select
-                                    id="nt-tip"
+                                <Dropdown
                                     value={form.tip}
-                                    onChange={(e) => setForm((f) => ({ ...f, tip: e.target.value as NotificationType }))}
-                                >
-                                    <option value="scenariu">Scenariu</option>
-                                    <option value="cont">Cont</option>
-                                    <option value="sistem">Sistem</option>
-                                </select>
+                                    onChange={(v) => setForm((f) => ({ ...f, tip: v as NotificationType }))}
+                                    options={tipOptions}
+                                    placeholder="Tip"
+                                />
                             </div>
                             <div className="admin-field">
                                 <label htmlFor="nt-data">Data</label>
@@ -174,16 +207,6 @@ function NotificationsSection() {
                             />
                         </div>
 
-                        <div className="admin-field admin-checkbox-field">
-                            <input
-                                id="nt-citit"
-                                type="checkbox"
-                                checked={form.citit}
-                                onChange={(e) => setForm((f) => ({ ...f, citit: e.target.checked }))}
-                            />
-                            <label htmlFor="nt-citit">Marchează ca citită</label>
-                        </div>
-
                         {error && <span className="admin-form-error">{error}</span>}
 
                         <div className="admin-form-actions">
@@ -191,7 +214,7 @@ function NotificationsSection() {
                                 Anulează
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {editingId ? 'Salvează' : 'Adaugă'}
+                                {editingId ? 'Salvează' : 'Trimite'}
                             </button>
                         </div>
                     </form>

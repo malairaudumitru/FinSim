@@ -4,16 +4,30 @@ import StarRating from '../../shared/StarRating/StarRating'
 import Modal from '../../shared/Modal/Modal'
 
 type FormState = {
-    autor: string
+    nume: string
+    varsta: string
     email: string
     rating: number
     mesaj: string
 }
 
-const emptyForm: FormState = { autor: '', email: '', rating: 5, mesaj: '' }
+const emptyForm: FormState = { nume: '', varsta: '', email: '', rating: 5, mesaj: '' }
+
+function parseAutor(autor: string): { nume: string; varsta: string } {
+    const match = autor.match(/^(.*?),\s*(\d+)\s*ani\s*$/i)
+    if (match) return { nume: match[1].trim(), varsta: match[2] }
+    return { nume: autor, varsta: '' }
+}
 
 function toForm(r: Review): FormState {
-    return { autor: r.autor, email: r.email, rating: r.rating, mesaj: r.mesaj }
+    const { nume, varsta } = parseAutor(r.autor)
+    return { nume, varsta, email: r.email, rating: r.rating, mesaj: r.mesaj }
+}
+
+function buildAutor(nume: string, varsta: string): string {
+    const numeTrim = nume.trim()
+    const varstaTrim = varsta.trim()
+    return varstaTrim ? `${numeTrim}, ${varstaTrim} ani` : numeTrim
 }
 
 function formatDate(iso: string) {
@@ -47,20 +61,21 @@ function ReviewsSection() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
-        if (!form.autor.trim() || !form.mesaj.trim()) {
-            setError('Autorul și mesajul sunt obligatorii.')
+        if (!form.nume.trim() || !form.mesaj.trim()) {
+            setError('Numele și mesajul sunt obligatorii.')
             return
         }
+        const autor = buildAutor(form.nume, form.varsta)
         if (editingId) {
             updateReview(editingId, {
-                autor: form.autor.trim(),
+                autor,
                 email: form.email.trim(),
                 rating: form.rating,
                 mesaj: form.mesaj.trim(),
             })
         } else {
             addReview({
-                autor: form.autor.trim(),
+                autor,
                 email: form.email.trim() || 'admin@finsim.md',
                 data: new Date().toISOString(),
                 rating: form.rating,
@@ -136,23 +151,35 @@ function ReviewsSection() {
                     <form className="admin-form" onSubmit={handleSubmit}>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="rv-autor">Autor</label>
+                                <label htmlFor="rv-nume">Nume</label>
                                 <input
-                                    id="rv-autor"
-                                    value={form.autor}
-                                    onChange={(e) => setForm((f) => ({ ...f, autor: e.target.value }))}
-                                    placeholder="Alexandru, 19 ani"
+                                    id="rv-nume"
+                                    value={form.nume}
+                                    onChange={(e) => setForm((f) => ({ ...f, nume: e.target.value }))}
+                                    placeholder="Alexandru"
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="rv-email">Email</label>
+                                <label htmlFor="rv-varsta">Vârstă (opțional)</label>
                                 <input
-                                    id="rv-email"
-                                    type="email"
-                                    value={form.email}
-                                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                                    id="rv-varsta"
+                                    type="number"
+                                    min={0}
+                                    value={form.varsta}
+                                    onChange={(e) => setForm((f) => ({ ...f, varsta: e.target.value }))}
+                                    placeholder="19"
                                 />
                             </div>
+                        </div>
+
+                        <div className="admin-field">
+                            <label htmlFor="rv-email">Email</label>
+                            <input
+                                id="rv-email"
+                                type="email"
+                                value={form.email}
+                                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                            />
                         </div>
 
                         <div className="admin-field">

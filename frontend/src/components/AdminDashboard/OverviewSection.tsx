@@ -4,6 +4,8 @@ import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
+import { useMessages } from '../../shared/MessagesContext/MessagesContext'
+import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 
 function OverviewSection() {
     const { users } = useUsers()
@@ -12,6 +14,7 @@ function OverviewSection() {
     const { notifications } = useNotifications()
     const { scenarios } = useScenarios()
     const { videos, pdfs } = useResources()
+    const { messages, unreadCount } = useMessages()
 
     const mediaRating = reviews.length
         ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
@@ -26,6 +29,8 @@ function OverviewSection() {
         { label: 'Rating mediu', value: mediaRating },
         { label: 'Notificări', value: notifications.length },
         { label: 'Resurse (video + PDF)', value: videos.length + pdfs.length },
+        { label: 'Mesaje', value: messages.length },
+        { label: 'Mesaje necitite', value: unreadCount },
     ]
 
     return (
@@ -39,7 +44,9 @@ function OverviewSection() {
             <div className="admin-stats-grid">
                 {stats.map((s) => (
                     <div className="admin-stat-card" key={s.label}>
-                        <span className="admin-stat-value">{s.value}</span>
+                        <span className="admin-stat-value">
+                            <AnimatedNumber value={String(s.value)} />
+                        </span>
                         <span className="admin-stat-label">{s.label}</span>
                     </div>
                 ))}

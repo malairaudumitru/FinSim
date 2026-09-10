@@ -8,9 +8,11 @@ import ScenariosSection from './ScenariosSection'
 import ReviewsSection from './ReviewsSection'
 import NotificationsSection from './NotificationsSection'
 import ResourcesSection from './ResourcesSection'
+import MessagesSection from './MessagesSection'
+import { useMessages } from '../../shared/MessagesContext/MessagesContext'
 import './AdminDashboard.css'
 
-type Tab = 'overview' | 'users' | 'leaderboard' | 'scenarios' | 'reviews' | 'notifications' | 'resources'
+type Tab = 'overview' | 'users' | 'leaderboard' | 'scenarios' | 'reviews' | 'notifications' | 'resources' | 'messages'
 
 const tabs: { id: Tab; label: string }[] = [
     { id: 'overview', label: 'Prezentare generală' },
@@ -20,10 +22,12 @@ const tabs: { id: Tab; label: string }[] = [
     { id: 'reviews', label: 'Recenzii' },
     { id: 'notifications', label: 'Notificări' },
     { id: 'resources', label: 'Resurse' },
+    { id: 'messages', label: 'Mesaje' },
 ]
 
 function AdminDashboard() {
     const { user } = useAuth()
+    const { unreadCount } = useMessages()
     const [tab, setTab] = useState<Tab>('overview')
 
     if (!user || user.rol !== 'admin') {
@@ -50,7 +54,7 @@ function AdminDashboard() {
             <div className="container">
                 <div className="admin-header">
                     <h1>Panou de administrare</h1>
-                    <p>Gestionează utilizatorii, clasamentul, scenariile, recenziile, notificările și resursele FinSim.</p>
+                    <p>Gestionează utilizatorii, clasamentul, scenariile, recenziile, notificările, resursele și mesajele FinSim.</p>
                 </div>
 
                 <div className="admin-tabs">
@@ -62,6 +66,9 @@ function AdminDashboard() {
                             onClick={() => setTab(t.id)}
                         >
                             {t.label}
+                            {t.id === 'messages' && unreadCount > 0 && (
+                                <span className="admin-tab-badge">{unreadCount}</span>
+                            )}
                         </button>
                     ))}
                 </div>
@@ -73,6 +80,7 @@ function AdminDashboard() {
                 {tab === 'reviews' && <ReviewsSection />}
                 {tab === 'notifications' && <NotificationsSection />}
                 {tab === 'resources' && <ResourcesSection />}
+                {tab === 'messages' && <MessagesSection />}
             </div>
         </div>
     )
