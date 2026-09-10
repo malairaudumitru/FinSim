@@ -36,7 +36,6 @@ function Footer() {
                     <div className="footer-col">
                         <h4>Despre proiect</h4>
                         <Link to="/about">Despre noi</Link>
-                        <Link to="/faq">Întrebări frecvente</Link>
                         <Link to="/terms">Termeni și condiții</Link>
                     </div>
                     <div className="footer-col">

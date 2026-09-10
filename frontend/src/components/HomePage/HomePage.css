@@ -385,11 +385,14 @@
 }
 
 .review-card {
+    display: flex;
+    flex-direction: column;
     background: var(--surface);
     border: 1px solid var(--rule);
     padding: 32px 28px;
     margin: 0;
     text-align: center;
+    min-height: 280px;
 }
 
 .review-card .star-rating {
@@ -438,6 +441,11 @@
     font-size: 19px;
     line-height: 1.45;
     margin: 0 0 20px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .review-text::before {
