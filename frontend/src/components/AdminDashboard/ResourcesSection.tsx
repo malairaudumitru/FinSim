@@ -8,6 +8,28 @@ type PdfForm = { titlu: string; descriere: string; fisier: string; tema: string 
 const emptyVideo: VideoForm = { youtubeId: '', titlu: '', sursa: '', tema: '' }
 const emptyPdf: PdfForm = { titlu: '', descriere: '', fisier: '', tema: '' }
 
+function extractYoutubeId(input: string): string {
+    const trimmed = input.trim()
+
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{6,})/,
+    ]
+    for (const pattern of patterns) {
+        const match = trimmed.match(pattern)
+        if (match) return match[1]
+    }
+
+    try {
+        const url = new URL(trimmed)
+        const v = url.searchParams.get('v')
+        if (v) return v
+    } catch {
+
+    }
+
+    return trimmed
+}
+
 function ResourcesSection() {
     const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf } = useResources()
 
@@ -38,11 +60,16 @@ function ResourcesSection() {
     const handleVideoSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!videoForm.titlu.trim() || !videoForm.youtubeId.trim()) {
-            setVideoError('Titlul și ID-ul YouTube sunt obligatorii.')
+            setVideoError('Titlul și linkul YouTube sunt obligatorii.')
+            return
+        }
+        const youtubeId = extractYoutubeId(videoForm.youtubeId)
+        if (!youtubeId) {
+            setVideoError('Nu am putut extrage ID-ul din linkul dat — verifică-l.')
             return
         }
         const payload = {
-            youtubeId: videoForm.youtubeId.trim(),
+            youtubeId,
             titlu: videoForm.titlu.trim(),
             sursa: videoForm.sursa.trim(),
             tema: videoForm.tema.trim() || 'General',
@@ -221,13 +248,16 @@ function ResourcesSection() {
                             </div>
                         </div>
                         <div className="admin-field">
-                            <label htmlFor="vd-yt">ID YouTube</label>
+                            <label htmlFor="vd-yt">Link YouTube</label>
                             <input
                                 id="vd-yt"
                                 value={videoForm.youtubeId}
                                 onChange={(e) => setVideoForm((f) => ({ ...f, youtubeId: e.target.value }))}
-                                placeholder="ex: FtP-S4mmidQ"
+                                placeholder="https://www.youtube.com/watch?v=FtP-S4mmidQ"
                             />
+                            <span className="admin-form-hint">
+                                Lipește linkul complet copiat din YouTube (funcționează și youtu.be) — ID-ul se extrage automat.
+                            </span>
                         </div>
                         {videoError && <span className="admin-form-error">{videoError}</span>}
                         <div className="admin-form-actions">
