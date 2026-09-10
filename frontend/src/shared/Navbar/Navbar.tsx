@@ -25,11 +25,11 @@ function Navbar() {
                     FinSim
                 </Link>
                 <nav className="nav-links">
-                    <Link to="/" hash="how-it-works">Cum funcționează</Link>
-                    <Link to="/" hash="reviews">Recenzii</Link>
                     <Link to="/scenarios">Scenarii</Link>
+                    <Link to="/resources">Resurse</Link>
                     <Link to="/leaderboard">Clasament</Link>
                     <Link to="/faq">Întrebări frecvente</Link>
+                    <Link to="/" hash="reviews">Recenzii</Link>
                     <Link to="/contact">Contact</Link>
                 </nav>
                 <div className="nav-actions">

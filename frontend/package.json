@@ -14,7 +14,8 @@
     "@tanstack/router-plugin": "^1.168.35",
     "framer-motion": "^13.2.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "typewriter-effect": "^2.22.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
