@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace FinSim.DataAccessLayer.Migrations
+namespace FinSim.DataAccessLayer.Migrations.UserDb
 {
     [DbContext(typeof(UserDbContext))]
     [Migration("20260911063523_Initialize user data table")]
