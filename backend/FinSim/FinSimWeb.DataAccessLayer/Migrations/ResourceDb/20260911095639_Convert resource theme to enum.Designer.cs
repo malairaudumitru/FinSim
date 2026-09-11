@@ -2,6 +2,7 @@
 using FinSim.DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinSim.DataAccessLayer.Migrations.ResourceDb
 {
     [DbContext(typeof(ResourceDbContext))]
-    partial class ResourceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260911095639_Convert resource theme to enum")]
+    partial class Convertresourcethemetoenum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

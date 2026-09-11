@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.Resources;
 
 namespace FinSim.Domain.Models.Resources;
 
@@ -15,6 +16,5 @@ public class PdfResourceCreateDto
     [StringLength(300)]
     public string Fisier { get; set; } = string.Empty;
 
-    [StringLength(50)]
-    public string Tema { get; set; } = "General";
+    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
 }

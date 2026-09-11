@@ -14,8 +14,7 @@ public class VideoResourceEntity
     [StringLength(150)]
     public string Titlu { get; set; } = string.Empty;
     
-    [StringLength(50)]
-    public string Tema { get; set; } = "General";
+    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
 
     [StringLength(150)]
     public string Sursa { get; set; } = string.Empty;

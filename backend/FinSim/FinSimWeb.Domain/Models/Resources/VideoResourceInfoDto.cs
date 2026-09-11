@@ -1,3 +1,5 @@
+using FinSim.Domain.Entities.Resources;
+
 namespace FinSim.Domain.Models.Resources;
 
 public class VideoResourceInfoDto
@@ -6,6 +8,6 @@ public class VideoResourceInfoDto
     public string YoutubeId { get; set; } = string.Empty;
     public string Titlu { get; set; } = string.Empty;
     public string Sursa { get; set; } = string.Empty;
-    public string Tema { get; set; } = string.Empty;
+    public ResourceTheme Tema { get; set; }
     public bool IsDeleted { get; set; }
 }

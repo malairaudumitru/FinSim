@@ -13,8 +13,7 @@ public class PdfResourceEntity
     [StringLength(600)]
     public string Descriere { get; set; } = string.Empty;
     
-    [StringLength(50)]
-    public string Tema { get; set; } = "General";
+    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
 
     [Required]
     [StringLength(300)]
