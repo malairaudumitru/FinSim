@@ -1,13 +1,13 @@
-﻿using FinSim.Domain.Entities.User;
+using FinSim.Domain.Entities.Leaderboard;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace FinSim.DataAccessLayer.Context;
 
-public class UserDbContext : DbContext
+public class LeaderboardDbContext : DbContext
 {
 
-    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<LeaderboardEntity> Leaderboard { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -21,14 +21,5 @@ public class UserDbContext : DbContext
 
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<UserEntity>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
     }
 }
