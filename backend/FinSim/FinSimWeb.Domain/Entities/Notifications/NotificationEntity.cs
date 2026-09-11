@@ -16,10 +16,9 @@ public class NotificationEntity
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool Citit { get; set; } = false;
-    
+
     [Required]
-    [StringLength(150)]
-    public string Email { get; set; } = string.Empty;
+    public int UserId { get; set; }
 
     public bool IsDeleted { get; set; } = false;
 }
