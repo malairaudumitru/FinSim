@@ -7,8 +7,4 @@
         <RootNamespace>FinSim.Domain</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Entities\" />
-    </ItemGroup>
-
 </Project>

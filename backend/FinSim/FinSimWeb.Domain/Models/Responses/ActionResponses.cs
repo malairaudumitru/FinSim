@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace MedicalCabinetWeb.Domain.Models.Responses;
+namespace FinSim.Domain.Models.Responses;
 
 public class ActionResponse
 {
