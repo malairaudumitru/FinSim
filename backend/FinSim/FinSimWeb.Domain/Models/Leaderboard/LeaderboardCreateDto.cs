@@ -13,6 +13,7 @@ public class LeaderboardCreateDto
     public string Prenume { get; set; } = string.Empty;
     
     public int Scor { get; set; }
-    
-    public int? UserId { get; set; }
+
+    [Required]
+    public int UserId { get; set; }
 }

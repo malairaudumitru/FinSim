@@ -17,7 +17,8 @@ public class LeaderboardEntity
     [Required]
     public int Scor { get; set; }
     
-    public int? UserId { get; set; }
+    [Required]
+    public int UserId { get; set; }
     
     public bool IsDeleted { get; set; } = false;
 }

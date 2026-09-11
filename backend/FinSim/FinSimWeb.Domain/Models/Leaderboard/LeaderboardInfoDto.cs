@@ -6,7 +6,5 @@ public class LeaderboardInfoDto
     public string Nume { get; set; } = string.Empty;
     public string Prenume { get; set; } = string.Empty;
     public int Scor { get; set; }
-    public int? UserId { get; set; }
-    
-    
+    public int UserId { get; set; }
 }

@@ -22,4 +22,13 @@ public class LeaderboardDbContext : DbContext
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<LeaderboardEntity>()
+            .HasIndex(l => l.UserId)
+            .IsUnique();
+    }
 }
