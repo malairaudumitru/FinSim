@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.Notifications;
 
 namespace FinSim.Domain.Models.Notifications;
 
 public class NotificationCreateDto
 {
-    [Required]
-    [StringLength(20)]
-    public string Tip { get; set; } = "sistem";
+    [EnumDataType(typeof(NotificationType))]
+    public NotificationType Tip { get; set; } = NotificationType.Sistem;
 
     [Required]
     [StringLength(300)]
@@ -16,7 +16,4 @@ public class NotificationCreateDto
     [EmailAddress]
     [StringLength(150)]
     public string Email { get; set; } = string.Empty;
-    
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

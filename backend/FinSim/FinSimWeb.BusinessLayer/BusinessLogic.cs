@@ -29,4 +29,9 @@ public class BusinessLogic
     {
         return new ReviewLogic();
     }
+
+    public INotificationLogic GetNotificationLogic()
+    {
+        return new NotificationLogic();
+    }
 }

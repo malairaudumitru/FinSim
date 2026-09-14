@@ -1,9 +1,11 @@
-﻿namespace FinSim.Domain.Models.Notifications;
+﻿using FinSim.Domain.Entities.Notifications;
+
+namespace FinSim.Domain.Models.Notifications;
 
 public class NotificationInfoDto
 {
     public int Id { get; set; }
-    public string Tip { get; set; } = string.Empty;
+    public NotificationType Tip { get; set; }
     public string Mesaj { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public bool Citit { get; set; }
