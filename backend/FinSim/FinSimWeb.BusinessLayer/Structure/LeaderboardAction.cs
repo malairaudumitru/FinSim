@@ -1,0 +1,48 @@
+using FinSim.DataAccessLayer.Context;
+using FinSim.Domain.Entities.Leaderboard;
+using FinSim.Domain.Models.Leaderboard;
+
+namespace FinSim.BusinessLayer.Structure;
+
+public class LeaderboardAction
+{
+    private readonly LeaderboardDbContext _context = new();
+
+    protected List<LeaderboardInfoDto> GetLeaderboardListAction()
+    {
+        return _context.Leaderboard
+            .Where(x => x.IsDeleted == false)
+            .OrderByDescending(x => x.Scor)
+            .Select(leaderboardEntity => MapToInfoDto(leaderboardEntity))
+            .ToList();
+    }
+
+    protected bool DeleteLeaderboardEntryAction(int id)
+    {
+        var leaderboardEntity = _context.Leaderboard.Find(id);
+        if (leaderboardEntity == null)
+            return false;
+
+        try
+        {
+            leaderboardEntity.IsDeleted = true;
+            _context.Leaderboard.Update(leaderboardEntity);
+            _context.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private static LeaderboardInfoDto MapToInfoDto(LeaderboardEntity leaderboardEntity) => new()
+    {
+        Id = leaderboardEntity.Id,
+        Nume = leaderboardEntity.Nume,
+        Prenume = leaderboardEntity.Prenume,
+        Scor = leaderboardEntity.Scor,
+        UserId = leaderboardEntity.UserId,
+        IsDeleted = leaderboardEntity.IsDeleted
+    };
+}

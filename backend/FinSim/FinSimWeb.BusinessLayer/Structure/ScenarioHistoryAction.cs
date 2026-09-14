@@ -1,4 +1,5 @@
 using FinSim.DataAccessLayer.Context;
+using FinSim.Domain.Entities.Leaderboard;
 using FinSim.Domain.Entities.ScenarioHistory;
 using FinSim.Domain.Models.ScenarioHistory;
 
@@ -21,6 +22,7 @@ public class ScenarioHistoryAction
         {
             _context.Add(scenarioHistoryEntity);
             _context.SaveChanges();
+            RecalculateLeaderboardEntry(data.UserId);
             return true;
         }
         catch (Exception)
@@ -53,6 +55,8 @@ public class ScenarioHistoryAction
         if (scenarioHistoryEntity == null || scenarioHistoryEntity.IsDeleted)
             return false;
 
+        var previousUserId = scenarioHistoryEntity.UserId;
+
         scenarioHistoryEntity.UserId = data.UserId;
         scenarioHistoryEntity.ScenarioId = data.ScenarioId;
         scenarioHistoryEntity.Scor = data.Scor;
@@ -61,6 +65,9 @@ public class ScenarioHistoryAction
         {
             _context.ScenarioHistories.Update(scenarioHistoryEntity);
             _context.SaveChanges();
+            RecalculateLeaderboardEntry(data.UserId);
+            if (previousUserId != data.UserId)
+                RecalculateLeaderboardEntry(previousUserId);
             return true;
         }
         catch (Exception)
@@ -80,12 +87,48 @@ public class ScenarioHistoryAction
             scenarioHistoryEntity.IsDeleted = true;
             _context.ScenarioHistories.Update(scenarioHistoryEntity);
             _context.SaveChanges();
+            RecalculateLeaderboardEntry(scenarioHistoryEntity.UserId);
             return true;
         }
         catch (Exception)
         {
             return false;
         }
+    }
+
+    private void RecalculateLeaderboardEntry(int userId)
+    {
+        var totalScor = _context.ScenarioHistories
+            .Where(x => x.UserId == userId && x.IsDeleted == false)
+            .Sum(x => x.Scor);
+
+        using var userContext = new UserDbContext();
+        var user = userContext.Users.Find(userId);
+        if (user == null)
+            return;
+
+        using var leaderboardContext = new LeaderboardDbContext();
+        var leaderboardEntity = leaderboardContext.Leaderboard.FirstOrDefault(x => x.UserId == userId);
+
+        if (leaderboardEntity == null)
+        {
+            leaderboardContext.Add(new LeaderboardEntity
+            {
+                Nume = user.Nume,
+                Prenume = user.Prenume,
+                Scor = totalScor,
+                UserId = userId
+            });
+        }
+        else
+        {
+            leaderboardEntity.Nume = user.Nume;
+            leaderboardEntity.Prenume = user.Prenume;
+            leaderboardEntity.Scor = totalScor;
+            leaderboardContext.Leaderboard.Update(leaderboardEntity);
+        }
+
+        leaderboardContext.SaveChanges();
     }
 
     private static ScenarioHistoryInfoDto MapToInfoDto(ScenarioHistoryEntity scenarioHistoryEntity) => new()

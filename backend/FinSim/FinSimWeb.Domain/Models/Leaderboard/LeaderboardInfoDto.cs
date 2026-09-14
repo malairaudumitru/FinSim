@@ -7,4 +7,5 @@ public class LeaderboardInfoDto
     public string Prenume { get; set; } = string.Empty;
     public int Scor { get; set; }
     public int UserId { get; set; }
+    public bool IsDeleted { get; set; }
 }

@@ -19,4 +19,9 @@ public class BusinessLogic
     {
         return new ScenarioHistoryLogic();
     }
+
+    public ILeaderboardLogic GetLeaderboardLogic()
+    {
+        return new LeaderboardLogic();
+    }
 }
