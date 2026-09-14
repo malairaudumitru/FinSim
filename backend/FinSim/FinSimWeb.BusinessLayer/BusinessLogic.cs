@@ -24,4 +24,9 @@ public class BusinessLogic
     {
         return new LeaderboardLogic();
     }
+
+    public IReviewLogic GetReviewLogic()
+    {
+        return new ReviewLogic();
+    }
 }

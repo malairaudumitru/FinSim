@@ -8,8 +8,9 @@ public class ReviewCreateDto
     [StringLength(50)]
     public string Nume { get; set; } = string.Empty;
 
+    [Required]
     [Range(1, 120)]
-    public int? Varsta { get; set; }
+    public int Varsta { get; set; }
 
     [Required]
     [EmailAddress]
