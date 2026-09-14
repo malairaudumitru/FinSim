@@ -39,4 +39,9 @@ public class BusinessLogic
     {
         return new ResourceLogic();
     }
+
+    public IContactMessageLogic GetContactMessageLogic()
+    {
+        return new ContactMessageLogic();
+    }
 }

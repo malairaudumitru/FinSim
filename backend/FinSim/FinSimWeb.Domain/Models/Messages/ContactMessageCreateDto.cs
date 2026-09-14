@@ -14,6 +14,6 @@ public class ContactMessageCreateDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(1000)]
+    [StringLength(1000, MinimumLength = 25)]
     public string Mesaj { get; set; } = string.Empty;
 }
