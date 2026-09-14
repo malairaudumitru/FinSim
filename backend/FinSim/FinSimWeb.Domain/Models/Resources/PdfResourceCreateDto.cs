@@ -16,5 +16,6 @@ public class PdfResourceCreateDto
     [StringLength(300)]
     public string Fisier { get; set; } = string.Empty;
 
+    [EnumDataType(typeof(ResourceTheme))]
     public ResourceTheme Tema { get; set; } = ResourceTheme.General;
 }

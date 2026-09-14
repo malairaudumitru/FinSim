@@ -6,7 +6,7 @@ namespace FinSim.Domain.Models.Resources;
 public class VideoResourceCreateDto
 {
     [Required]
-    [StringLength(50)]
+    [StringLength(500)]
     public string YoutubeId { get; set; } = string.Empty;
 
     [Required]
@@ -16,5 +16,6 @@ public class VideoResourceCreateDto
     [StringLength(150)]
     public string Sursa { get; set; } = string.Empty;
 
+    [EnumDataType(typeof(ResourceTheme))]
     public ResourceTheme Tema { get; set; } = ResourceTheme.General;
 }

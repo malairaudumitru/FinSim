@@ -34,4 +34,9 @@ public class BusinessLogic
     {
         return new NotificationLogic();
     }
+
+    public IResourceLogic GetResourceLogic()
+    {
+        return new ResourceLogic();
+    }
 }
