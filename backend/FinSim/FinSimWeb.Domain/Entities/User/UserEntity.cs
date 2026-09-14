@@ -18,8 +18,10 @@ public class UserEntity
     [StringLength(50)]
     public string Email { get; set; }
     
+    
     [Required]
-    public string PasswordHash { get; set; } = string.Empty;
+    [StringLength(50, MinimumLength = 8)]
+    public string Password { get; set; } = string.Empty;
     
     public UserRole Rol { get; set; } = UserRole.User;
  
@@ -31,12 +33,7 @@ public class UserEntity
     
     public int ScorTotal { get; set; } = 0;
     
-    [Range(1, 31)]
-    public int? Zi { get; set; }
-    [Range(1, 12)]
-    public int? Luna { get; set; }
-    
-    public int? An { get; set; }
+    public DateOnly? DataNasterii { get; set; }
     
     public bool IsDeleted { get; set; }
 }

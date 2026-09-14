@@ -21,11 +21,5 @@ public class UserRegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
     
-    [Range(1, 31)]
-    public int? Zi { get; set; }
-    
-    [Range(1, 12)]
-    public int? Luna { get; set; }
-    
-    public int? An { get; set; }
+    public DateOnly? DataNasterii { get; set; }
 }

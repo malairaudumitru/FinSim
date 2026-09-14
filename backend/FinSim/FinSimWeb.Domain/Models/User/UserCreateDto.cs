@@ -30,16 +30,6 @@ public class UserCreateDto
     
     public int ScorTotal { get; set; } = 0;
     
-    [Range(1, 31)]
-    public int? Zi { get; set; }
-    
-    [Range(1, 12)]
-    public int? Luna { get; set; }
-    
-    public int? An { get; set; }
-    
-    
-
-
+    public DateOnly? DataNasterii { get; set; }
 
 }

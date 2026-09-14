@@ -20,11 +20,7 @@ public class UserInfoDto
     
     public int ScorTotal { get; set; }
     
-    public int? Zi { get; set; }
-    
-    public int? Luna { get; set; }
-    
-    public int? An { get; set; }
+    public DateOnly? DataNasterii { get; set; }
     
     public bool IsDeleted { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using FinSim.DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinSim.DataAccessLayer.Migrations.UserDb
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260914051700_Rename PasswordHash to Password")]
+    partial class RenamePasswordHashtoPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +33,11 @@ namespace FinSim.DataAccessLayer.Migrations.UserDb
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("An")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DataInregistrare")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly?>("DataNasterii")
-                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -44,6 +47,9 @@ namespace FinSim.DataAccessLayer.Migrations.UserDb
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("Luna")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Nume")
                         .IsRequired()
                         .HasMaxLength(15)
@@ -51,8 +57,7 @@ namespace FinSim.DataAccessLayer.Migrations.UserDb
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Prenume")
                         .IsRequired()
@@ -69,6 +74,9 @@ namespace FinSim.DataAccessLayer.Migrations.UserDb
                         .HasColumnType("integer");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Zi")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
