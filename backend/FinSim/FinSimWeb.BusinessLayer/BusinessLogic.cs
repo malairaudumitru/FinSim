@@ -14,4 +14,9 @@ public class BusinessLogic
     {
         return new ScenarioLogic();
     }
+
+    public IScenarioHistoryLogic GetScenarioHistoryLogic()
+    {
+        return new ScenarioHistoryLogic();
+    }
 }
