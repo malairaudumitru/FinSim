@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.User;
 
@@ -45,7 +46,7 @@ public class UserLogic : UserAction, IUserLogic
         return ActionResponse.Ok("User deleted successfully");
     }
 
-    public ActionResponse UpdateUserStatus(int id, string status)
+    public ActionResponse UpdateUserStatus(int id, UserStatus status)
     {
         var result = UpdateUserStatusAction(id, status);
         if (result == false)

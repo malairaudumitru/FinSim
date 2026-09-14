@@ -1,18 +1,20 @@
-﻿namespace FinSim.Domain.Models.User;
+﻿using FinSim.Domain.Entities.User;
+
+namespace FinSim.Domain.Models.User;
 
 public class UserInfoDto
 {
     public int Id { get; set; }
-    
+
     public string Nume { get; set; } = string.Empty;
-    
+
     public string Prenume { get; set; } = string.Empty;
-    
+
     public string Email { get; set; } = string.Empty;
-    
-    public string Rol { get; set; } = string.Empty;
-    
-    public string Status { get; set; } = string.Empty;
+
+    public UserRole Rol { get; set; }
+
+    public UserStatus Status { get; set; }
     
     public DateTime DataInregistrare { get; set; }
     

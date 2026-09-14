@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.User;
 
 namespace FinSim.Domain.Models.User;
 
@@ -20,11 +21,11 @@ public class UserCreateDto
     [StringLength(50, MinimumLength = 8)]
     public string? Password { get; set; }
 
-    [Required] 
-    public string Rol { get; set; } = "User";
-    
-    [Required]
-    public string Status { get; set; } = "Activ";
+    [EnumDataType(typeof(UserRole))]
+    public UserRole Rol { get; set; } = UserRole.User;
+
+    [EnumDataType(typeof(UserStatus))]
+    public UserStatus Status { get; set; } = UserStatus.Activ;
     
     public int ScenariiFinalizate { get; set; } = 0;
     

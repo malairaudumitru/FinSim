@@ -22,8 +22,8 @@ public class UserAction
             Prenume = data.Prenume,
             Email = data.Email,
             Password = data.Password ?? string.Empty,
-            Rol = Enum.Parse<UserRole>(data.Rol, ignoreCase: true),
-            Status = Enum.Parse<UserStatus>(data.Status, ignoreCase: true),
+            Rol = data.Rol,
+            Status = data.Status,
             ScenariiFinalizate = data.ScenariiFinalizate,
             ScorTotal = data.ScorTotal,
             DataNasterii = data.DataNasterii
@@ -49,10 +49,6 @@ public class UserAction
             return new ActionResponse { IsSuccess = false, Message = "Prenume is empty" };
         if (string.IsNullOrEmpty(data.Email))
             return new ActionResponse { IsSuccess = false, Message = "Email is empty" };
-        if (!Enum.TryParse<UserRole>(data.Rol, ignoreCase: true, out _))
-            return new ActionResponse { IsSuccess = false, Message = "Rol is invalid" };
-        if (!Enum.TryParse<UserStatus>(data.Status, ignoreCase: true, out _))
-            return new ActionResponse { IsSuccess = false, Message = "Status is invalid" };
 
         var duplicate = _context.Users.Any(u =>
             u.Email == data.Email && u.IsDeleted == false && u.Id != (excludingId ?? 0));
@@ -93,8 +89,8 @@ public class UserAction
         userEntity.Nume = data.Nume;
         userEntity.Prenume = data.Prenume;
         userEntity.Email = data.Email;
-        userEntity.Rol = Enum.Parse<UserRole>(data.Rol, ignoreCase: true);
-        userEntity.Status = Enum.Parse<UserStatus>(data.Status, ignoreCase: true);
+        userEntity.Rol = data.Rol;
+        userEntity.Status = data.Status;
         userEntity.ScenariiFinalizate = data.ScenariiFinalizate;
         userEntity.ScorTotal = data.ScorTotal;
         userEntity.DataNasterii = data.DataNasterii;
@@ -133,16 +129,13 @@ public class UserAction
         }
     }
 
-    protected bool UpdateUserStatusAction(int id, string status)
+    protected bool UpdateUserStatusAction(int id, UserStatus status)
     {
-        if (!Enum.TryParse<UserStatus>(status, ignoreCase: true, out var parsedStatus))
-            return false;
-
         var userEntity = _context.Users.Find(id);
         if (userEntity == null || userEntity.IsDeleted)
             return false;
 
-        userEntity.Status = parsedStatus;
+        userEntity.Status = status;
 
         try
         {
@@ -162,8 +155,8 @@ public class UserAction
         Nume = userEntity.Nume,
         Prenume = userEntity.Prenume,
         Email = userEntity.Email,
-        Rol = userEntity.Rol.ToString(),
-        Status = userEntity.Status.ToString(),
+        Rol = userEntity.Rol,
+        Status = userEntity.Status,
         DataInregistrare = userEntity.DataInregistrare,
         ScenariiFinalizate = userEntity.ScenariiFinalizate,
         ScorTotal = userEntity.ScorTotal,

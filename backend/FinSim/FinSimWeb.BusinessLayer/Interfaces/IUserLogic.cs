@@ -1,3 +1,4 @@
+using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.User;
 
@@ -10,5 +11,5 @@ public interface IUserLogic
     ActionResponse GetUserList();
     ActionResponse UpdateUser(int id, UserCreateDto data);
     ActionResponse DeleteUser(int id);
-    ActionResponse UpdateUserStatus(int id, string status);
+    ActionResponse UpdateUserStatus(int id, UserStatus status);
 }

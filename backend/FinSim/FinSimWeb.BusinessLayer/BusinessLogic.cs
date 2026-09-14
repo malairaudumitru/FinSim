@@ -9,4 +9,9 @@ public class BusinessLogic
     {
         return new UserLogic();
     }
+
+    public IScenarioLogic GetScenarioLogic()
+    {
+        return new ScenarioLogic();
+    }
 }

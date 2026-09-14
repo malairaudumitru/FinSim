@@ -18,16 +18,16 @@ public class ScenarioEntity
     [StringLength(600)]
     public string Descriere { get; set; } = string.Empty;
 
-    [Required]
-    [StringLength(30)]
-    public string Dificultate { get; set; } = string.Empty;
+    public ScenarioDifficulty Dificultate { get; set; } = ScenarioDifficulty.Usor;
 
     public decimal SoldInitial { get; set; }
 
     public bool NecesitaCont { get; set; } = false;
 
     public int? ScorCreditInitial { get; set; }
-    
+
+    public int? StresInitial { get; set; }
+
     [Required]
     public string PasiJson { get; set; } = "[]";
 

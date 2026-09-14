@@ -3,6 +3,7 @@ using System;
 using FinSim.DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinSim.DataAccessLayer.Migrations.ScenarioDb
 {
     [DbContext(typeof(ScenarioDbContext))]
-    partial class ScenarioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260914063145_Add StresInitial to Scenario")]
+    partial class AddStresInitialtoScenario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
