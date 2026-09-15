@@ -1,68 +1,12 @@
-﻿import { useState, type FormEvent } from 'react'
 import { useLeaderboard, type LeaderboardEntry } from '../../shared/LeaderboardContext/LeaderboardContext'
-import Modal from '../../shared/Modal/Modal'
-import Checkbox from '../../shared/Checkbox/Checkbox'
-
-type FormState = {
-    nume: string
-    prenume: string
-    scor: string
-    esteTu: boolean
-}
-
-const emptyForm: FormState = { nume: '', prenume: '', scor: '0', esteTu: false }
-
-function toForm(e: LeaderboardEntry): FormState {
-    return { nume: e.nume, prenume: e.prenume, scor: String(e.scor), esteTu: Boolean(e.esteTu) }
-}
 
 function LeaderboardSection() {
-    const { entries, addEntry, updateEntry, deleteEntry } = useLeaderboard()
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [showForm, setShowForm] = useState(false)
-    const [form, setForm] = useState<FormState>(emptyForm)
-    const [error, setError] = useState('')
+    const { entries, deleteEntry } = useLeaderboard()
 
     const ranked = [...entries].sort((a, b) => b.scor - a.scor)
 
-    const openAdd = () => {
-        setEditingId(null)
-        setForm(emptyForm)
-        setError('')
-        setShowForm(true)
-    }
-
-    const openEdit = (entry: LeaderboardEntry) => {
-        setEditingId(entry.id)
-        setForm(toForm(entry))
-        setError('')
-        setShowForm(true)
-    }
-
-    const close = () => setShowForm(false)
-
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
-        if (!form.nume.trim() || !form.prenume.trim()) {
-            setError('Numele și prenumele sunt obligatorii.')
-            return
-        }
-        const payload = {
-            nume: form.nume.trim(),
-            prenume: form.prenume.trim(),
-            scor: Math.max(0, Number(form.scor) || 0),
-            esteTu: form.esteTu,
-        }
-        if (editingId) {
-            updateEntry(editingId, payload)
-        } else {
-            addEntry(payload)
-        }
-        setShowForm(false)
-    }
-
     const handleDelete = (entry: LeaderboardEntry) => {
-        if (confirm(`Ștergi ${entry.prenume} ${entry.nume} din clasament?`)) {
+        if (confirm(`Ascunzi ${entry.prenume} ${entry.nume} din clasament?`)) {
             deleteEntry(entry.id)
         }
     }
@@ -72,11 +16,8 @@ function LeaderboardSection() {
             <div className="admin-panel-header">
                 <div>
                     <h2>Clasament</h2>
-                    <p>Rangul se recalculează automat după scor — {entries.length} intrări.</p>
+                    <p>Calculat automat din scorurile scenariilor jucate — {entries.length} intrări.</p>
                 </div>
-                <button type="button" className="btn btn-primary" onClick={openAdd}>
-                    + Adaugă intrare
-                </button>
             </div>
 
             <div className="admin-table-wrap">
@@ -105,15 +46,12 @@ function LeaderboardSection() {
                                 <td>{entry.scor}</td>
                                 <td>
                                     <div className="admin-row-actions">
-                                        <button type="button" className="admin-icon-btn" onClick={() => openEdit(entry)}>
-                                            Editează
-                                        </button>
                                         <button
                                             type="button"
                                             className="admin-icon-btn danger"
                                             onClick={() => handleDelete(entry)}
                                         >
-                                            Șterge
+                                            Ascunde
                                         </button>
                                     </div>
                                 </td>
@@ -122,62 +60,6 @@ function LeaderboardSection() {
                     </tbody>
                 </table>
             </div>
-
-            {showForm && (
-                <Modal title={editingId ? 'Editează intrarea' : 'Adaugă intrare'} onClose={close}>
-                    <form className="admin-form" onSubmit={handleSubmit}>
-                        <div className="admin-form-row">
-                            <div className="admin-field">
-                                <label htmlFor="lb-nume">Nume</label>
-                                <input
-                                    id="lb-nume"
-                                    value={form.nume}
-                                    onChange={(e) => setForm((f) => ({ ...f, nume: e.target.value }))}
-                                />
-                            </div>
-                            <div className="admin-field">
-                                <label htmlFor="lb-prenume">Prenume</label>
-                                <input
-                                    id="lb-prenume"
-                                    value={form.prenume}
-                                    onChange={(e) => setForm((f) => ({ ...f, prenume: e.target.value }))}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="admin-field">
-                            <label htmlFor="lb-scor">Scor</label>
-                            <input
-                                id="lb-scor"
-                                type="number"
-                                min={0}
-                                value={form.scor}
-                                onChange={(e) => setForm((f) => ({ ...f, scor: e.target.value }))}
-                            />
-                        </div>
-
-                        <div className="admin-field admin-checkbox-field">
-                            <Checkbox
-                                id="lb-esteTu"
-                                checked={form.esteTu}
-                                onChange={(v) => setForm((f) => ({ ...f, esteTu: v }))}
-                                label='Marchează ca „Tu" (utilizatorul curent)'
-                            />
-                        </div>
-
-                        {error && <span className="admin-form-error">{error}</span>}
-
-                        <div className="admin-form-actions">
-                            <button type="button" className="btn btn-ghost" onClick={close}>
-                                Anulează
-                            </button>
-                            <button type="submit" className="btn btn-primary">
-                                {editingId ? 'Salvează' : 'Adaugă'}
-                            </button>
-                        </div>
-                    </form>
-                </Modal>
-            )}
         </div>
     )
 }
