@@ -1,3 +1,4 @@
+using FinSim.BusinessLayer.Core;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Responses;
@@ -21,7 +22,7 @@ public class UserAction
             Nume = data.Nume,
             Prenume = data.Prenume,
             Email = data.Email,
-            Password = data.Password ?? string.Empty,
+            Password = string.IsNullOrEmpty(data.Password) ? string.Empty : PasswordHasher.Hash(data.Password),
             Rol = data.Rol,
             Status = data.Status,
             ScenariiFinalizate = data.ScenariiFinalizate,
@@ -96,7 +97,7 @@ public class UserAction
         userEntity.DataNasterii = data.DataNasterii;
 
         if (!string.IsNullOrEmpty(data.Password))
-            userEntity.Password = data.Password;
+            userEntity.Password = PasswordHasher.Hash(data.Password);
 
         try
         {

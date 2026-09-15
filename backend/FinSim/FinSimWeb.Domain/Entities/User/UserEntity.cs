@@ -20,7 +20,7 @@ public class UserEntity
     
     
     [Required]
-    [StringLength(50, MinimumLength = 8)]
+    [StringLength(100)]
     public string Password { get; set; } = string.Empty;
     
     public UserRole Rol { get; set; } = UserRole.User;

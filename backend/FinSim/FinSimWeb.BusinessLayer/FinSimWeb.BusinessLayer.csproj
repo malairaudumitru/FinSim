@@ -18,4 +18,9 @@
       <ProjectReference Include="..\FinSimWeb.Domain\FinSimWeb.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>

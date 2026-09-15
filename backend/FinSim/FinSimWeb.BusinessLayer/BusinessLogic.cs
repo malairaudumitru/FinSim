@@ -44,4 +44,9 @@ public class BusinessLogic
     {
         return new ContactMessageLogic();
     }
+
+    public IAuthLogic GetAuthLogic()
+    {
+        return new AuthLogic();
+    }
 }
