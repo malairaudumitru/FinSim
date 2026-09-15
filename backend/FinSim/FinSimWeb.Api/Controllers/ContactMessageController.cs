@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Messages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinSim.Api.Controllers;
@@ -18,9 +20,12 @@ public class ContactMessageController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Authorize]
     public IActionResult CreateContactMessage([FromBody] ContactMessageCreateDto messageInfo)
     {
-        var result = _contactMessageLogic.CreateContactMessage(messageInfo);
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var result = _contactMessageLogic.CreateContactMessage(userId, messageInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

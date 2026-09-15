@@ -3,6 +3,7 @@ using System;
 using FinSim.DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinSim.DataAccessLayer.Migrations.ContactMessageDb
 {
     [DbContext(typeof(ContactMessageDbContext))]
-    partial class ContactMessageDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915054548_Add UserId to ContactMessage")]
+    partial class AddUserIdtoContactMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

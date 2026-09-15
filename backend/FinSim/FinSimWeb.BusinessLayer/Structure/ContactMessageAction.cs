@@ -1,5 +1,6 @@
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Messages;
+using FinSim.Domain.Entities.Notifications;
 using FinSim.Domain.Models.Messages;
 
 namespace FinSim.BusinessLayer.Structure;
@@ -8,13 +9,19 @@ public class ContactMessageAction
 {
     private readonly ContactMessageDbContext _context = new();
 
-    protected bool CreateContactMessageAction(ContactMessageCreateDto data)
+    protected bool CreateContactMessageAction(int userId, ContactMessageCreateDto data)
     {
+        using var userContext = new UserDbContext();
+        var user = userContext.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        if (user == null)
+            return false;
+
         var contactMessageEntity = new ContactMessageEntity
         {
-            Nume = data.Nume,
-            Email = data.Email,
-            Mesaj = data.Mesaj
+            Nume = $"{user.Prenume} {user.Nume}",
+            Email = user.Email,
+            Mesaj = data.Mesaj,
+            UserId = userId
         };
 
         try
@@ -69,12 +76,27 @@ public class ContactMessageAction
         {
             _context.ContactMessages.Update(contactMessageEntity);
             _context.SaveChanges();
+
+            NotifyUserOfReply(contactMessageEntity.UserId);
+
             return true;
         }
         catch (Exception)
         {
             return false;
         }
+    }
+
+    private static void NotifyUserOfReply(int userId)
+    {
+        using var notificationContext = new NotificationDbContext();
+        notificationContext.Add(new NotificationEntity
+        {
+            Tip = NotificationType.Cont,
+            Mesaj = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
+            UserId = userId
+        });
+        notificationContext.SaveChanges();
     }
 
     protected bool DeleteContactMessageAction(int id)
@@ -102,6 +124,7 @@ public class ContactMessageAction
         Nume = contactMessageEntity.Nume,
         Email = contactMessageEntity.Email,
         Mesaj = contactMessageEntity.Mesaj,
+        UserId = contactMessageEntity.UserId,
         CreatedAt = contactMessageEntity.CreatedAt,
         Citit = contactMessageEntity.Citit,
         Raspuns = contactMessageEntity.Raspuns,

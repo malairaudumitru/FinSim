@@ -7,9 +7,9 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ContactMessageLogic : ContactMessageAction, IContactMessageLogic
 {
-    public ActionResponse CreateContactMessage(ContactMessageCreateDto data)
+    public ActionResponse CreateContactMessage(int userId, ContactMessageCreateDto data)
     {
-        var result = CreateContactMessageAction(data);
+        var result = CreateContactMessageAction(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating contact message");
         return ActionResponse.Ok("Contact message created successfully");

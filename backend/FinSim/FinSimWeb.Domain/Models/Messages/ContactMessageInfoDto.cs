@@ -6,6 +6,7 @@ public class ContactMessageInfoDto
     public string Nume { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Mesaj { get; set; } = string.Empty;
+    public int UserId { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool Citit { get; set; }
     public string? Raspuns { get; set; }

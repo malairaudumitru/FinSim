@@ -19,6 +19,9 @@ public class ContactMessageEntity
     [StringLength(1000, MinimumLength = 25)]
     public string Mesaj { get; set; } = string.Empty;
 
+    [Required]
+    public int UserId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool Citit { get; set; } = false;
