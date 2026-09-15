@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,10 @@ public class LeaderboardController : ControllerBase
 {
     private readonly ILeaderboardLogic _leaderboardLogic;
 
-    public LeaderboardController()
+    public LeaderboardController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _leaderboardLogic = bl.GetLeaderboardLogic();
+        _leaderboardLogic = bl.GetLeaderboardLogic(context);
     }
 
     [HttpGet("list")]

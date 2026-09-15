@@ -8,11 +8,11 @@ public class ReviewEntity
 
     [Required]
     [StringLength(50)]
-    public string Nume { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     [Range(1, 120)]
-    public int Varsta { get; set; }
+    public int Age { get; set; }
 
     [Required]
     [StringLength(150)]
@@ -25,7 +25,7 @@ public class ReviewEntity
 
     [Required]
     [StringLength(500)]
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
 
     public bool IsDeleted { get; set; } = false;
 }

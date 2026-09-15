@@ -8,16 +8,16 @@ public class PdfResourceEntity
 
     [Required]
     [StringLength(150)]
-    public string Titlu { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 
     [StringLength(600)]
-    public string Descriere { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     
-    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
+    public ResourceTheme Theme { get; set; } = ResourceTheme.General;
 
     [Required]
     [StringLength(300)]
-    public string Fisier { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
     
 
     public bool IsDeleted { get; set; } = false;

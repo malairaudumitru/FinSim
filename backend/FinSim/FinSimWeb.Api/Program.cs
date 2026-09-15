@@ -1,6 +1,8 @@
 using System.Text;
 using FinSim.BusinessLayer.Core;
+using FinSim.DataAccessLayer.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -37,6 +39,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

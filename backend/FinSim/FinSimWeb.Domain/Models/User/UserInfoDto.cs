@@ -6,23 +6,23 @@ public class UserInfoDto
 {
     public int Id { get; set; }
 
-    public string Nume { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
 
-    public string Prenume { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
 
     public string Email { get; set; } = string.Empty;
 
-    public UserRole Rol { get; set; }
+    public UserRole Role { get; set; }
 
     public UserStatus Status { get; set; }
     
-    public DateTime DataInregistrare { get; set; }
+    public DateTime RegisteredAt { get; set; }
     
-    public int ScenariiFinalizate { get; set; }
+    public int CompletedScenarios { get; set; }
     
-    public int ScorTotal { get; set; }
+    public int TotalScore { get; set; }
     
-    public DateOnly? DataNasterii { get; set; }
+    public DateOnly? BirthDate { get; set; }
     
     public bool IsDeleted { get; set; }
 }

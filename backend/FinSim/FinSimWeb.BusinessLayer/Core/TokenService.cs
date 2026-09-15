@@ -8,7 +8,7 @@ namespace FinSim.BusinessLayer.Core;
 
 public class TokenService
 {
-    public string GenerateAccessToken(int userId, string nume, string prenume, string rol)
+    public string GenerateAccessToken(int userId, string lastName, string firstName, string role)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -16,8 +16,8 @@ public class TokenService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Name, $"{prenume} {nume}"),
-            new Claim(ClaimTypes.Role, rol)
+            new Claim(ClaimTypes.Name, $"{firstName} {lastName}"),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var token = new JwtSecurityToken(

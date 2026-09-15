@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Messages;
 using FinSim.Domain.Models.Responses;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ContactMessageLogic : ContactMessageAction, IContactMessageLogic
 {
+    public ContactMessageLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateContactMessage(int userId, ContactMessageCreateDto data)
     {
         var result = CreateContactMessageAction(userId, data);

@@ -6,11 +6,11 @@ public class ReviewCreateDto
 {
     [Required]
     [StringLength(50)]
-    public string Nume { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     [Range(1, 120)]
-    public int Varsta { get; set; }
+    public int Age { get; set; }
 
     [Required]
     [EmailAddress]
@@ -23,5 +23,5 @@ public class ReviewCreateDto
 
     [Required]
     [StringLength(500)]
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
 }

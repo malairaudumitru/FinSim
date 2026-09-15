@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.User;
 
 namespace FinSim.Domain.Entities.Auth;
 
@@ -18,4 +19,6 @@ public class RefreshTokenEntity
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? RevokedAt { get; set; }
+
+    public UserEntity? User { get; set; }
 }

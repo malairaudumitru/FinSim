@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Auth;
 using FinSim.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
@@ -15,11 +16,11 @@ public class SessionController : ControllerBase
     private readonly IAuthLogic _authLogic;
     private readonly IUserLogic _userLogic;
 
-    public SessionController()
+    public SessionController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _authLogic = bl.GetAuthLogic();
-        _userLogic = bl.GetUserLogic();
+        _authLogic = bl.GetAuthLogic(context);
+        _userLogic = bl.GetUserLogic(context);
     }
 
     [HttpPost("login")]

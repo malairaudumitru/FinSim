@@ -6,11 +6,11 @@ public class UserRegisterDto
 {
     [Required]
     [StringLength(15)]
-    public string Nume { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     
     [Required]
     [StringLength(15)]
-    public string Prenume { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
     
     [Required]
     [EmailAddress]
@@ -21,5 +21,5 @@ public class UserRegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
     
-    public DateOnly? DataNasterii { get; set; }
+    public DateOnly? BirthDate { get; set; }
 }

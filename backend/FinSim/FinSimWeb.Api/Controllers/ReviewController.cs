@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Reviews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,10 @@ public class ReviewController : ControllerBase
 {
     private readonly IReviewLogic _reviewLogic;
 
-    public ReviewController()
+    public ReviewController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _reviewLogic = bl.GetReviewLogic();
+        _reviewLogic = bl.GetReviewLogic(context);
     }
 
     [HttpPost("create")]

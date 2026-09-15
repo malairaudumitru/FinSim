@@ -6,13 +6,18 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class LeaderboardAction
 {
-    private readonly LeaderboardDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public LeaderboardAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected List<LeaderboardInfoDto> GetLeaderboardListAction()
     {
         return _context.Leaderboard
             .Where(x => x.IsDeleted == false)
-            .OrderByDescending(x => x.Scor)
+            .OrderByDescending(x => x.Score)
             .Select(leaderboardEntity => MapToInfoDto(leaderboardEntity))
             .ToList();
     }
@@ -39,9 +44,9 @@ public class LeaderboardAction
     private static LeaderboardInfoDto MapToInfoDto(LeaderboardEntity leaderboardEntity) => new()
     {
         Id = leaderboardEntity.Id,
-        Nume = leaderboardEntity.Nume,
-        Prenume = leaderboardEntity.Prenume,
-        Scor = leaderboardEntity.Scor,
+        LastName = leaderboardEntity.LastName,
+        FirstName = leaderboardEntity.FirstName,
+        Score = leaderboardEntity.Score,
         UserId = leaderboardEntity.UserId,
         IsDeleted = leaderboardEntity.IsDeleted
     };

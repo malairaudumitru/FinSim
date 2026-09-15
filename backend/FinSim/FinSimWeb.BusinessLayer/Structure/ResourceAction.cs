@@ -7,7 +7,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class ResourceAction
 {
-    private readonly ResourceDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public ResourceAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     private static readonly Regex YoutubeUrlPattern = new(
         @"(?:youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/|youtube\.com/shorts/)([a-zA-Z0-9_-]{6,})",
@@ -37,9 +42,9 @@ public class ResourceAction
         var videoResourceEntity = new VideoResourceEntity
         {
             YoutubeId = ExtractYoutubeId(data.YoutubeId),
-            Titlu = data.Titlu,
-            Sursa = data.Sursa,
-            Tema = data.Tema
+            Title = data.Title,
+            Source = data.Source,
+            Theme = data.Theme
         };
 
         try
@@ -69,9 +74,9 @@ public class ResourceAction
             return false;
 
         videoResourceEntity.YoutubeId = ExtractYoutubeId(data.YoutubeId);
-        videoResourceEntity.Titlu = data.Titlu;
-        videoResourceEntity.Sursa = data.Sursa;
-        videoResourceEntity.Tema = data.Tema;
+        videoResourceEntity.Title = data.Title;
+        videoResourceEntity.Source = data.Source;
+        videoResourceEntity.Theme = data.Theme;
 
         try
         {
@@ -108,10 +113,10 @@ public class ResourceAction
     {
         var pdfResourceEntity = new PdfResourceEntity
         {
-            Titlu = data.Titlu,
-            Descriere = data.Descriere,
-            Fisier = data.Fisier,
-            Tema = data.Tema
+            Title = data.Title,
+            Description = data.Description,
+            FilePath = data.FilePath,
+            Theme = data.Theme
         };
 
         try
@@ -140,10 +145,10 @@ public class ResourceAction
         if (pdfResourceEntity == null || pdfResourceEntity.IsDeleted)
             return false;
 
-        pdfResourceEntity.Titlu = data.Titlu;
-        pdfResourceEntity.Descriere = data.Descriere;
-        pdfResourceEntity.Fisier = data.Fisier;
-        pdfResourceEntity.Tema = data.Tema;
+        pdfResourceEntity.Title = data.Title;
+        pdfResourceEntity.Description = data.Description;
+        pdfResourceEntity.FilePath = data.FilePath;
+        pdfResourceEntity.Theme = data.Theme;
 
         try
         {
@@ -180,19 +185,19 @@ public class ResourceAction
     {
         Id = videoResourceEntity.Id,
         YoutubeId = videoResourceEntity.YoutubeId,
-        Titlu = videoResourceEntity.Titlu,
-        Sursa = videoResourceEntity.Sursa,
-        Tema = videoResourceEntity.Tema,
+        Title = videoResourceEntity.Title,
+        Source = videoResourceEntity.Source,
+        Theme = videoResourceEntity.Theme,
         IsDeleted = videoResourceEntity.IsDeleted
     };
 
     private static PdfResourceInfoDto MapToInfoDto(PdfResourceEntity pdfResourceEntity) => new()
     {
         Id = pdfResourceEntity.Id,
-        Titlu = pdfResourceEntity.Titlu,
-        Descriere = pdfResourceEntity.Descriere,
-        Fisier = pdfResourceEntity.Fisier,
-        Tema = pdfResourceEntity.Tema,
+        Title = pdfResourceEntity.Title,
+        Description = pdfResourceEntity.Description,
+        FilePath = pdfResourceEntity.FilePath,
+        Theme = pdfResourceEntity.Theme,
         IsDeleted = pdfResourceEntity.IsDeleted
     };
 }

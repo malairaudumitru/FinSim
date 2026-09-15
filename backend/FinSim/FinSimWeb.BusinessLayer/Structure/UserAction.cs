@@ -9,7 +9,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class UserAction
 {
-    private readonly UserDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public UserAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateUserAction(UserCreateDto data)
     {
@@ -19,15 +24,15 @@ public class UserAction
 
         var userEntity = new UserEntity
         {
-            Nume = data.Nume,
-            Prenume = data.Prenume,
+            LastName = data.LastName,
+            FirstName = data.FirstName,
             Email = data.Email,
             Password = string.IsNullOrEmpty(data.Password) ? string.Empty : PasswordHasher.Hash(data.Password),
-            Rol = data.Rol,
+            Role = data.Role,
             Status = data.Status,
-            ScenariiFinalizate = data.ScenariiFinalizate,
-            ScorTotal = data.ScorTotal,
-            DataNasterii = data.DataNasterii
+            CompletedScenarios = data.CompletedScenarios,
+            TotalScore = data.TotalScore,
+            BirthDate = data.BirthDate
         };
 
         try
@@ -44,10 +49,10 @@ public class UserAction
 
     private ActionResponse ValidateUser(UserCreateDto data, int? excludingId = null)
     {
-        if (string.IsNullOrEmpty(data.Nume))
-            return new ActionResponse { IsSuccess = false, Message = "Nume is empty" };
-        if (string.IsNullOrEmpty(data.Prenume))
-            return new ActionResponse { IsSuccess = false, Message = "Prenume is empty" };
+        if (string.IsNullOrEmpty(data.LastName))
+            return new ActionResponse { IsSuccess = false, Message = "LastName is empty" };
+        if (string.IsNullOrEmpty(data.FirstName))
+            return new ActionResponse { IsSuccess = false, Message = "FirstName is empty" };
         if (string.IsNullOrEmpty(data.Email))
             return new ActionResponse { IsSuccess = false, Message = "Email is empty" };
 
@@ -87,14 +92,14 @@ public class UserAction
         if (!validate.IsSuccess)
             return false;
 
-        userEntity.Nume = data.Nume;
-        userEntity.Prenume = data.Prenume;
+        userEntity.LastName = data.LastName;
+        userEntity.FirstName = data.FirstName;
         userEntity.Email = data.Email;
-        userEntity.Rol = data.Rol;
+        userEntity.Role = data.Role;
         userEntity.Status = data.Status;
-        userEntity.ScenariiFinalizate = data.ScenariiFinalizate;
-        userEntity.ScorTotal = data.ScorTotal;
-        userEntity.DataNasterii = data.DataNasterii;
+        userEntity.CompletedScenarios = data.CompletedScenarios;
+        userEntity.TotalScore = data.TotalScore;
+        userEntity.BirthDate = data.BirthDate;
 
         if (!string.IsNullOrEmpty(data.Password))
             userEntity.Password = PasswordHasher.Hash(data.Password);
@@ -153,15 +158,15 @@ public class UserAction
     private static UserInfoDto MapToInfoDto(UserEntity userEntity) => new()
     {
         Id = userEntity.Id,
-        Nume = userEntity.Nume,
-        Prenume = userEntity.Prenume,
+        LastName = userEntity.LastName,
+        FirstName = userEntity.FirstName,
         Email = userEntity.Email,
-        Rol = userEntity.Rol,
+        Role = userEntity.Role,
         Status = userEntity.Status,
-        DataInregistrare = userEntity.DataInregistrare,
-        ScenariiFinalizate = userEntity.ScenariiFinalizate,
-        ScorTotal = userEntity.ScorTotal,
-        DataNasterii = userEntity.DataNasterii,
+        RegisteredAt = userEntity.RegisteredAt,
+        CompletedScenarios = userEntity.CompletedScenarios,
+        TotalScore = userEntity.TotalScore,
+        BirthDate = userEntity.BirthDate,
         IsDeleted = userEntity.IsDeleted
     };
 }

@@ -3,13 +3,13 @@ namespace FinSim.Domain.Models.Messages;
 public class ContactMessageInfoDto
 {
     public int Id { get; set; }
-    public string Nume { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
     public int UserId { get; set; }
     public DateTime CreatedAt { get; set; }
-    public bool Citit { get; set; }
-    public string? Raspuns { get; set; }
-    public DateTime? RaspunsData { get; set; }
+    public bool IsRead { get; set; }
+    public string? Reply { get; set; }
+    public DateTime? ReplyDate { get; set; }
     public bool IsDeleted { get; set; }
 }

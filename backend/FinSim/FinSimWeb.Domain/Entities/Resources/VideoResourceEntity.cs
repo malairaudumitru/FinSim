@@ -12,12 +12,12 @@ public class VideoResourceEntity
 
     [Required]
     [StringLength(150)]
-    public string Titlu { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     
-    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
+    public ResourceTheme Theme { get; set; } = ResourceTheme.General;
 
     [StringLength(150)]
-    public string Sursa { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
     
 
     public bool IsDeleted { get; set; } = false;

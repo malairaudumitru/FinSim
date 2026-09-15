@@ -7,11 +7,11 @@ public class UserCreateDto
 {
     [Required]
     [StringLength(15)]
-    public string Nume { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     
     [Required]
     [StringLength(15)]
-    public string Prenume { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
@@ -22,15 +22,15 @@ public class UserCreateDto
     public string? Password { get; set; }
 
     [EnumDataType(typeof(UserRole))]
-    public UserRole Rol { get; set; } = UserRole.User;
+    public UserRole Role { get; set; } = UserRole.User;
 
     [EnumDataType(typeof(UserStatus))]
-    public UserStatus Status { get; set; } = UserStatus.Activ;
+    public UserStatus Status { get; set; } = UserStatus.Active;
     
-    public int ScenariiFinalizate { get; set; } = 0;
+    public int CompletedScenarios { get; set; } = 0;
     
-    public int ScorTotal { get; set; } = 0;
+    public int TotalScore { get; set; } = 0;
     
-    public DateOnly? DataNasterii { get; set; }
+    public DateOnly? BirthDate { get; set; }
 
 }

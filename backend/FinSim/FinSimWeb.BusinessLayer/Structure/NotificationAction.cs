@@ -7,7 +7,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class NotificationAction
 {
-    private readonly NotificationDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public NotificationAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateNotificationAction(NotificationCreateDto data)
     {
@@ -17,8 +22,8 @@ public class NotificationAction
 
         var notificationEntity = new NotificationEntity
         {
-            Tip = data.Tip,
-            Mesaj = data.Mesaj,
+            Type = data.Type,
+            Message = data.Message,
             UserId = userId.Value
         };
 
@@ -34,10 +39,9 @@ public class NotificationAction
         }
     }
 
-    private static int? ResolveUserIdByEmail(string email)
+    private int? ResolveUserIdByEmail(string email)
     {
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.FirstOrDefault(u => u.Email == email && u.IsDeleted == false);
+        var user = _context.Users.FirstOrDefault(u => u.Email == email && u.IsDeleted == false);
         return user?.Id;
     }
 
@@ -69,8 +73,8 @@ public class NotificationAction
         if (userId == null)
             return false;
 
-        notificationEntity.Tip = data.Tip;
-        notificationEntity.Mesaj = data.Mesaj;
+        notificationEntity.Type = data.Type;
+        notificationEntity.Message = data.Message;
         notificationEntity.UserId = userId.Value;
 
         try
@@ -100,7 +104,7 @@ public class NotificationAction
         if (notificationEntity == null || notificationEntity.IsDeleted)
             return false;
 
-        notificationEntity.Citit = true;
+        notificationEntity.IsRead = true;
 
         try
         {
@@ -117,11 +121,11 @@ public class NotificationAction
     protected bool MarkAllAsReadAction(int userId)
     {
         var notifications = _context.Notifications
-            .Where(x => x.UserId == userId && x.IsDeleted == false && x.Citit == false)
+            .Where(x => x.UserId == userId && x.IsDeleted == false && x.IsRead == false)
             .ToList();
 
         foreach (var notificationEntity in notifications)
-            notificationEntity.Citit = true;
+            notificationEntity.IsRead = true;
 
         try
         {
@@ -157,10 +161,10 @@ public class NotificationAction
     private static NotificationInfoDto MapToInfoDto(NotificationEntity notificationEntity) => new()
     {
         Id = notificationEntity.Id,
-        Tip = notificationEntity.Tip,
-        Mesaj = notificationEntity.Mesaj,
+        Type = notificationEntity.Type,
+        Message = notificationEntity.Message,
         CreatedAt = notificationEntity.CreatedAt,
-        Citit = notificationEntity.Citit,
+        IsRead = notificationEntity.IsRead,
         UserId = notificationEntity.UserId,
         IsDeleted = notificationEntity.IsDeleted
     };

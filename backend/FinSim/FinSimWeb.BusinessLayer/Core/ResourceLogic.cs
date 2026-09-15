@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Resources;
 using FinSim.Domain.Models.Responses;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ResourceLogic : ResourceAction, IResourceLogic
 {
+    public ResourceLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateVideo(VideoResourceCreateDto data)
     {
         var result = CreateVideoAction(data);

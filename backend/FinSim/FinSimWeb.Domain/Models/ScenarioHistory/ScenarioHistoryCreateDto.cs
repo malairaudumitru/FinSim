@@ -9,5 +9,5 @@ public class ScenarioHistoryCreateDto
 
     [Required]
     [Range(0, 100)]
-    public int Scor { get; set; }
+    public int Score { get; set; }
 }

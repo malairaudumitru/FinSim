@@ -6,5 +6,5 @@ public class ContactMessageCreateDto
 {
     [Required]
     [StringLength(1000, MinimumLength = 25)]
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
 }

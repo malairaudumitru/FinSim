@@ -12,5 +12,5 @@ public class ScenarioHistoryUpdateDto
 
     [Required]
     [Range(0, 100)]
-    public int Scor { get; set; }
+    public int Score { get; set; }
 }

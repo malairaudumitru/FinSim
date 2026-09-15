@@ -11,11 +11,11 @@ public class VideoResourceCreateDto
 
     [Required]
     [StringLength(150)]
-    public string Titlu { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 
     [StringLength(150)]
-    public string Sursa { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
 
     [EnumDataType(typeof(ResourceTheme))]
-    public ResourceTheme Tema { get; set; } = ResourceTheme.General;
+    public ResourceTheme Theme { get; set; } = ResourceTheme.General;
 }

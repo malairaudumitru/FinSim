@@ -7,7 +7,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class ScenarioHistoryAction
 {
-    private readonly ScenarioHistoryDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public ScenarioHistoryAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateScenarioHistoryAction(int userId, ScenarioHistoryCreateDto data)
     {
@@ -15,7 +20,7 @@ public class ScenarioHistoryAction
         {
             UserId = userId,
             ScenarioId = data.ScenarioId,
-            Scor = data.Scor
+            Score = data.Score
         };
 
         try
@@ -59,7 +64,7 @@ public class ScenarioHistoryAction
 
         scenarioHistoryEntity.UserId = data.UserId;
         scenarioHistoryEntity.ScenarioId = data.ScenarioId;
-        scenarioHistoryEntity.Scor = data.Scor;
+        scenarioHistoryEntity.Score = data.Score;
 
         try
         {
@@ -98,37 +103,35 @@ public class ScenarioHistoryAction
 
     private void RecalculateLeaderboardEntry(int userId)
     {
-        var totalScor = _context.ScenarioHistories
+        var totalScore = _context.ScenarioHistories
             .Where(x => x.UserId == userId && x.IsDeleted == false)
-            .Sum(x => x.Scor);
+            .Sum(x => x.Score);
 
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.Find(userId);
+        var user = _context.Users.Find(userId);
         if (user == null)
             return;
 
-        using var leaderboardContext = new LeaderboardDbContext();
-        var leaderboardEntity = leaderboardContext.Leaderboard.FirstOrDefault(x => x.UserId == userId);
+        var leaderboardEntity = _context.Leaderboard.FirstOrDefault(x => x.UserId == userId);
 
         if (leaderboardEntity == null)
         {
-            leaderboardContext.Add(new LeaderboardEntity
+            _context.Add(new LeaderboardEntity
             {
-                Nume = user.Nume,
-                Prenume = user.Prenume,
-                Scor = totalScor,
+                LastName = user.LastName,
+                FirstName = user.FirstName,
+                Score = totalScore,
                 UserId = userId
             });
         }
         else
         {
-            leaderboardEntity.Nume = user.Nume;
-            leaderboardEntity.Prenume = user.Prenume;
-            leaderboardEntity.Scor = totalScor;
-            leaderboardContext.Leaderboard.Update(leaderboardEntity);
+            leaderboardEntity.LastName = user.LastName;
+            leaderboardEntity.FirstName = user.FirstName;
+            leaderboardEntity.Score = totalScore;
+            _context.Leaderboard.Update(leaderboardEntity);
         }
 
-        leaderboardContext.SaveChanges();
+        _context.SaveChanges();
     }
 
     private static ScenarioHistoryInfoDto MapToInfoDto(ScenarioHistoryEntity scenarioHistoryEntity) => new()
@@ -136,7 +139,7 @@ public class ScenarioHistoryAction
         Id = scenarioHistoryEntity.Id,
         UserId = scenarioHistoryEntity.UserId,
         ScenarioId = scenarioHistoryEntity.ScenarioId,
-        Scor = scenarioHistoryEntity.Scor,
+        Score = scenarioHistoryEntity.Score,
         CreatedAt = scenarioHistoryEntity.CreatedAt,
         IsDeleted = scenarioHistoryEntity.IsDeleted
     };

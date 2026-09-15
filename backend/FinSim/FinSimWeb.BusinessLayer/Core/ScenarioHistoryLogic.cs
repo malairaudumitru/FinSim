@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.ScenarioHistory;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ScenarioHistoryLogic : ScenarioHistoryAction, IScenarioHistoryLogic
 {
+    public ScenarioHistoryLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateScenarioHistory(int userId, ScenarioHistoryCreateDto data)
     {
         var result = CreateScenarioHistoryAction(userId, data);

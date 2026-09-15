@@ -1,52 +1,53 @@
-﻿using FinSim.BusinessLayer.Core;
+using FinSim.BusinessLayer.Core;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 
 namespace FinSim.BusinessLayer;
 
 public class BusinessLogic
 {
-    public IUserLogic GetUserLogic()
+    public IUserLogic GetUserLogic(AppDbContext context)
     {
-        return new UserLogic();
+        return new UserLogic(context);
     }
 
-    public IScenarioLogic GetScenarioLogic()
+    public IScenarioLogic GetScenarioLogic(AppDbContext context)
     {
-        return new ScenarioLogic();
+        return new ScenarioLogic(context);
     }
 
-    public IScenarioHistoryLogic GetScenarioHistoryLogic()
+    public IScenarioHistoryLogic GetScenarioHistoryLogic(AppDbContext context)
     {
-        return new ScenarioHistoryLogic();
+        return new ScenarioHistoryLogic(context);
     }
 
-    public ILeaderboardLogic GetLeaderboardLogic()
+    public ILeaderboardLogic GetLeaderboardLogic(AppDbContext context)
     {
-        return new LeaderboardLogic();
+        return new LeaderboardLogic(context);
     }
 
-    public IReviewLogic GetReviewLogic()
+    public IReviewLogic GetReviewLogic(AppDbContext context)
     {
-        return new ReviewLogic();
+        return new ReviewLogic(context);
     }
 
-    public INotificationLogic GetNotificationLogic()
+    public INotificationLogic GetNotificationLogic(AppDbContext context)
     {
-        return new NotificationLogic();
+        return new NotificationLogic(context);
     }
 
-    public IResourceLogic GetResourceLogic()
+    public IResourceLogic GetResourceLogic(AppDbContext context)
     {
-        return new ResourceLogic();
+        return new ResourceLogic(context);
     }
 
-    public IContactMessageLogic GetContactMessageLogic()
+    public IContactMessageLogic GetContactMessageLogic(AppDbContext context)
     {
-        return new ContactMessageLogic();
+        return new ContactMessageLogic(context);
     }
 
-    public IAuthLogic GetAuthLogic()
+    public IAuthLogic GetAuthLogic(AppDbContext context)
     {
-        return new AuthLogic();
+        return new AuthLogic(context);
     }
 }

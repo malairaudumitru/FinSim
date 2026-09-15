@@ -9,31 +9,35 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class AuthAction
 {
+    protected readonly AppDbContext _context;
     private readonly TokenService _tokenService = new();
+
+    public AuthAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool RegisterAction(UserRegisterDto data)
     {
-        using var userContext = new UserDbContext();
-
-        var duplicate = userContext.Users.Any(u => u.Email == data.Email && u.IsDeleted == false);
+        var duplicate = _context.Users.Any(u => u.Email == data.Email && u.IsDeleted == false);
         if (duplicate)
             return false;
 
         var userEntity = new UserEntity
         {
-            Nume = data.Nume,
-            Prenume = data.Prenume,
+            LastName = data.LastName,
+            FirstName = data.FirstName,
             Email = data.Email,
             Password = PasswordHasher.Hash(data.Password),
-            Rol = UserRole.User,
-            Status = UserStatus.Activ,
-            DataNasterii = data.DataNasterii
+            Role = UserRole.User,
+            Status = UserStatus.Active,
+            BirthDate = data.BirthDate
         };
 
         try
         {
-            userContext.Add(userEntity);
-            userContext.SaveChanges();
+            _context.Add(userEntity);
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -44,10 +48,9 @@ public class AuthAction
 
     protected AuthResponseDto? LoginAction(UserLoginDto data)
     {
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.FirstOrDefault(u => u.Email == data.Email && u.IsDeleted == false);
+        var user = _context.Users.FirstOrDefault(u => u.Email == data.Email && u.IsDeleted == false);
 
-        if (user == null || user.Status == UserStatus.Blocat)
+        if (user == null || user.Status == UserStatus.Blocked)
             return null;
 
         if (!PasswordHasher.Verify(data.Password, user.Password))
@@ -58,28 +61,25 @@ public class AuthAction
 
     protected AuthResponseDto? RefreshAction(string refreshToken)
     {
-        using var refreshContext = new RefreshTokenDbContext();
-        var storedToken = refreshContext.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
+        var storedToken = _context.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
 
         if (storedToken == null || storedToken.RevokedAt != null || storedToken.ExpiresAt < DateTime.UtcNow)
             return null;
 
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.FirstOrDefault(u => u.Id == storedToken.UserId && u.IsDeleted == false);
-        if (user == null || user.Status == UserStatus.Blocat)
+        var user = _context.Users.FirstOrDefault(u => u.Id == storedToken.UserId && u.IsDeleted == false);
+        if (user == null || user.Status == UserStatus.Blocked)
             return null;
 
         storedToken.RevokedAt = DateTime.UtcNow;
-        refreshContext.RefreshTokens.Update(storedToken);
-        refreshContext.SaveChanges();
+        _context.RefreshTokens.Update(storedToken);
+        _context.SaveChanges();
 
         return GenerateAuthResponse(user);
     }
 
     protected bool ChangePasswordAction(int userId, ChangePasswordDto data)
     {
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
         if (user == null)
             return false;
 
@@ -90,8 +90,8 @@ public class AuthAction
 
         try
         {
-            userContext.Users.Update(user);
-            userContext.SaveChanges();
+            _context.Users.Update(user);
+            _context.SaveChanges();
             return true;
         }
         catch (Exception)
@@ -102,30 +102,28 @@ public class AuthAction
 
     protected bool LogoutAction(string refreshToken)
     {
-        using var refreshContext = new RefreshTokenDbContext();
-        var storedToken = refreshContext.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
+        var storedToken = _context.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
         if (storedToken == null || storedToken.RevokedAt != null)
             return false;
 
         storedToken.RevokedAt = DateTime.UtcNow;
-        refreshContext.RefreshTokens.Update(storedToken);
-        refreshContext.SaveChanges();
+        _context.RefreshTokens.Update(storedToken);
+        _context.SaveChanges();
         return true;
     }
 
     private AuthResponseDto GenerateAuthResponse(UserEntity user)
     {
-        var accessToken = _tokenService.GenerateAccessToken(user.Id, user.Nume, user.Prenume, user.Rol.ToString());
+        var accessToken = _tokenService.GenerateAccessToken(user.Id, user.LastName, user.FirstName, user.Role.ToString());
         var refreshTokenValue = _tokenService.GenerateRefreshToken();
 
-        using var refreshContext = new RefreshTokenDbContext();
-        refreshContext.Add(new RefreshTokenEntity
+        _context.Add(new RefreshTokenEntity
         {
             UserId = user.Id,
             Token = refreshTokenValue,
             ExpiresAt = DateTime.UtcNow.AddDays(JwtSettings.RefreshTokenExpireDays)
         });
-        refreshContext.SaveChanges();
+        _context.SaveChanges();
 
         return new AuthResponseDto
         {

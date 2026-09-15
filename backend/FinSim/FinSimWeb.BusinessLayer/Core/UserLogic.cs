@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.User;
@@ -8,6 +9,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class UserLogic : UserAction, IUserLogic
 {
+    public UserLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateUser(UserCreateDto data)
     {
         var result = CreateUserAction(data);

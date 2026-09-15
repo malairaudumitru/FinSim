@@ -7,7 +7,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class ScenarioAction
 {
-    private readonly ScenarioDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public ScenarioAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateScenarioAction(ScenarioCreateDto data)
     {
@@ -18,14 +23,14 @@ public class ScenarioAction
         var scenarioEntity = new ScenarioEntity
         {
             Slug = data.Slug,
-            Nume = data.Nume,
-            Descriere = data.Descriere,
-            Dificultate = data.Dificultate,
-            SoldInitial = data.SoldInitial,
-            NecesitaCont = data.NecesitaCont,
-            ScorCreditInitial = data.ScorCreditInitial,
-            StresInitial = data.StresInitial,
-            PasiJson = data.PasiJson
+            Name = data.Name,
+            Description = data.Description,
+            Difficulty = data.Difficulty,
+            InitialBalance = data.InitialBalance,
+            RequiresAccount = data.RequiresAccount,
+            InitialCreditScore = data.InitialCreditScore,
+            InitialStress = data.InitialStress,
+            StepsJson = data.StepsJson
         };
 
         try
@@ -44,10 +49,10 @@ public class ScenarioAction
     {
         if (string.IsNullOrEmpty(data.Slug))
             return new ActionResponse { IsSuccess = false, Message = "Slug is empty" };
-        if (string.IsNullOrEmpty(data.Nume))
-            return new ActionResponse { IsSuccess = false, Message = "Nume is empty" };
-        if (string.IsNullOrEmpty(data.Descriere))
-            return new ActionResponse { IsSuccess = false, Message = "Descriere is empty" };
+        if (string.IsNullOrEmpty(data.Name))
+            return new ActionResponse { IsSuccess = false, Message = "Name is empty" };
+        if (string.IsNullOrEmpty(data.Description))
+            return new ActionResponse { IsSuccess = false, Message = "Description is empty" };
 
         var duplicate = _context.Scenarios.Any(s =>
             s.Slug == data.Slug && s.IsDeleted == false && s.Id != (excludingId ?? 0));
@@ -86,14 +91,14 @@ public class ScenarioAction
             return false;
 
         scenarioEntity.Slug = data.Slug;
-        scenarioEntity.Nume = data.Nume;
-        scenarioEntity.Descriere = data.Descriere;
-        scenarioEntity.Dificultate = data.Dificultate;
-        scenarioEntity.SoldInitial = data.SoldInitial;
-        scenarioEntity.NecesitaCont = data.NecesitaCont;
-        scenarioEntity.ScorCreditInitial = data.ScorCreditInitial;
-        scenarioEntity.StresInitial = data.StresInitial;
-        scenarioEntity.PasiJson = data.PasiJson;
+        scenarioEntity.Name = data.Name;
+        scenarioEntity.Description = data.Description;
+        scenarioEntity.Difficulty = data.Difficulty;
+        scenarioEntity.InitialBalance = data.InitialBalance;
+        scenarioEntity.RequiresAccount = data.RequiresAccount;
+        scenarioEntity.InitialCreditScore = data.InitialCreditScore;
+        scenarioEntity.InitialStress = data.InitialStress;
+        scenarioEntity.StepsJson = data.StepsJson;
 
         try
         {
@@ -130,14 +135,14 @@ public class ScenarioAction
     {
         Id = scenarioEntity.Id,
         Slug = scenarioEntity.Slug,
-        Nume = scenarioEntity.Nume,
-        Descriere = scenarioEntity.Descriere,
-        Dificultate = scenarioEntity.Dificultate,
-        SoldInitial = scenarioEntity.SoldInitial,
-        NecesitaCont = scenarioEntity.NecesitaCont,
-        ScorCreditInitial = scenarioEntity.ScorCreditInitial,
-        StresInitial = scenarioEntity.StresInitial,
-        PasiJson = scenarioEntity.PasiJson,
+        Name = scenarioEntity.Name,
+        Description = scenarioEntity.Description,
+        Difficulty = scenarioEntity.Difficulty,
+        InitialBalance = scenarioEntity.InitialBalance,
+        RequiresAccount = scenarioEntity.RequiresAccount,
+        InitialCreditScore = scenarioEntity.InitialCreditScore,
+        InitialStress = scenarioEntity.InitialStress,
+        StepsJson = scenarioEntity.StepsJson,
         IsDeleted = scenarioEntity.IsDeleted
     };
 }

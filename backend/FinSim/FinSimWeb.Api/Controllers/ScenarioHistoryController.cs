@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.ScenarioHistory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,10 @@ public class ScenarioHistoryController : ControllerBase
 {
     private readonly IScenarioHistoryLogic _scenarioHistoryLogic;
 
-    public ScenarioHistoryController()
+    public ScenarioHistoryController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _scenarioHistoryLogic = bl.GetScenarioHistoryLogic();
+        _scenarioHistoryLogic = bl.GetScenarioHistoryLogic(context);
     }
 
     private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.Scenarios;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ScenarioLogic : ScenarioAction, IScenarioLogic
 {
+    public ScenarioLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateScenario(ScenarioCreateDto data)
     {
         var result = CreateScenarioAction(data);

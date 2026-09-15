@@ -3,8 +3,8 @@ namespace FinSim.Domain.Entities.Resources;
 public enum ResourceTheme
 {
     General = 0,
-    Buget = 1,
-    Economii = 2,
-    DeciziiFinanciare = 3,
-    Credite = 4
+    Budget = 1,
+    Savings = 2,
+    FinancialDecisions = 3,
+    Credit = 4
 }

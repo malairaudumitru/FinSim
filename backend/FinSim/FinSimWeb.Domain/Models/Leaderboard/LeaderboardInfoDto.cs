@@ -3,9 +3,9 @@
 public class LeaderboardInfoDto
 {
     public int Id { get; set; }
-    public string Nume { get; set; } = string.Empty;
-    public string Prenume { get; set; } = string.Empty;
-    public int Scor { get; set; }
+    public string LastName { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public int Score { get; set; }
     public int UserId { get; set; }
     public bool IsDeleted { get; set; }
 }

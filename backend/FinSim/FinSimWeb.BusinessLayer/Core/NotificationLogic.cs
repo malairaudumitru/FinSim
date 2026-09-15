@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Notifications;
 using FinSim.Domain.Models.Responses;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class NotificationLogic : NotificationAction, INotificationLogic
 {
+    public NotificationLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateNotification(NotificationCreateDto data)
     {
         var result = CreateNotificationAction(data);

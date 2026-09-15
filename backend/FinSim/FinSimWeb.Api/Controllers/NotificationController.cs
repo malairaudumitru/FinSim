@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,10 @@ public class NotificationController : ControllerBase
 {
     private readonly INotificationLogic _notificationLogic;
 
-    public NotificationController()
+    public NotificationController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _notificationLogic = bl.GetNotificationLogic();
+        _notificationLogic = bl.GetNotificationLogic(context);
     }
 
     private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

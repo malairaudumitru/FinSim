@@ -2,7 +2,7 @@
 
 public enum NotificationType
 {
-    Scenariu = 0,
-    Cont = 1,
-    Sistem = 2
+    Scenario = 0,
+    Account = 1,
+    System = 2
 }

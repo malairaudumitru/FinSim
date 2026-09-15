@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Auth;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.User;
@@ -8,6 +9,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class AuthLogic : AuthAction, IAuthLogic
 {
+    public AuthLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse Register(UserRegisterDto data)
     {
         var result = RegisterAction(data);

@@ -6,8 +6,8 @@ public class VideoResourceInfoDto
 {
     public int Id { get; set; }
     public string YoutubeId { get; set; } = string.Empty;
-    public string Titlu { get; set; } = string.Empty;
-    public string Sursa { get; set; } = string.Empty;
-    public ResourceTheme Tema { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
+    public ResourceTheme Theme { get; set; }
     public bool IsDeleted { get; set; }
 }

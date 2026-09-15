@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,10 @@ public class RegisterController : ControllerBase
 {
     private readonly IAuthLogic _authLogic;
 
-    public RegisterController()
+    public RegisterController(AppDbContext context)
     {
         var bl = new BusinessLogic();
-        _authLogic = bl.GetAuthLogic();
+        _authLogic = bl.GetAuthLogic(context);
     }
 
     [HttpPost]

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.ScenarioHistory;
 
 namespace FinSim.Domain.Entities.Scenarios;
 
@@ -12,24 +13,26 @@ public class ScenarioEntity
 
     [Required]
     [StringLength(150)]
-    public string Nume { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     [StringLength(600)]
-    public string Descriere { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 
-    public ScenarioDifficulty Dificultate { get; set; } = ScenarioDifficulty.Usor;
+    public ScenarioDifficulty Difficulty { get; set; } = ScenarioDifficulty.Easy;
 
-    public decimal SoldInitial { get; set; }
+    public decimal InitialBalance { get; set; }
 
-    public bool NecesitaCont { get; set; } = false;
+    public bool RequiresAccount { get; set; } = false;
 
-    public int? ScorCreditInitial { get; set; }
+    public int? InitialCreditScore { get; set; }
 
-    public int? StresInitial { get; set; }
+    public int? InitialStress { get; set; }
 
     [Required]
-    public string PasiJson { get; set; } = "[]";
+    public string StepsJson { get; set; } = "[]";
 
     public bool IsDeleted { get; set; } = false;
+
+    public ICollection<ScenarioHistoryEntity> Histories { get; set; } = new List<ScenarioHistoryEntity>();
 }

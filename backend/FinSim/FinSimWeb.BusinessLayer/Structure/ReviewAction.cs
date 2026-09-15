@@ -7,7 +7,12 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class ReviewAction
 {
-    private readonly ReviewDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public ReviewAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateReviewAction(ReviewCreateDto data)
     {
@@ -17,11 +22,11 @@ public class ReviewAction
 
         var reviewEntity = new ReviewEntity
         {
-            Nume = data.Nume,
-            Varsta = data.Varsta,
+            Name = data.Name,
+            Age = data.Age,
             Email = data.Email,
             Rating = data.Rating,
-            Mesaj = data.Mesaj
+            Message = data.Message
         };
 
         try
@@ -38,12 +43,12 @@ public class ReviewAction
 
     private ActionResponse ValidateReview(ReviewCreateDto data)
     {
-        if (string.IsNullOrEmpty(data.Nume))
-            return new ActionResponse { IsSuccess = false, Message = "Nume is empty" };
+        if (string.IsNullOrEmpty(data.Name))
+            return new ActionResponse { IsSuccess = false, Message = "Name is empty" };
         if (string.IsNullOrEmpty(data.Email))
             return new ActionResponse { IsSuccess = false, Message = "Email is empty" };
-        if (string.IsNullOrEmpty(data.Mesaj))
-            return new ActionResponse { IsSuccess = false, Message = "Mesaj is empty" };
+        if (string.IsNullOrEmpty(data.Message))
+            return new ActionResponse { IsSuccess = false, Message = "Message is empty" };
 
         return new ActionResponse { IsSuccess = true };
     }
@@ -67,11 +72,11 @@ public class ReviewAction
         if (!validate.IsSuccess)
             return false;
 
-        reviewEntity.Nume = data.Nume;
-        reviewEntity.Varsta = data.Varsta;
+        reviewEntity.Name = data.Name;
+        reviewEntity.Age = data.Age;
         reviewEntity.Email = data.Email;
         reviewEntity.Rating = data.Rating;
-        reviewEntity.Mesaj = data.Mesaj;
+        reviewEntity.Message = data.Message;
 
         try
         {
@@ -107,12 +112,12 @@ public class ReviewAction
     private static ReviewInfoDto MapToInfoDto(ReviewEntity reviewEntity) => new()
     {
         Id = reviewEntity.Id,
-        Nume = reviewEntity.Nume,
-        Varsta = reviewEntity.Varsta,
+        Name = reviewEntity.Name,
+        Age = reviewEntity.Age,
         Email = reviewEntity.Email,
         CreatedAt = reviewEntity.CreatedAt,
         Rating = reviewEntity.Rating,
-        Mesaj = reviewEntity.Mesaj,
+        Message = reviewEntity.Message,
         IsDeleted = reviewEntity.IsDeleted
     };
 }

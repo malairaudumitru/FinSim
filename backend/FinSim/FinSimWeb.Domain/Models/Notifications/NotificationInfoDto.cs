@@ -5,10 +5,10 @@ namespace FinSim.Domain.Models.Notifications;
 public class NotificationInfoDto
 {
     public int Id { get; set; }
-    public NotificationType Tip { get; set; }
-    public string Mesaj { get; set; } = string.Empty;
+    public NotificationType Type { get; set; }
+    public string Message { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public bool Citit { get; set; }
+    public bool IsRead { get; set; }
     public int UserId { get; set; }
     public bool IsDeleted { get; set; }
 }

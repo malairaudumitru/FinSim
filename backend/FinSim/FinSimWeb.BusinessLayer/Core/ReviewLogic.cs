@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.BusinessLayer.Structure;
+using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.Reviews;
 
@@ -7,6 +8,8 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ReviewLogic : ReviewAction, IReviewLogic
 {
+    public ReviewLogic(AppDbContext context) : base(context) { }
+
     public ActionResponse CreateReview(ReviewCreateDto data)
     {
         var result = CreateReviewAction(data);

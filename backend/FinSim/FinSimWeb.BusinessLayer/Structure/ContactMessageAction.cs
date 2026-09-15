@@ -7,20 +7,24 @@ namespace FinSim.BusinessLayer.Structure;
 
 public class ContactMessageAction
 {
-    private readonly ContactMessageDbContext _context = new();
+    protected readonly AppDbContext _context;
+
+    public ContactMessageAction(AppDbContext context)
+    {
+        _context = context;
+    }
 
     protected bool CreateContactMessageAction(int userId, ContactMessageCreateDto data)
     {
-        using var userContext = new UserDbContext();
-        var user = userContext.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
         if (user == null)
             return false;
 
         var contactMessageEntity = new ContactMessageEntity
         {
-            Nume = $"{user.Prenume} {user.Nume}",
+            Name = $"{user.FirstName} {user.LastName}",
             Email = user.Email,
-            Mesaj = data.Mesaj,
+            Message = data.Message,
             UserId = userId
         };
 
@@ -52,9 +56,9 @@ public class ContactMessageAction
         if (contactMessageEntity == null)
             return null;
 
-        if (!contactMessageEntity.Citit)
+        if (!contactMessageEntity.IsRead)
         {
-            contactMessageEntity.Citit = true;
+            contactMessageEntity.IsRead = true;
             _context.ContactMessages.Update(contactMessageEntity);
             _context.SaveChanges();
         }
@@ -68,9 +72,9 @@ public class ContactMessageAction
         if (contactMessageEntity == null || contactMessageEntity.IsDeleted)
             return false;
 
-        contactMessageEntity.Raspuns = data.Raspuns;
-        contactMessageEntity.RaspunsData = DateTime.UtcNow;
-        contactMessageEntity.Citit = true;
+        contactMessageEntity.Reply = data.Reply;
+        contactMessageEntity.ReplyDate = DateTime.UtcNow;
+        contactMessageEntity.IsRead = true;
 
         try
         {
@@ -87,16 +91,15 @@ public class ContactMessageAction
         }
     }
 
-    private static void NotifyUserOfReply(int userId)
+    private void NotifyUserOfReply(int userId)
     {
-        using var notificationContext = new NotificationDbContext();
-        notificationContext.Add(new NotificationEntity
+        _context.Add(new NotificationEntity
         {
-            Tip = NotificationType.Cont,
-            Mesaj = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
+            Type = NotificationType.Account,
+            Message = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
             UserId = userId
         });
-        notificationContext.SaveChanges();
+        _context.SaveChanges();
     }
 
     protected bool DeleteContactMessageAction(int id)
@@ -121,14 +124,14 @@ public class ContactMessageAction
     private static ContactMessageInfoDto MapToInfoDto(ContactMessageEntity contactMessageEntity) => new()
     {
         Id = contactMessageEntity.Id,
-        Nume = contactMessageEntity.Nume,
+        Name = contactMessageEntity.Name,
         Email = contactMessageEntity.Email,
-        Mesaj = contactMessageEntity.Mesaj,
+        Message = contactMessageEntity.Message,
         UserId = contactMessageEntity.UserId,
         CreatedAt = contactMessageEntity.CreatedAt,
-        Citit = contactMessageEntity.Citit,
-        Raspuns = contactMessageEntity.Raspuns,
-        RaspunsData = contactMessageEntity.RaspunsData,
+        IsRead = contactMessageEntity.IsRead,
+        Reply = contactMessageEntity.Reply,
+        ReplyDate = contactMessageEntity.ReplyDate,
         IsDeleted = contactMessageEntity.IsDeleted
     };
 }

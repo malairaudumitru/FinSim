@@ -6,11 +6,11 @@ namespace FinSim.Domain.Models.Notifications;
 public class NotificationCreateDto
 {
     [EnumDataType(typeof(NotificationType))]
-    public NotificationType Tip { get; set; } = NotificationType.Sistem;
+    public NotificationType Type { get; set; } = NotificationType.System;
 
     [Required]
     [StringLength(300)]
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]

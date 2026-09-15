@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.User;
 
 namespace FinSim.Domain.Entities.Messages;
 
@@ -8,7 +9,7 @@ public class ContactMessageEntity
 
     [Required]
     [StringLength(50)]
-    public string Nume { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
@@ -17,19 +18,21 @@ public class ContactMessageEntity
 
     [Required]
     [StringLength(1000, MinimumLength = 25)]
-    public string Mesaj { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
 
     [Required]
     public int UserId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public bool Citit { get; set; } = false;
+    public bool IsRead { get; set; } = false;
 
     [StringLength(1000)]
-    public string? Raspuns { get; set; }
+    public string? Reply { get; set; }
 
-    public DateTime? RaspunsData { get; set; }
+    public DateTime? ReplyDate { get; set; }
 
     public bool IsDeleted { get; set; } = false;
+
+    public UserEntity? User { get; set; }
 }

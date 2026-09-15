@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using FinSim.Domain.Entities.Scenarios;
+using FinSim.Domain.Entities.User;
 
 namespace FinSim.Domain.Entities.ScenarioHistory;
 
@@ -14,9 +16,12 @@ public class ScenarioHistoryEntity
 
     [Required]
     [Range(0, 100)]
-    public int Scor { get; set; }
+    public int Score { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool IsDeleted { get; set; } = false;
+
+    public UserEntity? User { get; set; }
+    public ScenarioEntity? Scenario { get; set; }
 }
