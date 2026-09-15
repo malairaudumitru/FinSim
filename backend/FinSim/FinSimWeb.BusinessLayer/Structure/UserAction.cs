@@ -79,7 +79,7 @@ public class UserAction
 
     protected bool UpdateUserAction(int id, UserCreateDto data)
     {
-        var userEntity = _context.Users.Find(id);
+        var userEntity = _context.Users.Find(id); // in loc de find firstordefault
         if (userEntity == null || userEntity.IsDeleted)
             return false;
 

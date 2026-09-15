@@ -10,4 +10,5 @@ public interface IAuthLogic
     ActionResponse Login(UserLoginDto data);
     ActionResponse Refresh(RefreshTokenRequestDto data);
     ActionResponse Logout(RefreshTokenRequestDto data);
+    ActionResponse ChangePassword(int userId, ChangePasswordDto data);
 }

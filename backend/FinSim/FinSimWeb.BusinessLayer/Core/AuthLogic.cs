@@ -39,4 +39,12 @@ public class AuthLogic : AuthAction, IAuthLogic
             return ActionResponse.BadRequest("Invalid refresh token");
         return ActionResponse.Ok("Logged out successfully");
     }
+
+    public ActionResponse ChangePassword(int userId, ChangePasswordDto data)
+    {
+        var result = ChangePasswordAction(userId, data);
+        if (result == false)
+            return ActionResponse.BadRequest("Current password is incorrect");
+        return ActionResponse.Ok("Password changed successfully");
+    }
 }

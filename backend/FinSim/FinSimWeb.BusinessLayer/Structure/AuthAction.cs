@@ -76,6 +76,30 @@ public class AuthAction
         return GenerateAuthResponse(user);
     }
 
+    protected bool ChangePasswordAction(int userId, ChangePasswordDto data)
+    {
+        using var userContext = new UserDbContext();
+        var user = userContext.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        if (user == null)
+            return false;
+
+        if (!PasswordHasher.Verify(data.CurrentPassword, user.Password))
+            return false;
+
+        user.Password = PasswordHasher.Hash(data.NewPassword);
+
+        try
+        {
+            userContext.Users.Update(user);
+            userContext.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     protected bool LogoutAction(string refreshToken)
     {
         using var refreshContext = new RefreshTokenDbContext();
