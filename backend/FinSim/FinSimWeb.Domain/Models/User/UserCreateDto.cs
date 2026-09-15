@@ -32,6 +32,7 @@ public class UserCreateDto
     
     public int TotalScore { get; set; } = 0;
     
+    [Required]
     public DateOnly? BirthDate { get; set; }
 
 }

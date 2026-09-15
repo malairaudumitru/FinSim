@@ -21,5 +21,6 @@ public class UserRegisterDto
     [StringLength(50, MinimumLength = 8)]
     public string Password { get; set; } = string.Empty;
     
+    [Required]
     public DateOnly? BirthDate { get; set; }
 }
