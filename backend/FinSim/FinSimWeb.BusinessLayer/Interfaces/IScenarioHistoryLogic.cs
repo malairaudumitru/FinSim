@@ -5,9 +5,9 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IScenarioHistoryLogic
 {
-    ActionResponse CreateScenarioHistory(int userId, ScenarioHistoryCreateDto data);
-    ActionResponse GetScenarioHistoryList();
-    ActionResponse GetScenarioHistoryByUserId(int userId);
-    ActionResponse UpdateScenarioHistory(int id, ScenarioHistoryUpdateDto data);
-    ActionResponse DeleteScenarioHistory(int id);
+    Task<ActionResponse> CreateScenarioHistoryAsync(int userId, ScenarioHistoryCreateDto data);
+    Task<ActionResponse> GetScenarioHistoryListAsync();
+    Task<ActionResponse> GetScenarioHistoryByUserIdAsync(int userId);
+    Task<ActionResponse> UpdateScenarioHistoryAsync(int id, ScenarioHistoryUpdateDto data);
+    Task<ActionResponse> DeleteScenarioHistoryAsync(int id);
 }

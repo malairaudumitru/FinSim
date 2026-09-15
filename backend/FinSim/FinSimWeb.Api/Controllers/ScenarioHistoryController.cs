@@ -25,9 +25,9 @@ public class ScenarioHistoryController : ControllerBase
     private bool IsAdmin => User.IsInRole("Admin");
 
     [HttpPost("create")]
-    public IActionResult CreateScenarioHistory([FromBody] ScenarioHistoryCreateDto scenarioHistoryInfo)
+    public async Task<IActionResult> CreateScenarioHistory([FromBody] ScenarioHistoryCreateDto scenarioHistoryInfo)
     {
-        var result = _scenarioHistoryLogic.CreateScenarioHistory(CurrentUserId, scenarioHistoryInfo);
+        var result = await _scenarioHistoryLogic.CreateScenarioHistoryAsync(CurrentUserId, scenarioHistoryInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -36,9 +36,9 @@ public class ScenarioHistoryController : ControllerBase
 
     [HttpGet("list")]
     [Authorize(Roles = "Admin")]
-    public IActionResult GetScenarioHistoryList()
+    public async Task<IActionResult> GetScenarioHistoryList()
     {
-        var result = _scenarioHistoryLogic.GetScenarioHistoryList();
+        var result = await _scenarioHistoryLogic.GetScenarioHistoryListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -46,12 +46,12 @@ public class ScenarioHistoryController : ControllerBase
     }
 
     [HttpGet("by-user/{userId}")]
-    public IActionResult GetScenarioHistoryByUserId([FromRoute] int userId)
+    public async Task<IActionResult> GetScenarioHistoryByUserId([FromRoute] int userId)
     {
         if (!IsAdmin && userId != CurrentUserId)
             return Forbid();
 
-        var result = _scenarioHistoryLogic.GetScenarioHistoryByUserId(userId);
+        var result = await _scenarioHistoryLogic.GetScenarioHistoryByUserIdAsync(userId);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -60,9 +60,9 @@ public class ScenarioHistoryController : ControllerBase
 
     [HttpPut("update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateScenarioHistory([FromRoute] int id, [FromBody] ScenarioHistoryUpdateDto scenarioHistoryInfo)
+    public async Task<IActionResult> UpdateScenarioHistory([FromRoute] int id, [FromBody] ScenarioHistoryUpdateDto scenarioHistoryInfo)
     {
-        var result = _scenarioHistoryLogic.UpdateScenarioHistory(id, scenarioHistoryInfo);
+        var result = await _scenarioHistoryLogic.UpdateScenarioHistoryAsync(id, scenarioHistoryInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -71,9 +71,9 @@ public class ScenarioHistoryController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteScenarioHistory([FromRoute] int id)
+    public async Task<IActionResult> DeleteScenarioHistory([FromRoute] int id)
     {
-        var result = _scenarioHistoryLogic.DeleteScenarioHistory(id);
+        var result = await _scenarioHistoryLogic.DeleteScenarioHistoryAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

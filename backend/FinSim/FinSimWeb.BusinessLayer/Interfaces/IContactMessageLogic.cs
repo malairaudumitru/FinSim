@@ -5,9 +5,9 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IContactMessageLogic
 {
-    ActionResponse CreateContactMessage(int userId, ContactMessageCreateDto data);
-    ActionResponse GetContactMessageList();
-    ActionResponse GetContactMessageById(int id);
-    ActionResponse ReplyToContactMessage(int id, ContactMessageReplyDto data);
-    ActionResponse DeleteContactMessage(int id);
+    Task<ActionResponse> CreateContactMessageAsync(int userId, ContactMessageCreateDto data);
+    Task<ActionResponse> GetContactMessageListAsync();
+    Task<ActionResponse> GetContactMessageByIdAsync(int id);
+    Task<ActionResponse> ReplyToContactMessageAsync(int id, ContactMessageReplyDto data);
+    Task<ActionResponse> DeleteContactMessageAsync(int id);
 }

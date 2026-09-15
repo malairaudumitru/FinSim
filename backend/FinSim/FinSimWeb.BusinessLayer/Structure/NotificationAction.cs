@@ -2,6 +2,7 @@ using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Notifications;
 using FinSim.Domain.Models.Notifications;
 using FinSim.Domain.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -14,9 +15,9 @@ public class NotificationAction
         _context = context;
     }
 
-    protected bool CreateNotificationAction(NotificationCreateDto data)
+    protected async Task<bool> CreateNotificationActionAsync(NotificationCreateDto data)
     {
-        var userId = ResolveUserIdByEmail(data.Email);
+        var userId = await ResolveUserIdByEmailAsync(data.Email);
         if (userId == null)
             return false;
 
@@ -30,7 +31,7 @@ public class NotificationAction
         try
         {
             _context.Add(notificationEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -39,37 +40,37 @@ public class NotificationAction
         }
     }
 
-    private int? ResolveUserIdByEmail(string email)
+    private async Task<int?> ResolveUserIdByEmailAsync(string email)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Email == email && u.IsDeleted == false);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
         return user?.Id;
     }
 
-    protected List<NotificationInfoDto> GetNotificationListAction()
+    protected async Task<List<NotificationInfoDto>> GetNotificationListActionAsync()
     {
-        return _context.Notifications
+        return await _context.Notifications
             .Where(x => x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
             .Select(notificationEntity => MapToInfoDto(notificationEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected List<NotificationInfoDto> GetNotificationByUserIdAction(int userId)
+    protected async Task<List<NotificationInfoDto>> GetNotificationByUserIdActionAsync(int userId)
     {
-        return _context.Notifications
+        return await _context.Notifications
             .Where(x => x.UserId == userId && x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
             .Select(notificationEntity => MapToInfoDto(notificationEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateNotificationAction(int id, NotificationCreateDto data)
+    protected async Task<bool> UpdateNotificationActionAsync(int id, NotificationCreateDto data)
     {
-        var notificationEntity = _context.Notifications.Find(id);
+        var notificationEntity = await _context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         if (notificationEntity == null || notificationEntity.IsDeleted)
             return false;
 
-        var userId = ResolveUserIdByEmail(data.Email);
+        var userId = await ResolveUserIdByEmailAsync(data.Email);
         if (userId == null)
             return false;
 
@@ -80,7 +81,7 @@ public class NotificationAction
         try
         {
             _context.Notifications.Update(notificationEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -89,18 +90,18 @@ public class NotificationAction
         }
     }
 
-    protected int? GetNotificationOwnerUserIdAction(int id)
+    protected async Task<int?> GetNotificationOwnerUserIdActionAsync(int id)
     {
-        var notificationEntity = _context.Notifications.Find(id);
+        var notificationEntity = await _context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         if (notificationEntity == null || notificationEntity.IsDeleted)
             return null;
 
         return notificationEntity.UserId;
     }
 
-    protected bool UpdateReadStatusAction(int id)
+    protected async Task<bool> UpdateReadStatusActionAsync(int id)
     {
-        var notificationEntity = _context.Notifications.Find(id);
+        var notificationEntity = await _context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         if (notificationEntity == null || notificationEntity.IsDeleted)
             return false;
 
@@ -109,7 +110,7 @@ public class NotificationAction
         try
         {
             _context.Notifications.Update(notificationEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -118,11 +119,11 @@ public class NotificationAction
         }
     }
 
-    protected bool MarkAllAsReadAction(int userId)
+    protected async Task<bool> MarkAllAsReadActionAsync(int userId)
     {
-        var notifications = _context.Notifications
+        var notifications = await _context.Notifications
             .Where(x => x.UserId == userId && x.IsDeleted == false && x.IsRead == false)
-            .ToList();
+            .ToListAsync();
 
         foreach (var notificationEntity in notifications)
             notificationEntity.IsRead = true;
@@ -130,7 +131,7 @@ public class NotificationAction
         try
         {
             _context.Notifications.UpdateRange(notifications);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -139,9 +140,9 @@ public class NotificationAction
         }
     }
 
-    protected bool DeleteNotificationAction(int id)
+    protected async Task<bool> DeleteNotificationActionAsync(int id)
     {
-        var notificationEntity = _context.Notifications.Find(id);
+        var notificationEntity = await _context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         if (notificationEntity == null)
             return false;
 
@@ -149,7 +150,7 @@ public class NotificationAction
         {
             notificationEntity.IsDeleted = true;
             _context.Notifications.Update(notificationEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

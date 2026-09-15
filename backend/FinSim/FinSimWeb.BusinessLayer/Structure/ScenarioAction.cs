@@ -2,6 +2,7 @@ using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Scenarios;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.Scenarios;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -14,9 +15,9 @@ public class ScenarioAction
         _context = context;
     }
 
-    protected bool CreateScenarioAction(ScenarioCreateDto data)
+    protected async Task<bool> CreateScenarioActionAsync(ScenarioCreateDto data)
     {
-        var validate = ValidateScenario(data);
+        var validate = await ValidateScenarioAsync(data);
         if (!validate.IsSuccess)
             return false;
 
@@ -36,7 +37,7 @@ public class ScenarioAction
         try
         {
             _context.Add(scenarioEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -45,7 +46,7 @@ public class ScenarioAction
         }
     }
 
-    private ActionResponse ValidateScenario(ScenarioCreateDto data, int? excludingId = null)
+    private async Task<ActionResponse> ValidateScenarioAsync(ScenarioCreateDto data, int? excludingId = null)
     {
         if (string.IsNullOrEmpty(data.Slug))
             return new ActionResponse { IsSuccess = false, Message = "Slug is empty" };
@@ -54,7 +55,7 @@ public class ScenarioAction
         if (string.IsNullOrEmpty(data.Description))
             return new ActionResponse { IsSuccess = false, Message = "Description is empty" };
 
-        var duplicate = _context.Scenarios.Any(s =>
+        var duplicate = await _context.Scenarios.AnyAsync(s =>
             s.Slug == data.Slug && s.IsDeleted == false && s.Id != (excludingId ?? 0));
         if (duplicate)
             return new ActionResponse { IsSuccess = false, Message = "Slug already in use" };
@@ -62,31 +63,31 @@ public class ScenarioAction
         return new ActionResponse { IsSuccess = true };
     }
 
-    protected ScenarioInfoDto? GetScenarioBySlugAction(string slug)
+    protected async Task<ScenarioInfoDto?> GetScenarioBySlugActionAsync(string slug)
     {
-        var scenarioEntity = _context.Scenarios
-            .FirstOrDefault(x => x.Slug == slug && x.IsDeleted == false);
+        var scenarioEntity = await _context.Scenarios
+            .FirstOrDefaultAsync(x => x.Slug == slug && x.IsDeleted == false);
         if (scenarioEntity == null)
             return null;
 
         return MapToInfoDto(scenarioEntity);
     }
 
-    protected List<ScenarioInfoDto> GetScenarioListAction()
+    protected async Task<List<ScenarioInfoDto>> GetScenarioListActionAsync()
     {
-        return _context.Scenarios
+        return await _context.Scenarios
             .Where(x => x.IsDeleted == false)
             .Select(scenarioEntity => MapToInfoDto(scenarioEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateScenarioAction(int id, ScenarioCreateDto data)
+    protected async Task<bool> UpdateScenarioActionAsync(int id, ScenarioCreateDto data)
     {
-        var scenarioEntity = _context.Scenarios.Find(id);
+        var scenarioEntity = await _context.Scenarios.FirstOrDefaultAsync(x => x.Id == id);
         if (scenarioEntity == null || scenarioEntity.IsDeleted)
             return false;
 
-        var validate = ValidateScenario(data, excludingId: id);
+        var validate = await ValidateScenarioAsync(data, excludingId: id);
         if (!validate.IsSuccess)
             return false;
 
@@ -103,7 +104,7 @@ public class ScenarioAction
         try
         {
             _context.Scenarios.Update(scenarioEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -112,9 +113,9 @@ public class ScenarioAction
         }
     }
 
-    protected bool DeleteScenarioAction(int id)
+    protected async Task<bool> DeleteScenarioActionAsync(int id)
     {
-        var scenarioEntity = _context.Scenarios.Find(id);
+        var scenarioEntity = await _context.Scenarios.FirstOrDefaultAsync(x => x.Id == id);
         if (scenarioEntity == null)
             return false;
 
@@ -122,7 +123,7 @@ public class ScenarioAction
         {
             scenarioEntity.IsDeleted = true;
             _context.Scenarios.Update(scenarioEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

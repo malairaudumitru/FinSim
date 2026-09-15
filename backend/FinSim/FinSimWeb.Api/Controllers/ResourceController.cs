@@ -20,9 +20,9 @@ public class ResourceController : ControllerBase
     }
 
     [HttpGet("videos")]
-    public IActionResult GetVideoList()
+    public async Task<IActionResult> GetVideoList()
     {
-        var result = _resourceLogic.GetVideoList();
+        var result = await _resourceLogic.GetVideoListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -31,9 +31,9 @@ public class ResourceController : ControllerBase
 
     [HttpPost("videos/create")]
     [Authorize(Roles = "Admin")]
-    public IActionResult CreateVideo([FromBody] VideoResourceCreateDto videoInfo)
+    public async Task<IActionResult> CreateVideo([FromBody] VideoResourceCreateDto videoInfo)
     {
-        var result = _resourceLogic.CreateVideo(videoInfo);
+        var result = await _resourceLogic.CreateVideoAsync(videoInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -42,9 +42,9 @@ public class ResourceController : ControllerBase
 
     [HttpPut("videos/update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateVideo([FromRoute] int id, [FromBody] VideoResourceCreateDto videoInfo)
+    public async Task<IActionResult> UpdateVideo([FromRoute] int id, [FromBody] VideoResourceCreateDto videoInfo)
     {
-        var result = _resourceLogic.UpdateVideo(id, videoInfo);
+        var result = await _resourceLogic.UpdateVideoAsync(id, videoInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -53,9 +53,9 @@ public class ResourceController : ControllerBase
 
     [HttpDelete("videos/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteVideo([FromRoute] int id)
+    public async Task<IActionResult> DeleteVideo([FromRoute] int id)
     {
-        var result = _resourceLogic.DeleteVideo(id);
+        var result = await _resourceLogic.DeleteVideoAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -63,9 +63,9 @@ public class ResourceController : ControllerBase
     }
 
     [HttpGet("pdfs")]
-    public IActionResult GetPdfList()
+    public async Task<IActionResult> GetPdfList()
     {
-        var result = _resourceLogic.GetPdfList();
+        var result = await _resourceLogic.GetPdfListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -103,9 +103,9 @@ public class ResourceController : ControllerBase
 
     [HttpPost("pdfs/create")]
     [Authorize(Roles = "Admin")]
-    public IActionResult CreatePdf([FromBody] PdfResourceCreateDto pdfInfo)
+    public async Task<IActionResult> CreatePdf([FromBody] PdfResourceCreateDto pdfInfo)
     {
-        var result = _resourceLogic.CreatePdf(pdfInfo);
+        var result = await _resourceLogic.CreatePdfAsync(pdfInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -114,9 +114,9 @@ public class ResourceController : ControllerBase
 
     [HttpPut("pdfs/update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdatePdf([FromRoute] int id, [FromBody] PdfResourceCreateDto pdfInfo)
+    public async Task<IActionResult> UpdatePdf([FromRoute] int id, [FromBody] PdfResourceCreateDto pdfInfo)
     {
-        var result = _resourceLogic.UpdatePdf(id, pdfInfo);
+        var result = await _resourceLogic.UpdatePdfAsync(id, pdfInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -125,9 +125,9 @@ public class ResourceController : ControllerBase
 
     [HttpDelete("pdfs/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeletePdf([FromRoute] int id)
+    public async Task<IActionResult> DeletePdf([FromRoute] int id)
     {
-        var result = _resourceLogic.DeletePdf(id);
+        var result = await _resourceLogic.DeletePdfAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

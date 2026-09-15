@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Resources;
 using FinSim.Domain.Models.Resources;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -37,7 +38,7 @@ public class ResourceAction
         return trimmed;
     }
 
-    protected bool CreateVideoAction(VideoResourceCreateDto data)
+    protected async Task<bool> CreateVideoActionAsync(VideoResourceCreateDto data)
     {
         var videoResourceEntity = new VideoResourceEntity
         {
@@ -50,7 +51,7 @@ public class ResourceAction
         try
         {
             _context.Add(videoResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -59,17 +60,17 @@ public class ResourceAction
         }
     }
 
-    protected List<VideoResourceInfoDto> GetVideoListAction()
+    protected async Task<List<VideoResourceInfoDto>> GetVideoListActionAsync()
     {
-        return _context.VideoResources
+        return await _context.VideoResources
             .Where(x => x.IsDeleted == false)
             .Select(videoResourceEntity => MapToInfoDto(videoResourceEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateVideoAction(int id, VideoResourceCreateDto data)
+    protected async Task<bool> UpdateVideoActionAsync(int id, VideoResourceCreateDto data)
     {
-        var videoResourceEntity = _context.VideoResources.Find(id);
+        var videoResourceEntity = await _context.VideoResources.FirstOrDefaultAsync(x => x.Id == id);
         if (videoResourceEntity == null || videoResourceEntity.IsDeleted)
             return false;
 
@@ -81,7 +82,7 @@ public class ResourceAction
         try
         {
             _context.VideoResources.Update(videoResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -90,9 +91,9 @@ public class ResourceAction
         }
     }
 
-    protected bool DeleteVideoAction(int id)
+    protected async Task<bool> DeleteVideoActionAsync(int id)
     {
-        var videoResourceEntity = _context.VideoResources.Find(id);
+        var videoResourceEntity = await _context.VideoResources.FirstOrDefaultAsync(x => x.Id == id);
         if (videoResourceEntity == null)
             return false;
 
@@ -100,7 +101,7 @@ public class ResourceAction
         {
             videoResourceEntity.IsDeleted = true;
             _context.VideoResources.Update(videoResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -109,7 +110,7 @@ public class ResourceAction
         }
     }
 
-    protected bool CreatePdfAction(PdfResourceCreateDto data)
+    protected async Task<bool> CreatePdfActionAsync(PdfResourceCreateDto data)
     {
         var pdfResourceEntity = new PdfResourceEntity
         {
@@ -122,7 +123,7 @@ public class ResourceAction
         try
         {
             _context.Add(pdfResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -131,17 +132,17 @@ public class ResourceAction
         }
     }
 
-    protected List<PdfResourceInfoDto> GetPdfListAction()
+    protected async Task<List<PdfResourceInfoDto>> GetPdfListActionAsync()
     {
-        return _context.PdfResources
+        return await _context.PdfResources
             .Where(x => x.IsDeleted == false)
             .Select(pdfResourceEntity => MapToInfoDto(pdfResourceEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdatePdfAction(int id, PdfResourceCreateDto data)
+    protected async Task<bool> UpdatePdfActionAsync(int id, PdfResourceCreateDto data)
     {
-        var pdfResourceEntity = _context.PdfResources.Find(id);
+        var pdfResourceEntity = await _context.PdfResources.FirstOrDefaultAsync(x => x.Id == id);
         if (pdfResourceEntity == null || pdfResourceEntity.IsDeleted)
             return false;
 
@@ -153,7 +154,7 @@ public class ResourceAction
         try
         {
             _context.PdfResources.Update(pdfResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -162,9 +163,9 @@ public class ResourceAction
         }
     }
 
-    protected bool DeletePdfAction(int id)
+    protected async Task<bool> DeletePdfActionAsync(int id)
     {
-        var pdfResourceEntity = _context.PdfResources.Find(id);
+        var pdfResourceEntity = await _context.PdfResources.FirstOrDefaultAsync(x => x.Id == id);
         if (pdfResourceEntity == null)
             return false;
 
@@ -172,7 +173,7 @@ public class ResourceAction
         {
             pdfResourceEntity.IsDeleted = true;
             _context.PdfResources.Update(pdfResourceEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

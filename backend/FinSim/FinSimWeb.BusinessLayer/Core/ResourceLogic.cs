@@ -10,61 +10,61 @@ public class ResourceLogic : ResourceAction, IResourceLogic
 {
     public ResourceLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateVideo(VideoResourceCreateDto data)
+    public async Task<ActionResponse> CreateVideoAsync(VideoResourceCreateDto data)
     {
-        var result = CreateVideoAction(data);
+        var result = await CreateVideoActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating video resource");
         return ActionResponse.Ok("Video resource created successfully");
     }
 
-    public ActionResponse GetVideoList()
+    public async Task<ActionResponse> GetVideoListAsync()
     {
-        var result = GetVideoListAction();
+        var result = await GetVideoListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateVideo(int id, VideoResourceCreateDto data)
+    public async Task<ActionResponse> UpdateVideoAsync(int id, VideoResourceCreateDto data)
     {
-        var result = UpdateVideoAction(id, data);
+        var result = await UpdateVideoActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating video resource");
         return ActionResponse.Ok("Video resource updated successfully");
     }
 
-    public ActionResponse DeleteVideo(int id)
+    public async Task<ActionResponse> DeleteVideoAsync(int id)
     {
-        var result = DeleteVideoAction(id);
+        var result = await DeleteVideoActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Video resource not found");
         return ActionResponse.Ok("Video resource deleted successfully");
     }
 
-    public ActionResponse CreatePdf(PdfResourceCreateDto data)
+    public async Task<ActionResponse> CreatePdfAsync(PdfResourceCreateDto data)
     {
-        var result = CreatePdfAction(data);
+        var result = await CreatePdfActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating pdf resource");
         return ActionResponse.Ok("Pdf resource created successfully");
     }
 
-    public ActionResponse GetPdfList()
+    public async Task<ActionResponse> GetPdfListAsync()
     {
-        var result = GetPdfListAction();
+        var result = await GetPdfListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdatePdf(int id, PdfResourceCreateDto data)
+    public async Task<ActionResponse> UpdatePdfAsync(int id, PdfResourceCreateDto data)
     {
-        var result = UpdatePdfAction(id, data);
+        var result = await UpdatePdfActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating pdf resource");
         return ActionResponse.Ok("Pdf resource updated successfully");
     }
 
-    public ActionResponse DeletePdf(int id)
+    public async Task<ActionResponse> DeletePdfAsync(int id)
     {
-        var result = DeletePdfAction(id);
+        var result = await DeletePdfActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Pdf resource not found");
         return ActionResponse.Ok("Pdf resource deleted successfully");

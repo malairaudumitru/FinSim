@@ -26,9 +26,9 @@ public class UserController : ControllerBase
 
     [HttpPost("create")]
     [Authorize(Roles = "Admin")]
-    public IActionResult CreateUser([FromBody] UserCreateDto userInfo)
+    public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userInfo)
     {
-        var result = _userLogic.CreateUser(userInfo);
+        var result = await _userLogic.CreateUserAsync(userInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -37,9 +37,9 @@ public class UserController : ControllerBase
 
     [HttpGet("list")]
     [Authorize(Roles = "Admin")]
-    public IActionResult GetUserList()
+    public async Task<IActionResult> GetUserList()
     {
-        var result = _userLogic.GetUserList();
+        var result = await _userLogic.GetUserListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -47,12 +47,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetUserById([FromRoute] int id)
+    public async Task<IActionResult> GetUserById([FromRoute] int id)
     {
         if (!IsAdmin && id != CurrentUserId)
             return Forbid();
 
-        var result = _userLogic.GetUserById(id);
+        var result = await _userLogic.GetUserByIdAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -60,12 +60,12 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public IActionResult UpdateUser([FromRoute] int id, [FromBody] UserCreateDto userInfo)
+    public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UserCreateDto userInfo)
     {
         if (!IsAdmin && id != CurrentUserId)
             return Forbid();
 
-        var result = _userLogic.UpdateUser(id, userInfo);
+        var result = await _userLogic.UpdateUserAsync(id, userInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -74,9 +74,9 @@ public class UserController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteUser([FromRoute] int id)
+    public async Task<IActionResult> DeleteUser([FromRoute] int id)
     {
-        var result = _userLogic.DeleteUser(id);
+        var result = await _userLogic.DeleteUserAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -85,9 +85,9 @@ public class UserController : ControllerBase
 
     [HttpPatch("{id}/status")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateUserStatus([FromRoute] int id, [FromBody] UpdateUserStatusDto dto)
+    public async Task<IActionResult> UpdateUserStatus([FromRoute] int id, [FromBody] UpdateUserStatusDto dto)
     {
-        var result = _userLogic.UpdateUserStatus(id, dto.Status);
+        var result = await _userLogic.UpdateUserStatusAsync(id, dto.Status);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

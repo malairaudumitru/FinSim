@@ -1,6 +1,7 @@
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Leaderboard;
 using FinSim.Domain.Models.Leaderboard;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -13,18 +14,18 @@ public class LeaderboardAction
         _context = context;
     }
 
-    protected List<LeaderboardInfoDto> GetLeaderboardListAction()
+    protected async Task<List<LeaderboardInfoDto>> GetLeaderboardListActionAsync()
     {
-        return _context.Leaderboard
+        return await _context.Leaderboard
             .Where(x => x.IsDeleted == false)
             .OrderByDescending(x => x.Score)
             .Select(leaderboardEntity => MapToInfoDto(leaderboardEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool DeleteLeaderboardEntryAction(int id)
+    protected async Task<bool> DeleteLeaderboardEntryActionAsync(int id)
     {
-        var leaderboardEntity = _context.Leaderboard.Find(id);
+        var leaderboardEntity = await _context.Leaderboard.FirstOrDefaultAsync(x => x.Id == id);
         if (leaderboardEntity == null)
             return false;
 
@@ -32,7 +33,7 @@ public class LeaderboardAction
         {
             leaderboardEntity.IsDeleted = true;
             _context.Leaderboard.Update(leaderboardEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

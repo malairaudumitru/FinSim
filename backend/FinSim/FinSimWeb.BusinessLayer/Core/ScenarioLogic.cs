@@ -10,39 +10,39 @@ public class ScenarioLogic : ScenarioAction, IScenarioLogic
 {
     public ScenarioLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateScenario(ScenarioCreateDto data)
+    public async Task<ActionResponse> CreateScenarioAsync(ScenarioCreateDto data)
     {
-        var result = CreateScenarioAction(data);
+        var result = await CreateScenarioActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating scenario");
         return ActionResponse.Ok("Scenario created successfully");
     }
 
-    public ActionResponse GetScenarioBySlug(string slug)
+    public async Task<ActionResponse> GetScenarioBySlugAsync(string slug)
     {
-        var result = GetScenarioBySlugAction(slug);
+        var result = await GetScenarioBySlugActionAsync(slug);
         if (result == null)
             return ActionResponse.NotFound("Scenario not found");
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse GetScenarioList()
+    public async Task<ActionResponse> GetScenarioListAsync()
     {
-        var result = GetScenarioListAction();
+        var result = await GetScenarioListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateScenario(int id, ScenarioCreateDto data)
+    public async Task<ActionResponse> UpdateScenarioAsync(int id, ScenarioCreateDto data)
     {
-        var result = UpdateScenarioAction(id, data);
+        var result = await UpdateScenarioActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating scenario");
         return ActionResponse.Ok("Scenario updated successfully");
     }
 
-    public ActionResponse DeleteScenario(int id)
+    public async Task<ActionResponse> DeleteScenarioAsync(int id)
     {
-        var result = DeleteScenarioAction(id);
+        var result = await DeleteScenarioActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Scenario not found");
         return ActionResponse.Ok("Scenario deleted successfully");

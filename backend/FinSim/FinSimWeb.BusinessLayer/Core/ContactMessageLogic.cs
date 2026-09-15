@@ -10,39 +10,39 @@ public class ContactMessageLogic : ContactMessageAction, IContactMessageLogic
 {
     public ContactMessageLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateContactMessage(int userId, ContactMessageCreateDto data)
+    public async Task<ActionResponse> CreateContactMessageAsync(int userId, ContactMessageCreateDto data)
     {
-        var result = CreateContactMessageAction(userId, data);
+        var result = await CreateContactMessageActionAsync(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating contact message");
         return ActionResponse.Ok("Contact message created successfully");
     }
 
-    public ActionResponse GetContactMessageList()
+    public async Task<ActionResponse> GetContactMessageListAsync()
     {
-        var result = GetContactMessageListAction();
+        var result = await GetContactMessageListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse GetContactMessageById(int id)
+    public async Task<ActionResponse> GetContactMessageByIdAsync(int id)
     {
-        var result = GetContactMessageByIdAction(id);
+        var result = await GetContactMessageByIdActionAsync(id);
         if (result == null)
             return ActionResponse.NotFound("Contact message not found");
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse ReplyToContactMessage(int id, ContactMessageReplyDto data)
+    public async Task<ActionResponse> ReplyToContactMessageAsync(int id, ContactMessageReplyDto data)
     {
-        var result = ReplyToContactMessageAction(id, data);
+        var result = await ReplyToContactMessageActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error replying to contact message");
         return ActionResponse.Ok("Reply sent successfully");
     }
 
-    public ActionResponse DeleteContactMessage(int id)
+    public async Task<ActionResponse> DeleteContactMessageAsync(int id)
     {
-        var result = DeleteContactMessageAction(id);
+        var result = await DeleteContactMessageActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Contact message not found");
         return ActionResponse.Ok("Contact message deleted successfully");

@@ -5,9 +5,9 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IScenarioLogic
 {
-    ActionResponse CreateScenario(ScenarioCreateDto data);
-    ActionResponse GetScenarioBySlug(string slug);
-    ActionResponse GetScenarioList();
-    ActionResponse UpdateScenario(int id, ScenarioCreateDto data);
-    ActionResponse DeleteScenario(int id);
+    Task<ActionResponse> CreateScenarioAsync(ScenarioCreateDto data);
+    Task<ActionResponse> GetScenarioBySlugAsync(string slug);
+    Task<ActionResponse> GetScenarioListAsync();
+    Task<ActionResponse> UpdateScenarioAsync(int id, ScenarioCreateDto data);
+    Task<ActionResponse> DeleteScenarioAsync(int id);
 }

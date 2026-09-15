@@ -21,9 +21,9 @@ public class RegisterController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Register([FromBody] UserRegisterDto registerInfo)
+    public async Task<IActionResult> Register([FromBody] UserRegisterDto registerInfo)
     {
-        var result = _authLogic.Register(registerInfo);
+        var result = await _authLogic.RegisterAsync(registerInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

@@ -22,11 +22,11 @@ public class ContactMessageController : ControllerBase
 
     [HttpPost("create")]
     [Authorize]
-    public IActionResult CreateContactMessage([FromBody] ContactMessageCreateDto messageInfo)
+    public async Task<IActionResult> CreateContactMessage([FromBody] ContactMessageCreateDto messageInfo)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        var result = _contactMessageLogic.CreateContactMessage(userId, messageInfo);
+        var result = await _contactMessageLogic.CreateContactMessageAsync(userId, messageInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -35,9 +35,9 @@ public class ContactMessageController : ControllerBase
 
     [HttpGet("list")]
     [Authorize(Roles = "Admin")]
-    public IActionResult GetContactMessageList()
+    public async Task<IActionResult> GetContactMessageList()
     {
-        var result = _contactMessageLogic.GetContactMessageList();
+        var result = await _contactMessageLogic.GetContactMessageListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -46,9 +46,9 @@ public class ContactMessageController : ControllerBase
 
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult GetContactMessageById([FromRoute] int id)
+    public async Task<IActionResult> GetContactMessageById([FromRoute] int id)
     {
-        var result = _contactMessageLogic.GetContactMessageById(id);
+        var result = await _contactMessageLogic.GetContactMessageByIdAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -57,9 +57,9 @@ public class ContactMessageController : ControllerBase
 
     [HttpPut("{id}/reply")]
     [Authorize(Roles = "Admin")]
-    public IActionResult ReplyToContactMessage([FromRoute] int id, [FromBody] ContactMessageReplyDto replyInfo)
+    public async Task<IActionResult> ReplyToContactMessage([FromRoute] int id, [FromBody] ContactMessageReplyDto replyInfo)
     {
-        var result = _contactMessageLogic.ReplyToContactMessage(id, replyInfo);
+        var result = await _contactMessageLogic.ReplyToContactMessageAsync(id, replyInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -68,9 +68,9 @@ public class ContactMessageController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteContactMessage([FromRoute] int id)
+    public async Task<IActionResult> DeleteContactMessage([FromRoute] int id)
     {
-        var result = _contactMessageLogic.DeleteContactMessage(id);
+        var result = await _contactMessageLogic.DeleteContactMessageAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

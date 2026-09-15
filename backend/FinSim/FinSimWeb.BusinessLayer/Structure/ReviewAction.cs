@@ -2,6 +2,7 @@ using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Reviews;
 using FinSim.Domain.Models.Responses;
 using FinSim.Domain.Models.Reviews;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -14,7 +15,7 @@ public class ReviewAction
         _context = context;
     }
 
-    protected bool CreateReviewAction(ReviewCreateDto data)
+    protected async Task<bool> CreateReviewActionAsync(ReviewCreateDto data)
     {
         var validate = ValidateReview(data);
         if (!validate.IsSuccess)
@@ -32,7 +33,7 @@ public class ReviewAction
         try
         {
             _context.Add(reviewEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -53,18 +54,18 @@ public class ReviewAction
         return new ActionResponse { IsSuccess = true };
     }
 
-    protected List<ReviewInfoDto> GetReviewListAction()
+    protected async Task<List<ReviewInfoDto>> GetReviewListActionAsync()
     {
-        return _context.Reviews
+        return await _context.Reviews
             .Where(x => x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
             .Select(reviewEntity => MapToInfoDto(reviewEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateReviewAction(int id, ReviewCreateDto data)
+    protected async Task<bool> UpdateReviewActionAsync(int id, ReviewCreateDto data)
     {
-        var reviewEntity = _context.Reviews.Find(id);
+        var reviewEntity = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
         if (reviewEntity == null || reviewEntity.IsDeleted)
             return false;
 
@@ -81,7 +82,7 @@ public class ReviewAction
         try
         {
             _context.Reviews.Update(reviewEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -90,9 +91,9 @@ public class ReviewAction
         }
     }
 
-    protected bool DeleteReviewAction(int id)
+    protected async Task<bool> DeleteReviewActionAsync(int id)
     {
-        var reviewEntity = _context.Reviews.Find(id);
+        var reviewEntity = await _context.Reviews.FirstOrDefaultAsync(x => x.Id == id);
         if (reviewEntity == null)
             return false;
 
@@ -100,7 +101,7 @@ public class ReviewAction
         {
             reviewEntity.IsDeleted = true;
             _context.Reviews.Update(reviewEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

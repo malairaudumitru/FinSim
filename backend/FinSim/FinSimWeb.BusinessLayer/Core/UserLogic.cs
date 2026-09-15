@@ -11,47 +11,47 @@ public class UserLogic : UserAction, IUserLogic
 {
     public UserLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateUser(UserCreateDto data)
+    public async Task<ActionResponse> CreateUserAsync(UserCreateDto data)
     {
-        var result = CreateUserAction(data);
+        var result = await CreateUserActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating user");
         return ActionResponse.Ok("User created successfully");
     }
 
-    public ActionResponse GetUserById(int id)
+    public async Task<ActionResponse> GetUserByIdAsync(int id)
     {
-        var result = GetUserByIdAction(id);
+        var result = await GetUserByIdActionAsync(id);
         if (result == null)
             return ActionResponse.NotFound("User not found");
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse GetUserList()
+    public async Task<ActionResponse> GetUserListAsync()
     {
-        var result = GetUserListAction();
+        var result = await GetUserListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateUser(int id, UserCreateDto data)
+    public async Task<ActionResponse> UpdateUserAsync(int id, UserCreateDto data)
     {
-        var result = UpdateUserAction(id, data);
+        var result = await UpdateUserActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating user");
         return ActionResponse.Ok("User updated successfully");
     }
 
-    public ActionResponse DeleteUser(int id)
+    public async Task<ActionResponse> DeleteUserAsync(int id)
     {
-        var result = DeleteUserAction(id);
+        var result = await DeleteUserActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("User not found");
         return ActionResponse.Ok("User deleted successfully");
     }
 
-    public ActionResponse UpdateUserStatus(int id, UserStatus status)
+    public async Task<ActionResponse> UpdateUserStatusAsync(int id, UserStatus status)
     {
-        var result = UpdateUserStatusAction(id, status);
+        var result = await UpdateUserStatusActionAsync(id, status);
         if (result == false)
             return ActionResponse.BadRequest("Error updating user status");
         return ActionResponse.Ok("User status updated successfully");

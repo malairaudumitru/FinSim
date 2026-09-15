@@ -2,6 +2,7 @@ using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Messages;
 using FinSim.Domain.Entities.Notifications;
 using FinSim.Domain.Models.Messages;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -14,9 +15,9 @@ public class ContactMessageAction
         _context = context;
     }
 
-    protected bool CreateContactMessageAction(int userId, ContactMessageCreateDto data)
+    protected async Task<bool> CreateContactMessageActionAsync(int userId, ContactMessageCreateDto data)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false);
         if (user == null)
             return false;
 
@@ -31,7 +32,7 @@ public class ContactMessageAction
         try
         {
             _context.Add(contactMessageEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -40,19 +41,19 @@ public class ContactMessageAction
         }
     }
 
-    protected List<ContactMessageInfoDto> GetContactMessageListAction()
+    protected async Task<List<ContactMessageInfoDto>> GetContactMessageListActionAsync()
     {
-        return _context.ContactMessages
+        return await _context.ContactMessages
             .Where(x => x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
             .Select(contactMessageEntity => MapToInfoDto(contactMessageEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected ContactMessageInfoDto? GetContactMessageByIdAction(int id)
+    protected async Task<ContactMessageInfoDto?> GetContactMessageByIdActionAsync(int id)
     {
-        var contactMessageEntity = _context.ContactMessages
-            .FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
+        var contactMessageEntity = await _context.ContactMessages
+            .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
         if (contactMessageEntity == null)
             return null;
 
@@ -60,15 +61,15 @@ public class ContactMessageAction
         {
             contactMessageEntity.IsRead = true;
             _context.ContactMessages.Update(contactMessageEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         return MapToInfoDto(contactMessageEntity);
     }
 
-    protected bool ReplyToContactMessageAction(int id, ContactMessageReplyDto data)
+    protected async Task<bool> ReplyToContactMessageActionAsync(int id, ContactMessageReplyDto data)
     {
-        var contactMessageEntity = _context.ContactMessages.Find(id);
+        var contactMessageEntity = await _context.ContactMessages.FirstOrDefaultAsync(x => x.Id == id);
         if (contactMessageEntity == null || contactMessageEntity.IsDeleted)
             return false;
 
@@ -79,9 +80,9 @@ public class ContactMessageAction
         try
         {
             _context.ContactMessages.Update(contactMessageEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            NotifyUserOfReply(contactMessageEntity.UserId);
+            await NotifyUserOfReplyAsync(contactMessageEntity.UserId);
 
             return true;
         }
@@ -91,7 +92,7 @@ public class ContactMessageAction
         }
     }
 
-    private void NotifyUserOfReply(int userId)
+    private async Task NotifyUserOfReplyAsync(int userId)
     {
         _context.Add(new NotificationEntity
         {
@@ -99,12 +100,12 @@ public class ContactMessageAction
             Message = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
             UserId = userId
         });
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    protected bool DeleteContactMessageAction(int id)
+    protected async Task<bool> DeleteContactMessageActionAsync(int id)
     {
-        var contactMessageEntity = _context.ContactMessages.Find(id);
+        var contactMessageEntity = await _context.ContactMessages.FirstOrDefaultAsync(x => x.Id == id);
         if (contactMessageEntity == null)
             return false;
 
@@ -112,7 +113,7 @@ public class ContactMessageAction
         {
             contactMessageEntity.IsDeleted = true;
             _context.ContactMessages.Update(contactMessageEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

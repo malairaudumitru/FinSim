@@ -19,9 +19,9 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpGet("list")]
-    public IActionResult GetLeaderboardList()
+    public async Task<IActionResult> GetLeaderboardList()
     {
-        var result = _leaderboardLogic.GetLeaderboardList();
+        var result = await _leaderboardLogic.GetLeaderboardListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -30,9 +30,9 @@ public class LeaderboardController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteLeaderboardEntry([FromRoute] int id)
+    public async Task<IActionResult> DeleteLeaderboardEntry([FromRoute] int id)
     {
-        var result = _leaderboardLogic.DeleteLeaderboardEntry(id);
+        var result = await _leaderboardLogic.DeleteLeaderboardEntryAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

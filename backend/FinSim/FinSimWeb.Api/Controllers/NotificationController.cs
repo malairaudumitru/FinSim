@@ -26,9 +26,9 @@ public class NotificationController : ControllerBase
 
     [HttpPost("create")]
     [Authorize(Roles = "Admin")]
-    public IActionResult CreateNotification([FromBody] NotificationCreateDto notificationInfo)
+    public async Task<IActionResult> CreateNotification([FromBody] NotificationCreateDto notificationInfo)
     {
-        var result = _notificationLogic.CreateNotification(notificationInfo);
+        var result = await _notificationLogic.CreateNotificationAsync(notificationInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -37,9 +37,9 @@ public class NotificationController : ControllerBase
 
     [HttpGet("list")]
     [Authorize(Roles = "Admin")]
-    public IActionResult GetNotificationList()
+    public async Task<IActionResult> GetNotificationList()
     {
-        var result = _notificationLogic.GetNotificationList();
+        var result = await _notificationLogic.GetNotificationListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -47,12 +47,12 @@ public class NotificationController : ControllerBase
     }
 
     [HttpGet("by-user/{userId}")]
-    public IActionResult GetNotificationByUserId([FromRoute] int userId)
+    public async Task<IActionResult> GetNotificationByUserId([FromRoute] int userId)
     {
         if (!IsAdmin && userId != CurrentUserId)
             return Forbid();
 
-        var result = _notificationLogic.GetNotificationByUserId(userId);
+        var result = await _notificationLogic.GetNotificationByUserIdAsync(userId);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -61,9 +61,9 @@ public class NotificationController : ControllerBase
 
     [HttpPut("update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateNotification([FromRoute] int id, [FromBody] NotificationCreateDto notificationInfo)
+    public async Task<IActionResult> UpdateNotification([FromRoute] int id, [FromBody] NotificationCreateDto notificationInfo)
     {
-        var result = _notificationLogic.UpdateNotification(id, notificationInfo);
+        var result = await _notificationLogic.UpdateNotificationAsync(id, notificationInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -71,9 +71,9 @@ public class NotificationController : ControllerBase
     }
 
     [HttpPut("{id}/read-status")]
-    public IActionResult UpdateReadStatus([FromRoute] int id)
+    public async Task<IActionResult> UpdateReadStatus([FromRoute] int id)
     {
-        var result = _notificationLogic.UpdateReadStatus(id, CurrentUserId, IsAdmin);
+        var result = await _notificationLogic.UpdateReadStatusAsync(id, CurrentUserId, IsAdmin);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -81,12 +81,12 @@ public class NotificationController : ControllerBase
     }
 
     [HttpPut("{userId}/mark-all-read")]
-    public IActionResult MarkAllAsRead([FromRoute] int userId)
+    public async Task<IActionResult> MarkAllAsRead([FromRoute] int userId)
     {
         if (!IsAdmin && userId != CurrentUserId)
             return Forbid();
 
-        var result = _notificationLogic.MarkAllAsRead(userId);
+        var result = await _notificationLogic.MarkAllAsReadAsync(userId);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -95,9 +95,9 @@ public class NotificationController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteNotification([FromRoute] int id)
+    public async Task<IActionResult> DeleteNotification([FromRoute] int id)
     {
-        var result = _notificationLogic.DeleteNotification(id);
+        var result = await _notificationLogic.DeleteNotificationAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

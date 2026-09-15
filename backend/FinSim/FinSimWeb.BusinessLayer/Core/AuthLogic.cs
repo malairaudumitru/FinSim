@@ -11,41 +11,41 @@ public class AuthLogic : AuthAction, IAuthLogic
 {
     public AuthLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse Register(UserRegisterDto data)
+    public async Task<ActionResponse> RegisterAsync(UserRegisterDto data)
     {
-        var result = RegisterAction(data);
+        var result = await RegisterActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Email already in use");
         return ActionResponse.Ok("Registered successfully");
     }
 
-    public ActionResponse Login(UserLoginDto data)
+    public async Task<ActionResponse> LoginAsync(UserLoginDto data)
     {
-        var result = LoginAction(data);
+        var result = await LoginActionAsync(data);
         if (result == null)
             return ActionResponse.BadRequest("Invalid email or password");
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse Refresh(RefreshTokenRequestDto data)
+    public async Task<ActionResponse> RefreshAsync(RefreshTokenRequestDto data)
     {
-        var result = RefreshAction(data.RefreshToken);
+        var result = await RefreshActionAsync(data.RefreshToken);
         if (result == null)
             return ActionResponse.BadRequest("Invalid or expired refresh token");
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse Logout(RefreshTokenRequestDto data)
+    public async Task<ActionResponse> LogoutAsync(RefreshTokenRequestDto data)
     {
-        var result = LogoutAction(data.RefreshToken);
+        var result = await LogoutActionAsync(data.RefreshToken);
         if (result == false)
             return ActionResponse.BadRequest("Invalid refresh token");
         return ActionResponse.Ok("Logged out successfully");
     }
 
-    public ActionResponse ChangePassword(int userId, ChangePasswordDto data)
+    public async Task<ActionResponse> ChangePasswordAsync(int userId, ChangePasswordDto data)
     {
-        var result = ChangePasswordAction(userId, data);
+        var result = await ChangePasswordActionAsync(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Current password is incorrect");
         return ActionResponse.Ok("Password changed successfully");

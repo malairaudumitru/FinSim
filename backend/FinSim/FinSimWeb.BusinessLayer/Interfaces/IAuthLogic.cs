@@ -6,9 +6,9 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IAuthLogic
 {
-    ActionResponse Register(UserRegisterDto data);
-    ActionResponse Login(UserLoginDto data);
-    ActionResponse Refresh(RefreshTokenRequestDto data);
-    ActionResponse Logout(RefreshTokenRequestDto data);
-    ActionResponse ChangePassword(int userId, ChangePasswordDto data);
+    Task<ActionResponse> RegisterAsync(UserRegisterDto data);
+    Task<ActionResponse> LoginAsync(UserLoginDto data);
+    Task<ActionResponse> RefreshAsync(RefreshTokenRequestDto data);
+    Task<ActionResponse> LogoutAsync(RefreshTokenRequestDto data);
+    Task<ActionResponse> ChangePasswordAsync(int userId, ChangePasswordDto data);
 }

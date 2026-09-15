@@ -21,9 +21,9 @@ public class ScenarioController : ControllerBase
 
     [HttpPost("create")]
     [Authorize(Roles = "Admin")]
-    public IActionResult CreateScenario([FromBody] ScenarioCreateDto scenarioInfo)
+    public async Task<IActionResult> CreateScenario([FromBody] ScenarioCreateDto scenarioInfo)
     {
-        var result = _scenarioLogic.CreateScenario(scenarioInfo);
+        var result = await _scenarioLogic.CreateScenarioAsync(scenarioInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -31,9 +31,9 @@ public class ScenarioController : ControllerBase
     }
 
     [HttpGet("list")]
-    public IActionResult GetScenarioList()
+    public async Task<IActionResult> GetScenarioList()
     {
-        var result = _scenarioLogic.GetScenarioList();
+        var result = await _scenarioLogic.GetScenarioListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -41,9 +41,9 @@ public class ScenarioController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public IActionResult GetScenarioBySlug([FromRoute] string slug)
+    public async Task<IActionResult> GetScenarioBySlug([FromRoute] string slug)
     {
-        var result = _scenarioLogic.GetScenarioBySlug(slug);
+        var result = await _scenarioLogic.GetScenarioBySlugAsync(slug);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -52,9 +52,9 @@ public class ScenarioController : ControllerBase
 
     [HttpPut("update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateScenario([FromRoute] int id, [FromBody] ScenarioCreateDto scenarioInfo)
+    public async Task<IActionResult> UpdateScenario([FromRoute] int id, [FromBody] ScenarioCreateDto scenarioInfo)
     {
-        var result = _scenarioLogic.UpdateScenario(id, scenarioInfo);
+        var result = await _scenarioLogic.UpdateScenarioAsync(id, scenarioInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -63,9 +63,9 @@ public class ScenarioController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteScenario([FromRoute] int id)
+    public async Task<IActionResult> DeleteScenario([FromRoute] int id)
     {
-        var result = _scenarioLogic.DeleteScenario(id);
+        var result = await _scenarioLogic.DeleteScenarioAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

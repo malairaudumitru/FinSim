@@ -10,59 +10,59 @@ public class NotificationLogic : NotificationAction, INotificationLogic
 {
     public NotificationLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateNotification(NotificationCreateDto data)
+    public async Task<ActionResponse> CreateNotificationAsync(NotificationCreateDto data)
     {
-        var result = CreateNotificationAction(data);
+        var result = await CreateNotificationActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating notification — check that the email belongs to an existing user");
         return ActionResponse.Ok("Notification created successfully");
     }
 
-    public ActionResponse GetNotificationList()
+    public async Task<ActionResponse> GetNotificationListAsync()
     {
-        var result = GetNotificationListAction();
+        var result = await GetNotificationListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse GetNotificationByUserId(int userId)
+    public async Task<ActionResponse> GetNotificationByUserIdAsync(int userId)
     {
-        var result = GetNotificationByUserIdAction(userId);
+        var result = await GetNotificationByUserIdActionAsync(userId);
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateNotification(int id, NotificationCreateDto data)
+    public async Task<ActionResponse> UpdateNotificationAsync(int id, NotificationCreateDto data)
     {
-        var result = UpdateNotificationAction(id, data);
+        var result = await UpdateNotificationActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating notification");
         return ActionResponse.Ok("Notification updated successfully");
     }
 
-    public ActionResponse UpdateReadStatus(int id, int callerUserId, bool isAdmin)
+    public async Task<ActionResponse> UpdateReadStatusAsync(int id, int callerUserId, bool isAdmin)
     {
-        var ownerUserId = GetNotificationOwnerUserIdAction(id);
+        var ownerUserId = await GetNotificationOwnerUserIdActionAsync(id);
         if (ownerUserId == null)
             return ActionResponse.NotFound("Notification not found");
         if (!isAdmin && ownerUserId != callerUserId)
             return ActionResponse.Forbidden("You can only mark your own notifications as read");
 
-        var result = UpdateReadStatusAction(id);
+        var result = await UpdateReadStatusActionAsync(id);
         if (result == false)
             return ActionResponse.BadRequest("Error marking notification as read");
         return ActionResponse.Ok("Notification marked as read");
     }
 
-    public ActionResponse MarkAllAsRead(int userId)
+    public async Task<ActionResponse> MarkAllAsReadAsync(int userId)
     {
-        var result = MarkAllAsReadAction(userId);
+        var result = await MarkAllAsReadActionAsync(userId);
         if (result == false)
             return ActionResponse.BadRequest("Error marking notifications as read");
         return ActionResponse.Ok("All notifications marked as read");
     }
 
-    public ActionResponse DeleteNotification(int id)
+    public async Task<ActionResponse> DeleteNotificationAsync(int id)
     {
-        var result = DeleteNotificationAction(id);
+        var result = await DeleteNotificationActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Notification not found");
         return ActionResponse.Ok("Notification deleted successfully");

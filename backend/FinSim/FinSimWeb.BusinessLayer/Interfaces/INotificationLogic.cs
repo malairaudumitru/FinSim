@@ -5,11 +5,11 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface INotificationLogic
 {
-    ActionResponse CreateNotification(NotificationCreateDto data);
-    ActionResponse GetNotificationList();
-    ActionResponse GetNotificationByUserId(int userId);
-    ActionResponse UpdateNotification(int id, NotificationCreateDto data);
-    ActionResponse UpdateReadStatus(int id, int callerUserId, bool isAdmin);
-    ActionResponse MarkAllAsRead(int userId);
-    ActionResponse DeleteNotification(int id);
+    Task<ActionResponse> CreateNotificationAsync(NotificationCreateDto data);
+    Task<ActionResponse> GetNotificationListAsync();
+    Task<ActionResponse> GetNotificationByUserIdAsync(int userId);
+    Task<ActionResponse> UpdateNotificationAsync(int id, NotificationCreateDto data);
+    Task<ActionResponse> UpdateReadStatusAsync(int id, int callerUserId, bool isAdmin);
+    Task<ActionResponse> MarkAllAsReadAsync(int userId);
+    Task<ActionResponse> DeleteNotificationAsync(int id);
 }

@@ -21,9 +21,9 @@ public class ReviewController : ControllerBase
 
     [HttpPost("create")]
     [Authorize]
-    public IActionResult CreateReview([FromBody] ReviewCreateDto reviewInfo)
+    public async Task<IActionResult> CreateReview([FromBody] ReviewCreateDto reviewInfo)
     {
-        var result = _reviewLogic.CreateReview(reviewInfo);
+        var result = await _reviewLogic.CreateReviewAsync(reviewInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -31,9 +31,9 @@ public class ReviewController : ControllerBase
     }
 
     [HttpGet("list")]
-    public IActionResult GetReviewList()
+    public async Task<IActionResult> GetReviewList()
     {
-        var result = _reviewLogic.GetReviewList();
+        var result = await _reviewLogic.GetReviewListAsync();
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -42,9 +42,9 @@ public class ReviewController : ControllerBase
 
     [HttpPut("update/{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult UpdateReview([FromRoute] int id, [FromBody] ReviewCreateDto reviewInfo)
+    public async Task<IActionResult> UpdateReview([FromRoute] int id, [FromBody] ReviewCreateDto reviewInfo)
     {
-        var result = _reviewLogic.UpdateReview(id, reviewInfo);
+        var result = await _reviewLogic.UpdateReviewAsync(id, reviewInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -53,9 +53,9 @@ public class ReviewController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult DeleteReview([FromRoute] int id)
+    public async Task<IActionResult> DeleteReview([FromRoute] int id)
     {
-        var result = _reviewLogic.DeleteReview(id);
+        var result = await _reviewLogic.DeleteReviewAsync(id);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

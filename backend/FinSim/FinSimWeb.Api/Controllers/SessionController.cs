@@ -25,9 +25,9 @@ public class SessionController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public IActionResult Login([FromBody] UserLoginDto loginInfo)
+    public async Task<IActionResult> Login([FromBody] UserLoginDto loginInfo)
     {
-        var result = _authLogic.Login(loginInfo);
+        var result = await _authLogic.LoginAsync(loginInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -36,9 +36,9 @@ public class SessionController : ControllerBase
 
     [HttpPost("refresh")]
     [AllowAnonymous]
-    public IActionResult Refresh([FromBody] RefreshTokenRequestDto refreshInfo)
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto refreshInfo)
     {
-        var result = _authLogic.Refresh(refreshInfo);
+        var result = await _authLogic.RefreshAsync(refreshInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -47,9 +47,9 @@ public class SessionController : ControllerBase
 
     [HttpPost("logout")]
     [AllowAnonymous]
-    public IActionResult Logout([FromBody] RefreshTokenRequestDto refreshInfo)
+    public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto refreshInfo)
     {
-        var result = _authLogic.Logout(refreshInfo);
+        var result = await _authLogic.LogoutAsync(refreshInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -58,11 +58,11 @@ public class SessionController : ControllerBase
 
     [HttpGet("me")]
     [Authorize]
-    public IActionResult Me()
+    public async Task<IActionResult> Me()
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        var result = _userLogic.GetUserById(userId);
+        var result = await _userLogic.GetUserByIdAsync(userId);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -71,11 +71,11 @@ public class SessionController : ControllerBase
 
     [HttpPut("change-password")]
     [Authorize]
-    public IActionResult ChangePassword([FromBody] ChangePasswordDto passwordInfo)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto passwordInfo)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        var result = _authLogic.ChangePassword(userId, passwordInfo);
+        var result = await _authLogic.ChangePasswordAsync(userId, passwordInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

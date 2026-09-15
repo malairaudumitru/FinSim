@@ -5,8 +5,8 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IReviewLogic
 {
-    ActionResponse CreateReview(ReviewCreateDto data);
-    ActionResponse GetReviewList();
-    ActionResponse UpdateReview(int id, ReviewCreateDto data);
-    ActionResponse DeleteReview(int id);
+    Task<ActionResponse> CreateReviewAsync(ReviewCreateDto data);
+    Task<ActionResponse> GetReviewListAsync();
+    Task<ActionResponse> UpdateReviewAsync(int id, ReviewCreateDto data);
+    Task<ActionResponse> DeleteReviewAsync(int id);
 }

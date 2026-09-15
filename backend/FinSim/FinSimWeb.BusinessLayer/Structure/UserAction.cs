@@ -16,9 +16,9 @@ public class UserAction
         _context = context;
     }
 
-    protected bool CreateUserAction(UserCreateDto data)
+    protected async Task<bool> CreateUserActionAsync(UserCreateDto data)
     {
-        var validate = ValidateUser(data);
+        var validate = await ValidateUserAsync(data);
         if (!validate.IsSuccess)
             return false;
 
@@ -38,7 +38,7 @@ public class UserAction
         try
         {
             _context.Add(userEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -47,7 +47,7 @@ public class UserAction
         }
     }
 
-    private ActionResponse ValidateUser(UserCreateDto data, int? excludingId = null)
+    private async Task<ActionResponse> ValidateUserAsync(UserCreateDto data, int? excludingId = null)
     {
         if (string.IsNullOrEmpty(data.LastName))
             return new ActionResponse { IsSuccess = false, Message = "LastName is empty" };
@@ -56,7 +56,7 @@ public class UserAction
         if (string.IsNullOrEmpty(data.Email))
             return new ActionResponse { IsSuccess = false, Message = "Email is empty" };
 
-        var duplicate = _context.Users.Any(u =>
+        var duplicate = await _context.Users.AnyAsync(u =>
             u.Email == data.Email && u.IsDeleted == false && u.Id != (excludingId ?? 0));
         if (duplicate)
             return new ActionResponse { IsSuccess = false, Message = "Email already in use" };
@@ -64,31 +64,31 @@ public class UserAction
         return new ActionResponse { IsSuccess = true };
     }
 
-    protected UserInfoDto? GetUserByIdAction(int id)
+    protected async Task<UserInfoDto?> GetUserByIdActionAsync(int id)
     {
-        var userEntity = _context.Users
-            .FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
+        var userEntity = await _context.Users
+            .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
         if (userEntity == null)
             return null;
 
         return MapToInfoDto(userEntity);
     }
 
-    protected List<UserInfoDto> GetUserListAction()
+    protected async Task<List<UserInfoDto>> GetUserListActionAsync()
     {
-        return _context.Users
+        return await _context.Users
             .Where(x => x.IsDeleted == false)
             .Select(userEntity => MapToInfoDto(userEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateUserAction(int id, UserCreateDto data)
+    protected async Task<bool> UpdateUserActionAsync(int id, UserCreateDto data)
     {
-        var userEntity = _context.Users.Find(id); // in loc de find firstordefault
+        var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         if (userEntity == null || userEntity.IsDeleted)
             return false;
 
-        var validate = ValidateUser(data, excludingId: id);
+        var validate = await ValidateUserAsync(data, excludingId: id);
         if (!validate.IsSuccess)
             return false;
 
@@ -107,7 +107,7 @@ public class UserAction
         try
         {
             _context.Users.Update(userEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -116,9 +116,9 @@ public class UserAction
         }
     }
 
-    protected bool DeleteUserAction(int id)
+    protected async Task<bool> DeleteUserActionAsync(int id)
     {
-        var userEntity = _context.Users.Find(id);
+        var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         if (userEntity == null)
             return false;
 
@@ -126,7 +126,7 @@ public class UserAction
         {
             userEntity.IsDeleted = true;
             _context.Users.Update(userEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -135,9 +135,9 @@ public class UserAction
         }
     }
 
-    protected bool UpdateUserStatusAction(int id, UserStatus status)
+    protected async Task<bool> UpdateUserStatusActionAsync(int id, UserStatus status)
     {
-        var userEntity = _context.Users.Find(id);
+        var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         if (userEntity == null || userEntity.IsDeleted)
             return false;
 
@@ -146,7 +146,7 @@ public class UserAction
         try
         {
             _context.Users.Update(userEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)

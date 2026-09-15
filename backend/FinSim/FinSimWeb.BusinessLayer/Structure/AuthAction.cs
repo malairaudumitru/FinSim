@@ -4,6 +4,7 @@ using FinSim.Domain.Entities.Auth;
 using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Auth;
 using FinSim.Domain.Models.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -17,9 +18,9 @@ public class AuthAction
         _context = context;
     }
 
-    protected bool RegisterAction(UserRegisterDto data)
+    protected async Task<bool> RegisterActionAsync(UserRegisterDto data)
     {
-        var duplicate = _context.Users.Any(u => u.Email == data.Email && u.IsDeleted == false);
+        var duplicate = await _context.Users.AnyAsync(u => u.Email == data.Email && u.IsDeleted == false);
         if (duplicate)
             return false;
 
@@ -37,7 +38,7 @@ public class AuthAction
         try
         {
             _context.Add(userEntity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -46,9 +47,9 @@ public class AuthAction
         }
     }
 
-    protected AuthResponseDto? LoginAction(UserLoginDto data)
+    protected async Task<AuthResponseDto?> LoginActionAsync(UserLoginDto data)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Email == data.Email && u.IsDeleted == false);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
 
         if (user == null || user.Status == UserStatus.Blocked)
             return null;
@@ -56,30 +57,30 @@ public class AuthAction
         if (!PasswordHasher.Verify(data.Password, user.Password))
             return null;
 
-        return GenerateAuthResponse(user);
+        return await GenerateAuthResponseAsync(user);
     }
 
-    protected AuthResponseDto? RefreshAction(string refreshToken)
+    protected async Task<AuthResponseDto?> RefreshActionAsync(string refreshToken)
     {
-        var storedToken = _context.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
+        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
 
         if (storedToken == null || storedToken.RevokedAt != null || storedToken.ExpiresAt < DateTime.UtcNow)
             return null;
 
-        var user = _context.Users.FirstOrDefault(u => u.Id == storedToken.UserId && u.IsDeleted == false);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == storedToken.UserId && u.IsDeleted == false);
         if (user == null || user.Status == UserStatus.Blocked)
             return null;
 
         storedToken.RevokedAt = DateTime.UtcNow;
         _context.RefreshTokens.Update(storedToken);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
-        return GenerateAuthResponse(user);
+        return await GenerateAuthResponseAsync(user);
     }
 
-    protected bool ChangePasswordAction(int userId, ChangePasswordDto data)
+    protected async Task<bool> ChangePasswordActionAsync(int userId, ChangePasswordDto data)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId && u.IsDeleted == false);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false);
         if (user == null)
             return false;
 
@@ -91,7 +92,7 @@ public class AuthAction
         try
         {
             _context.Users.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception)
@@ -100,19 +101,19 @@ public class AuthAction
         }
     }
 
-    protected bool LogoutAction(string refreshToken)
+    protected async Task<bool> LogoutActionAsync(string refreshToken)
     {
-        var storedToken = _context.RefreshTokens.FirstOrDefault(t => t.Token == refreshToken);
+        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
         if (storedToken == null || storedToken.RevokedAt != null)
             return false;
 
         storedToken.RevokedAt = DateTime.UtcNow;
         _context.RefreshTokens.Update(storedToken);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    private AuthResponseDto GenerateAuthResponse(UserEntity user)
+    private async Task<AuthResponseDto> GenerateAuthResponseAsync(UserEntity user)
     {
         var accessToken = _tokenService.GenerateAccessToken(user.Id, user.LastName, user.FirstName, user.Role.ToString());
         var refreshTokenValue = _tokenService.GenerateRefreshToken();
@@ -123,7 +124,7 @@ public class AuthAction
             Token = refreshTokenValue,
             ExpiresAt = DateTime.UtcNow.AddDays(JwtSettings.RefreshTokenExpireDays)
         });
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return new AuthResponseDto
         {

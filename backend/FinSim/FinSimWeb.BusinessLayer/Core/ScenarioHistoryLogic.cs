@@ -10,37 +10,37 @@ public class ScenarioHistoryLogic : ScenarioHistoryAction, IScenarioHistoryLogic
 {
     public ScenarioHistoryLogic(AppDbContext context) : base(context) { }
 
-    public ActionResponse CreateScenarioHistory(int userId, ScenarioHistoryCreateDto data)
+    public async Task<ActionResponse> CreateScenarioHistoryAsync(int userId, ScenarioHistoryCreateDto data)
     {
-        var result = CreateScenarioHistoryAction(userId, data);
+        var result = await CreateScenarioHistoryActionAsync(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating scenario history");
         return ActionResponse.Ok("Scenario history created successfully");
     }
 
-    public ActionResponse GetScenarioHistoryList()
+    public async Task<ActionResponse> GetScenarioHistoryListAsync()
     {
-        var result = GetScenarioHistoryListAction();
+        var result = await GetScenarioHistoryListActionAsync();
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse GetScenarioHistoryByUserId(int userId)
+    public async Task<ActionResponse> GetScenarioHistoryByUserIdAsync(int userId)
     {
-        var result = GetScenarioHistoryByUserIdAction(userId);
+        var result = await GetScenarioHistoryByUserIdActionAsync(userId);
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateScenarioHistory(int id, ScenarioHistoryUpdateDto data)
+    public async Task<ActionResponse> UpdateScenarioHistoryAsync(int id, ScenarioHistoryUpdateDto data)
     {
-        var result = UpdateScenarioHistoryAction(id, data);
+        var result = await UpdateScenarioHistoryActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating scenario history");
         return ActionResponse.Ok("Scenario history updated successfully");
     }
 
-    public ActionResponse DeleteScenarioHistory(int id)
+    public async Task<ActionResponse> DeleteScenarioHistoryAsync(int id)
     {
-        var result = DeleteScenarioHistoryAction(id);
+        var result = await DeleteScenarioHistoryActionAsync(id);
         if (result == false)
             return ActionResponse.NotFound("Scenario history not found");
         return ActionResponse.Ok("Scenario history deleted successfully");

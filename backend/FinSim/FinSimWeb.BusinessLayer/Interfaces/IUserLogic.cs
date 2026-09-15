@@ -6,10 +6,10 @@ namespace FinSim.BusinessLayer.Interfaces;
 
 public interface IUserLogic
 {
-    ActionResponse CreateUser(UserCreateDto data);
-    ActionResponse GetUserById(int id);
-    ActionResponse GetUserList();
-    ActionResponse UpdateUser(int id, UserCreateDto data);
-    ActionResponse DeleteUser(int id);
-    ActionResponse UpdateUserStatus(int id, UserStatus status);
+    Task<ActionResponse> CreateUserAsync(UserCreateDto data);
+    Task<ActionResponse> GetUserByIdAsync(int id);
+    Task<ActionResponse> GetUserListAsync();
+    Task<ActionResponse> UpdateUserAsync(int id, UserCreateDto data);
+    Task<ActionResponse> DeleteUserAsync(int id);
+    Task<ActionResponse> UpdateUserStatusAsync(int id, UserStatus status);
 }

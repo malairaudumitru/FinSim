@@ -2,6 +2,7 @@ using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Leaderboard;
 using FinSim.Domain.Entities.ScenarioHistory;
 using FinSim.Domain.Models.ScenarioHistory;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinSim.BusinessLayer.Structure;
 
@@ -14,7 +15,7 @@ public class ScenarioHistoryAction
         _context = context;
     }
 
-    protected bool CreateScenarioHistoryAction(int userId, ScenarioHistoryCreateDto data)
+    protected async Task<bool> CreateScenarioHistoryActionAsync(int userId, ScenarioHistoryCreateDto data)
     {
         var scenarioHistoryEntity = new ScenarioHistoryEntity
         {
@@ -26,8 +27,8 @@ public class ScenarioHistoryAction
         try
         {
             _context.Add(scenarioHistoryEntity);
-            _context.SaveChanges();
-            RecalculateLeaderboardEntry(userId);
+            await _context.SaveChangesAsync();
+            await RecalculateLeaderboardEntryAsync(userId);
             return true;
         }
         catch (Exception)
@@ -36,27 +37,27 @@ public class ScenarioHistoryAction
         }
     }
 
-    protected List<ScenarioHistoryInfoDto> GetScenarioHistoryListAction()
+    protected async Task<List<ScenarioHistoryInfoDto>> GetScenarioHistoryListActionAsync()
     {
-        return _context.ScenarioHistories
+        return await _context.ScenarioHistories
             .Where(x => x.IsDeleted == false)
             .OrderBy(x => x.CreatedAt)
             .Select(scenarioHistoryEntity => MapToInfoDto(scenarioHistoryEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected List<ScenarioHistoryInfoDto> GetScenarioHistoryByUserIdAction(int userId)
+    protected async Task<List<ScenarioHistoryInfoDto>> GetScenarioHistoryByUserIdActionAsync(int userId)
     {
-        return _context.ScenarioHistories
+        return await _context.ScenarioHistories
             .Where(x => x.UserId == userId && x.IsDeleted == false)
             .OrderBy(x => x.CreatedAt)
             .Select(scenarioHistoryEntity => MapToInfoDto(scenarioHistoryEntity))
-            .ToList();
+            .ToListAsync();
     }
 
-    protected bool UpdateScenarioHistoryAction(int id, ScenarioHistoryUpdateDto data)
+    protected async Task<bool> UpdateScenarioHistoryActionAsync(int id, ScenarioHistoryUpdateDto data)
     {
-        var scenarioHistoryEntity = _context.ScenarioHistories.Find(id);
+        var scenarioHistoryEntity = await _context.ScenarioHistories.FirstOrDefaultAsync(x => x.Id == id);
         if (scenarioHistoryEntity == null || scenarioHistoryEntity.IsDeleted)
             return false;
 
@@ -69,10 +70,10 @@ public class ScenarioHistoryAction
         try
         {
             _context.ScenarioHistories.Update(scenarioHistoryEntity);
-            _context.SaveChanges();
-            RecalculateLeaderboardEntry(data.UserId);
+            await _context.SaveChangesAsync();
+            await RecalculateLeaderboardEntryAsync(data.UserId);
             if (previousUserId != data.UserId)
-                RecalculateLeaderboardEntry(previousUserId);
+                await RecalculateLeaderboardEntryAsync(previousUserId);
             return true;
         }
         catch (Exception)
@@ -81,9 +82,9 @@ public class ScenarioHistoryAction
         }
     }
 
-    protected bool DeleteScenarioHistoryAction(int id)
+    protected async Task<bool> DeleteScenarioHistoryActionAsync(int id)
     {
-        var scenarioHistoryEntity = _context.ScenarioHistories.Find(id);
+        var scenarioHistoryEntity = await _context.ScenarioHistories.FirstOrDefaultAsync(x => x.Id == id);
         if (scenarioHistoryEntity == null)
             return false;
 
@@ -91,8 +92,8 @@ public class ScenarioHistoryAction
         {
             scenarioHistoryEntity.IsDeleted = true;
             _context.ScenarioHistories.Update(scenarioHistoryEntity);
-            _context.SaveChanges();
-            RecalculateLeaderboardEntry(scenarioHistoryEntity.UserId);
+            await _context.SaveChangesAsync();
+            await RecalculateLeaderboardEntryAsync(scenarioHistoryEntity.UserId);
             return true;
         }
         catch (Exception)
@@ -101,17 +102,17 @@ public class ScenarioHistoryAction
         }
     }
 
-    private void RecalculateLeaderboardEntry(int userId)
+    private async Task RecalculateLeaderboardEntryAsync(int userId)
     {
-        var totalScore = _context.ScenarioHistories
+        var totalScore = await _context.ScenarioHistories
             .Where(x => x.UserId == userId && x.IsDeleted == false)
-            .Sum(x => x.Score);
+            .SumAsync(x => x.Score);
 
-        var user = _context.Users.Find(userId);
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user == null)
             return;
 
-        var leaderboardEntity = _context.Leaderboard.FirstOrDefault(x => x.UserId == userId);
+        var leaderboardEntity = await _context.Leaderboard.FirstOrDefaultAsync(x => x.UserId == userId);
 
         if (leaderboardEntity == null)
         {
@@ -131,7 +132,7 @@ public class ScenarioHistoryAction
             _context.Leaderboard.Update(leaderboardEntity);
         }
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
     private static ScenarioHistoryInfoDto MapToInfoDto(ScenarioHistoryEntity scenarioHistoryEntity) => new()
