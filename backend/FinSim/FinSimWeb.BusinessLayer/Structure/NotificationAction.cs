@@ -85,6 +85,15 @@ public class NotificationAction
         }
     }
 
+    protected int? GetNotificationOwnerUserIdAction(int id)
+    {
+        var notificationEntity = _context.Notifications.Find(id);
+        if (notificationEntity == null || notificationEntity.IsDeleted)
+            return null;
+
+        return notificationEntity.UserId;
+    }
+
     protected bool UpdateReadStatusAction(int id)
     {
         var notificationEntity = _context.Notifications.Find(id);

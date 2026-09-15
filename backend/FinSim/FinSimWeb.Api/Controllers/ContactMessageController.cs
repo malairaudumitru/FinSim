@@ -33,6 +33,7 @@ public class ContactMessageController : ControllerBase
     }
 
     [HttpGet("list")]
+    [Authorize(Roles = "Admin")]
     public IActionResult GetContactMessageList()
     {
         var result = _contactMessageLogic.GetContactMessageList();
@@ -43,6 +44,7 @@ public class ContactMessageController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult GetContactMessageById([FromRoute] int id)
     {
         var result = _contactMessageLogic.GetContactMessageById(id);
@@ -53,6 +55,7 @@ public class ContactMessageController : ControllerBase
     }
 
     [HttpPut("{id}/reply")]
+    [Authorize(Roles = "Admin")]
     public IActionResult ReplyToContactMessage([FromRoute] int id, [FromBody] ContactMessageReplyDto replyInfo)
     {
         var result = _contactMessageLogic.ReplyToContactMessage(id, replyInfo);
@@ -63,6 +66,7 @@ public class ContactMessageController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteContactMessage([FromRoute] int id)
     {
         var result = _contactMessageLogic.DeleteContactMessage(id);

@@ -1,6 +1,7 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinSim.Api.Controllers;
@@ -28,6 +29,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPost("videos/create")]
+    [Authorize(Roles = "Admin")]
     public IActionResult CreateVideo([FromBody] VideoResourceCreateDto videoInfo)
     {
         var result = _resourceLogic.CreateVideo(videoInfo);
@@ -38,6 +40,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPut("videos/update/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult UpdateVideo([FromRoute] int id, [FromBody] VideoResourceCreateDto videoInfo)
     {
         var result = _resourceLogic.UpdateVideo(id, videoInfo);
@@ -48,6 +51,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpDelete("videos/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteVideo([FromRoute] int id)
     {
         var result = _resourceLogic.DeleteVideo(id);
@@ -68,6 +72,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPost("pdfs/upload")]
+    [Authorize(Roles = "Admin")]
     [RequestSizeLimit(20_000_000)]
     public async Task<IActionResult> UploadPdf(IFormFile file)
     {
@@ -96,6 +101,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPost("pdfs/create")]
+    [Authorize(Roles = "Admin")]
     public IActionResult CreatePdf([FromBody] PdfResourceCreateDto pdfInfo)
     {
         var result = _resourceLogic.CreatePdf(pdfInfo);
@@ -106,6 +112,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPut("pdfs/update/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult UpdatePdf([FromRoute] int id, [FromBody] PdfResourceCreateDto pdfInfo)
     {
         var result = _resourceLogic.UpdatePdf(id, pdfInfo);
@@ -116,6 +123,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpDelete("pdfs/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeletePdf([FromRoute] int id)
     {
         var result = _resourceLogic.DeletePdf(id);

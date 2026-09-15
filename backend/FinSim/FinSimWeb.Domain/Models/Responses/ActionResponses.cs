@@ -20,7 +20,14 @@ public class ActionResponse
     {
         IsSuccess = false,
         Message = message,
-        StatusCode = HttpStatusCode.BadRequest  
+        StatusCode = HttpStatusCode.BadRequest
+    };
+
+    public static ActionResponse Forbidden(string? message = null) => new()
+    {
+        IsSuccess = false,
+        Message = message,
+        StatusCode = HttpStatusCode.Forbidden
     };
     
     public static ActionResponse Ok(string? message = null, object? data = null) => new()

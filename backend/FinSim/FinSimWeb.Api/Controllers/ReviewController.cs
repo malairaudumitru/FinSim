@@ -1,6 +1,7 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Reviews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinSim.Api.Controllers;
@@ -18,6 +19,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Authorize]
     public IActionResult CreateReview([FromBody] ReviewCreateDto reviewInfo)
     {
         var result = _reviewLogic.CreateReview(reviewInfo);
@@ -38,6 +40,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult UpdateReview([FromRoute] int id, [FromBody] ReviewCreateDto reviewInfo)
     {
         var result = _reviewLogic.UpdateReview(id, reviewInfo);
@@ -48,6 +51,7 @@ public class ReviewController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteReview([FromRoute] int id)
     {
         var result = _reviewLogic.DeleteReview(id);

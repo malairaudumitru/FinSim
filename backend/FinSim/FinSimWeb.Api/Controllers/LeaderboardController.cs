@@ -1,5 +1,6 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinSim.Api.Controllers;
@@ -27,6 +28,7 @@ public class LeaderboardController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteLeaderboardEntry([FromRoute] int id)
     {
         var result = _leaderboardLogic.DeleteLeaderboardEntry(id);

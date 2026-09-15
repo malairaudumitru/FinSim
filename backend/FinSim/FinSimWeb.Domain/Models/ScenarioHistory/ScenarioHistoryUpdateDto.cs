@@ -2,8 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinSim.Domain.Models.ScenarioHistory;
 
-public class ScenarioHistoryCreateDto
+public class ScenarioHistoryUpdateDto
 {
+    [Required]
+    public int UserId { get; set; }
+
     [Required]
     public int ScenarioId { get; set; }
 

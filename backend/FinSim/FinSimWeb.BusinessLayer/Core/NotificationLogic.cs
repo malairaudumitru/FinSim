@@ -35,11 +35,17 @@ public class NotificationLogic : NotificationAction, INotificationLogic
         return ActionResponse.Ok("Notification updated successfully");
     }
 
-    public ActionResponse UpdateReadStatus(int id)
+    public ActionResponse UpdateReadStatus(int id, int callerUserId, bool isAdmin)
     {
+        var ownerUserId = GetNotificationOwnerUserIdAction(id);
+        if (ownerUserId == null)
+            return ActionResponse.NotFound("Notification not found");
+        if (!isAdmin && ownerUserId != callerUserId)
+            return ActionResponse.Forbidden("You can only mark your own notifications as read");
+
         var result = UpdateReadStatusAction(id);
         if (result == false)
-            return ActionResponse.NotFound("Notification not found");
+            return ActionResponse.BadRequest("Error marking notification as read");
         return ActionResponse.Ok("Notification marked as read");
     }
 

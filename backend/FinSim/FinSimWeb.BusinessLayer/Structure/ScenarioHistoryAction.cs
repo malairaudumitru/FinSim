@@ -9,11 +9,11 @@ public class ScenarioHistoryAction
 {
     private readonly ScenarioHistoryDbContext _context = new();
 
-    protected bool CreateScenarioHistoryAction(ScenarioHistoryCreateDto data)
+    protected bool CreateScenarioHistoryAction(int userId, ScenarioHistoryCreateDto data)
     {
         var scenarioHistoryEntity = new ScenarioHistoryEntity
         {
-            UserId = data.UserId,
+            UserId = userId,
             ScenarioId = data.ScenarioId,
             Scor = data.Scor
         };
@@ -22,7 +22,7 @@ public class ScenarioHistoryAction
         {
             _context.Add(scenarioHistoryEntity);
             _context.SaveChanges();
-            RecalculateLeaderboardEntry(data.UserId);
+            RecalculateLeaderboardEntry(userId);
             return true;
         }
         catch (Exception)
@@ -49,7 +49,7 @@ public class ScenarioHistoryAction
             .ToList();
     }
 
-    protected bool UpdateScenarioHistoryAction(int id, ScenarioHistoryCreateDto data)
+    protected bool UpdateScenarioHistoryAction(int id, ScenarioHistoryUpdateDto data)
     {
         var scenarioHistoryEntity = _context.ScenarioHistories.Find(id);
         if (scenarioHistoryEntity == null || scenarioHistoryEntity.IsDeleted)

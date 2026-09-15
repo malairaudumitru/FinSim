@@ -1,6 +1,7 @@
 using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Scenarios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinSim.Api.Controllers;
@@ -18,6 +19,7 @@ public class ScenarioController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Authorize(Roles = "Admin")]
     public IActionResult CreateScenario([FromBody] ScenarioCreateDto scenarioInfo)
     {
         var result = _scenarioLogic.CreateScenario(scenarioInfo);
@@ -48,6 +50,7 @@ public class ScenarioController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult UpdateScenario([FromRoute] int id, [FromBody] ScenarioCreateDto scenarioInfo)
     {
         var result = _scenarioLogic.UpdateScenario(id, scenarioInfo);
@@ -58,6 +61,7 @@ public class ScenarioController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public IActionResult DeleteScenario([FromRoute] int id)
     {
         var result = _scenarioLogic.DeleteScenario(id);

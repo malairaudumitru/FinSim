@@ -7,9 +7,9 @@ namespace FinSim.BusinessLayer.Core;
 
 public class ScenarioHistoryLogic : ScenarioHistoryAction, IScenarioHistoryLogic
 {
-    public ActionResponse CreateScenarioHistory(ScenarioHistoryCreateDto data)
+    public ActionResponse CreateScenarioHistory(int userId, ScenarioHistoryCreateDto data)
     {
-        var result = CreateScenarioHistoryAction(data);
+        var result = CreateScenarioHistoryAction(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Error creating scenario history");
         return ActionResponse.Ok("Scenario history created successfully");
@@ -27,7 +27,7 @@ public class ScenarioHistoryLogic : ScenarioHistoryAction, IScenarioHistoryLogic
         return ActionResponse.Ok(data: result);
     }
 
-    public ActionResponse UpdateScenarioHistory(int id, ScenarioHistoryCreateDto data)
+    public ActionResponse UpdateScenarioHistory(int id, ScenarioHistoryUpdateDto data)
     {
         var result = UpdateScenarioHistoryAction(id, data);
         if (result == false)
