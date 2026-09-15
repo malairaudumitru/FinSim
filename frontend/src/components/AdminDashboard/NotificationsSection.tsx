@@ -19,6 +19,18 @@ function todayLabel() {
     return new Date().toLocaleDateString('ro-RO')
 }
 
+function toDateInputValue(roDate: string): string {
+    const [zi, luna, an] = roDate.split('.')
+    if (!zi || !luna || !an) return ''
+    return `${an}-${luna.padStart(2, '0')}-${zi.padStart(2, '0')}`
+}
+
+function fromDateInputValue(isoDate: string): string {
+    const [an, luna, zi] = isoDate.split('-')
+    if (!an || !luna || !zi) return todayLabel()
+    return `${zi}.${luna}.${an}`
+}
+
 const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: '', data: todayLabel() }
 
 function toForm(n: NotificationItem): FormState {
@@ -190,9 +202,9 @@ function NotificationsSection() {
                                 <label htmlFor="nt-data">Data</label>
                                 <input
                                     id="nt-data"
-                                    value={form.data}
-                                    onChange={(e) => setForm((f) => ({ ...f, data: e.target.value }))}
-                                    placeholder="10.09.2026"
+                                    type="date"
+                                    value={toDateInputValue(form.data)}
+                                    onChange={(e) => setForm((f) => ({ ...f, data: fromDateInputValue(e.target.value) }))}
                                 />
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 ﻿import { useState, type FormEvent } from 'react'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
 import Modal from '../../shared/Modal/Modal'
+import Dropdown from '../../shared/Dropdown/Dropdown'
 
 type VideoForm = { youtubeId: string; titlu: string; sursa: string; tema: string }
 type PdfForm = { titlu: string; descriere: string; fisier: string; tema: string }
@@ -29,6 +30,14 @@ function extractYoutubeId(input: string): string {
 
     return trimmed
 }
+
+const temaOptions = [
+    { value: 'General', label: 'General' },
+    { value: 'Buget', label: 'Buget' },
+    { value: 'Economii', label: 'Economii' },
+    { value: 'Decizii financiare', label: 'Decizii financiare' },
+    { value: 'Credite', label: 'Credite' },
+]
 
 function ResourcesSection() {
     const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf } = useResources()
@@ -240,10 +249,11 @@ function ResourcesSection() {
                             </div>
                             <div className="admin-field">
                                 <label htmlFor="vd-tema">Temă</label>
-                                <input
-                                    id="vd-tema"
+                                <Dropdown
                                     value={videoForm.tema}
-                                    onChange={(e) => setVideoForm((f) => ({ ...f, tema: e.target.value }))}
+                                    onChange={(v) => setVideoForm((f) => ({ ...f, tema: v }))}
+                                    options={temaOptions}
+                                    placeholder="Alege tema"
                                 />
                             </div>
                         </div>
@@ -295,10 +305,11 @@ function ResourcesSection() {
                         <div className="admin-form-row">
                             <div className="admin-field">
                                 <label htmlFor="pd-tema">Temă</label>
-                                <input
-                                    id="pd-tema"
+                                <Dropdown
                                     value={pdfForm.tema}
-                                    onChange={(e) => setPdfForm((f) => ({ ...f, tema: e.target.value }))}
+                                    onChange={(v) => setPdfForm((f) => ({ ...f, tema: v }))}
+                                    options={temaOptions}
+                                    placeholder="Alege tema"
                                 />
                             </div>
                             <div className="admin-field">

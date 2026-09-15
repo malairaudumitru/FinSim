@@ -108,6 +108,7 @@ function ReviewsSection() {
                     <thead>
                         <tr>
                             <th>Autor</th>
+                            <th>Email</th>
                             <th>Rating</th>
                             <th>Mesaj</th>
                             <th>Data</th>
@@ -117,12 +118,13 @@ function ReviewsSection() {
                     <tbody>
                         {reviews.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={5}>Nicio recenzie momentan.</td>
+                                <td colSpan={6}>Nicio recenzie momentan.</td>
                             </tr>
                         )}
                         {reviews.map((r) => (
                             <tr key={r.id}>
                                 <td>{r.autor}</td>
+                                <td className="admin-cell-muted">{r.email}</td>
                                 <td><StarRating rating={r.rating} size={13} /></td>
                                 <td className="admin-cell-truncate">{r.mesaj}</td>
                                 <td className="admin-cell-muted">{formatDate(r.data)}</td>
