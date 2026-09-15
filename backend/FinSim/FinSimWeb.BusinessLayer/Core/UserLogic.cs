@@ -33,12 +33,20 @@ public class UserLogic : UserAction, IUserLogic
         return ActionResponse.Ok(data: result);
     }
 
-    public async Task<ActionResponse> UpdateUserAsync(int id, UserCreateDto data)
+    public async Task<ActionResponse> UpdateUserAsync(int id, UserUpdateDto data)
     {
         var result = await UpdateUserActionAsync(id, data);
         if (result == false)
             return ActionResponse.BadRequest("Error updating user");
         return ActionResponse.Ok("User updated successfully");
+    }
+
+    public async Task<ActionResponse> UpdateSelfAsync(int userId, UserSelfUpdateDto data)
+    {
+        var result = await UpdateSelfActionAsync(userId, data);
+        if (result == false)
+            return ActionResponse.BadRequest("Error updating profile");
+        return ActionResponse.Ok("Profile updated successfully");
     }
 
     public async Task<ActionResponse> DeleteUserAsync(int id)

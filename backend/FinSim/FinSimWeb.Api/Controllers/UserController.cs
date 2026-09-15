@@ -60,12 +60,20 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UserCreateDto userInfo)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UserUpdateDto userInfo)
     {
-        if (!IsAdmin && id != CurrentUserId)
-            return Forbid();
-
         var result = await _userLogic.UpdateUserAsync(id, userInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateMe([FromBody] UserSelfUpdateDto userInfo)
+    {
+        var result = await _userLogic.UpdateSelfAsync(CurrentUserId, userInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

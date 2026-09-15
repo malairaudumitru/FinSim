@@ -18,7 +18,7 @@ public class UserAction
 
     protected async Task<bool> CreateUserActionAsync(UserCreateDto data)
     {
-        var validate = await ValidateUserAsync(data);
+        var validate = await ValidateUserAsync(data.LastName, data.FirstName, data.Email);
         if (!validate.IsSuccess)
             return false;
 
@@ -27,7 +27,7 @@ public class UserAction
             LastName = data.LastName,
             FirstName = data.FirstName,
             Email = data.Email,
-            Password = string.IsNullOrEmpty(data.Password) ? string.Empty : PasswordHasher.Hash(data.Password),
+            Password = PasswordHasher.Hash(data.Password),
             Role = data.Role,
             Status = data.Status,
             CompletedScenarios = data.CompletedScenarios,
@@ -47,17 +47,17 @@ public class UserAction
         }
     }
 
-    private async Task<ActionResponse> ValidateUserAsync(UserCreateDto data, int? excludingId = null)
+    private async Task<ActionResponse> ValidateUserAsync(string lastName, string firstName, string email, int? excludingId = null)
     {
-        if (string.IsNullOrEmpty(data.LastName))
+        if (string.IsNullOrEmpty(lastName))
             return new ActionResponse { IsSuccess = false, Message = "LastName is empty" };
-        if (string.IsNullOrEmpty(data.FirstName))
+        if (string.IsNullOrEmpty(firstName))
             return new ActionResponse { IsSuccess = false, Message = "FirstName is empty" };
-        if (string.IsNullOrEmpty(data.Email))
+        if (string.IsNullOrEmpty(email))
             return new ActionResponse { IsSuccess = false, Message = "Email is empty" };
 
         var duplicate = await _context.Users.AnyAsync(u =>
-            u.Email == data.Email && u.IsDeleted == false && u.Id != (excludingId ?? 0));
+            u.Email == email && u.IsDeleted == false && u.Id != (excludingId ?? 0));
         if (duplicate)
             return new ActionResponse { IsSuccess = false, Message = "Email already in use" };
 
@@ -82,13 +82,13 @@ public class UserAction
             .ToListAsync();
     }
 
-    protected async Task<bool> UpdateUserActionAsync(int id, UserCreateDto data)
+    protected async Task<bool> UpdateUserActionAsync(int id, UserUpdateDto data)
     {
         var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         if (userEntity == null || userEntity.IsDeleted)
             return false;
 
-        var validate = await ValidateUserAsync(data, excludingId: id);
+        var validate = await ValidateUserAsync(data.LastName, data.FirstName, data.Email, excludingId: id);
         if (!validate.IsSuccess)
             return false;
 
@@ -99,6 +99,36 @@ public class UserAction
         userEntity.Status = data.Status;
         userEntity.CompletedScenarios = data.CompletedScenarios;
         userEntity.TotalScore = data.TotalScore;
+        userEntity.BirthDate = data.BirthDate;
+
+        if (!string.IsNullOrEmpty(data.Password))
+            userEntity.Password = PasswordHasher.Hash(data.Password);
+
+        try
+        {
+            _context.Users.Update(userEntity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    protected async Task<bool> UpdateSelfActionAsync(int userId, UserSelfUpdateDto data)
+    {
+        var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (userEntity == null || userEntity.IsDeleted)
+            return false;
+
+        var validate = await ValidateUserAsync(data.LastName, data.FirstName, data.Email, excludingId: userId);
+        if (!validate.IsSuccess)
+            return false;
+
+        userEntity.LastName = data.LastName;
+        userEntity.FirstName = data.FirstName;
+        userEntity.Email = data.Email;
         userEntity.BirthDate = data.BirthDate;
 
         if (!string.IsNullOrEmpty(data.Password))

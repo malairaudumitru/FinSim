@@ -9,7 +9,8 @@ public interface IUserLogic
     Task<ActionResponse> CreateUserAsync(UserCreateDto data);
     Task<ActionResponse> GetUserByIdAsync(int id);
     Task<ActionResponse> GetUserListAsync();
-    Task<ActionResponse> UpdateUserAsync(int id, UserCreateDto data);
+    Task<ActionResponse> UpdateUserAsync(int id, UserUpdateDto data);
+    Task<ActionResponse> UpdateSelfAsync(int userId, UserSelfUpdateDto data);
     Task<ActionResponse> DeleteUserAsync(int id);
     Task<ActionResponse> UpdateUserStatusAsync(int id, UserStatus status);
 }
