@@ -11,11 +11,15 @@ interface DropdownProps {
     onChange: (value: string) => void
     options: DropdownOption[]
     placeholder: string
+    searchable?: boolean
+    searchPlaceholder?: string
 }
 
-function Dropdown({ value, onChange, options, placeholder }: DropdownProps) {
+function Dropdown({ value, onChange, options, placeholder, searchable = false, searchPlaceholder = 'Caută...' }: DropdownProps) {
     const [open, setOpen] = useState(false)
+    const [query, setQuery] = useState('')
     const ref = useRef<HTMLDivElement>(null)
+    const searchRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -27,12 +31,23 @@ function Dropdown({ value, onChange, options, placeholder }: DropdownProps) {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    useEffect(() => {
+        if (open && searchable) {
+            setQuery('')
+            searchRef.current?.focus()
+        }
+    }, [open, searchable])
+
     const selected = options.find((o) => o.value === value)
 
     const handleSelect = (v: string) => {
         onChange(v)
         setOpen(false)
     }
+
+    const filteredOptions = searchable && query.trim()
+        ? options.filter((o) => o.label.toLowerCase().includes(query.trim().toLowerCase()))
+        : options
 
     return (
         <div className="dropdown" ref={ref}>
@@ -50,7 +65,21 @@ function Dropdown({ value, onChange, options, placeholder }: DropdownProps) {
 
             {open && (
                 <div className="dropdown-list">
-                    {options.map((o) => (
+                    {searchable && (
+                        <input
+                            ref={searchRef}
+                            type="text"
+                            className="dropdown-search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder={searchPlaceholder}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    )}
+                    {filteredOptions.length === 0 && (
+                        <div className="dropdown-empty">Niciun rezultat.</div>
+                    )}
+                    {filteredOptions.map((o) => (
                         <button
                             type="button"
                             key={o.value}

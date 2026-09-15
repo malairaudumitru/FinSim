@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from 'react'
+﻿import { useState, useRef, type FormEvent, type DragEvent } from 'react'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
@@ -51,6 +51,8 @@ function ResourcesSection() {
     const [showPdfForm, setShowPdfForm] = useState(false)
     const [pdfForm, setPdfForm] = useState<PdfForm>(emptyPdf)
     const [pdfError, setPdfError] = useState('')
+    const [pdfDragActive, setPdfDragActive] = useState(false)
+    const pdfFileInputRef = useRef<HTMLInputElement>(null)
 
     const openAddVideo = () => {
         setVideoEditId(null)
@@ -125,6 +127,32 @@ function ResourcesSection() {
 
     const handleDeletePdf = (p: PdfResource) => {
         if (confirm(`Ștergi ghidul „${p.titlu}"?`)) deletePdf(p.id)
+    }
+
+    const acceptPdfFile = (file: File | undefined) => {
+        if (!file) return
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            setPdfError('Poți încărca doar fișiere PDF.')
+            return
+        }
+        setPdfError('')
+        setPdfForm((f) => ({ ...f, fisier: `/${file.name}` }))
+    }
+
+    const handlePdfDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        setPdfDragActive(false)
+        acceptPdfFile(e.dataTransfer.files[0])
+    }
+
+    const handlePdfDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        setPdfDragActive(true)
+    }
+
+    const handlePdfDragLeave = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        setPdfDragActive(false)
     }
 
     return (
@@ -313,13 +341,30 @@ function ResourcesSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="pd-fisier">Cale fișier</label>
-                                <input
-                                    id="pd-fisier"
-                                    value={pdfForm.fisier}
-                                    onChange={(e) => setPdfForm((f) => ({ ...f, fisier: e.target.value }))}
-                                    placeholder="/nume-fisier.pdf"
-                                />
+                                <label htmlFor="pd-fisier">Fișier PDF</label>
+                                <div
+                                    className={`admin-dropzone ${pdfDragActive ? 'active' : ''}`}
+                                    onDrop={handlePdfDrop}
+                                    onDragOver={handlePdfDragOver}
+                                    onDragLeave={handlePdfDragLeave}
+                                    onClick={() => pdfFileInputRef.current?.click()}
+                                >
+                                    <input
+                                        id="pd-fisier"
+                                        ref={pdfFileInputRef}
+                                        type="file"
+                                        accept="application/pdf,.pdf"
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => acceptPdfFile(e.target.files?.[0])}
+                                    />
+                                    {pdfForm.fisier ? (
+                                        <span className="admin-dropzone-file">{pdfForm.fisier}</span>
+                                    ) : (
+                                        <span className="admin-dropzone-hint">
+                                            Trage fișierul PDF aici sau apasă pentru a-l alege
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         {pdfError && <span className="admin-form-error">{pdfError}</span>}

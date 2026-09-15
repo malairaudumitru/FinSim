@@ -347,6 +347,37 @@
     margin-top: -8px;
 }
 
+.admin-dropzone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 22px 12px;
+    border: 1px dashed var(--rule);
+    border-radius: 4px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.admin-dropzone:hover,
+.admin-dropzone.active {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+}
+
+.admin-dropzone-hint {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.admin-dropzone-file {
+    font-size: 14px;
+    color: var(--text-h);
+    font-weight: 500;
+    word-break: break-all;
+}
+
 /* messages */
 .admin-message-thread {
     display: flex;

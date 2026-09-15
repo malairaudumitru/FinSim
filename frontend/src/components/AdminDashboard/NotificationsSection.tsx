@@ -185,6 +185,8 @@ function NotificationsSection() {
                                 onChange={(v) => setForm((f) => ({ ...f, email: v }))}
                                 options={emailOptions}
                                 placeholder="Alege utilizatorul"
+                                searchable
+                                searchPlaceholder="Caută după nume sau email..."
                             />
                         </div>
 

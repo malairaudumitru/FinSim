@@ -73,3 +73,29 @@
     background: var(--gold-soft);
     color: var(--gold);
 }
+
+.dropdown-search {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--text-h);
+}
+
+.dropdown-search:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.dropdown-empty {
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+}
