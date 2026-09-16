@@ -47,4 +47,5 @@ public class UserEntity
     public ICollection<NotificationEntity> Notifications { get; set; } = new List<NotificationEntity>();
     public ICollection<ContactMessageEntity> ContactMessages { get; set; } = new List<ContactMessageEntity>();
     public ICollection<ScenarioHistoryEntity> ScenarioHistories { get; set; } = new List<ScenarioHistoryEntity>();
+    public ICollection<VerificationCodeEntity> VerificationCodes { get; set; } = new List<VerificationCodeEntity>();
 }

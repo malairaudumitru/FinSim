@@ -1,4 +1,5 @@
 using FinSim.BusinessLayer.Interfaces;
+using FinSim.Domain.Models.Auth;
 using FinSim.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,20 @@ public class RegisterController : ControllerBase
         _authLogic = authLogic;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Register([FromBody] UserRegisterDto registerInfo)
+    [HttpPost("start")]
+    public async Task<IActionResult> Start([FromBody] UserRegisterDto registerInfo)
     {
-        var result = await _authLogic.RegisterAsync(registerInfo);
+        var result = await _authLogic.StartRegisterAsync(registerInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPost("confirm")]
+    public async Task<IActionResult> Confirm([FromBody] RegisterConfirmDto confirmInfo)
+    {
+        var result = await _authLogic.ConfirmRegisterAsync(confirmInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

@@ -11,11 +11,19 @@ public class AuthLogic : AuthAction, IAuthLogic
 {
     public AuthLogic(AppDbContext context) : base(context) { }
 
-    public async Task<ActionResponse> RegisterAsync(UserRegisterDto data)
+    public async Task<ActionResponse> StartRegisterAsync(UserRegisterDto data)
     {
-        var result = await RegisterActionAsync(data);
+        var result = await StartRegisterActionAsync(data);
         if (result == false)
             return ActionResponse.BadRequest("Email already in use");
+        return ActionResponse.Ok("Cod de confirmare trimis pe email");
+    }
+
+    public async Task<ActionResponse> ConfirmRegisterAsync(RegisterConfirmDto data)
+    {
+        var result = await ConfirmRegisterActionAsync(data);
+        if (result == false)
+            return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Registered successfully");
     }
 
@@ -43,11 +51,33 @@ public class AuthLogic : AuthAction, IAuthLogic
         return ActionResponse.Ok("Logged out successfully");
     }
 
-    public async Task<ActionResponse> ChangePasswordAsync(int userId, ChangePasswordDto data)
+    public async Task<ActionResponse> StartChangePasswordAsync(int userId, ChangePasswordDto data)
     {
-        var result = await ChangePasswordActionAsync(userId, data);
+        var result = await StartChangePasswordActionAsync(userId, data);
         if (result == false)
             return ActionResponse.BadRequest("Current password is incorrect");
+        return ActionResponse.Ok("Cod de confirmare trimis pe email");
+    }
+
+    public async Task<ActionResponse> ConfirmChangePasswordAsync(int userId, ConfirmCodeDto data)
+    {
+        var result = await ConfirmChangePasswordActionAsync(userId, data);
+        if (result == false)
+            return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Password changed successfully");
+    }
+
+    public async Task<ActionResponse> ForgotPasswordAsync(ForgotPasswordDto data)
+    {
+        await ForgotPasswordActionAsync(data.Email);
+        return ActionResponse.Ok("Daca adresa exista in sistem, vei primi un cod pe email");
+    }
+
+    public async Task<ActionResponse> ResetPasswordAsync(ResetPasswordDto data)
+    {
+        var result = await ResetPasswordActionAsync(data);
+        if (result == false)
+            return ActionResponse.BadRequest("Cod invalid sau expirat");
+        return ActionResponse.Ok("Parola a fost resetata cu succes");
     }
 }

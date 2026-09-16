@@ -11,5 +11,4 @@ public class HealthController : ControllerBase
     {
         return Ok("Server is running");
     }
-    
 }

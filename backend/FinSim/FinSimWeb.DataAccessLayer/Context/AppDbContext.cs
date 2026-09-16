@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<ContactMessageEntity> ContactMessages => Set<ContactMessageEntity>();
     public DbSet<ScenarioEntity> Scenarios => Set<ScenarioEntity>();
     public DbSet<ScenarioHistoryEntity> ScenarioHistories => Set<ScenarioHistoryEntity>();
+    public DbSet<VerificationCodeEntity> VerificationCodes => Set<VerificationCodeEntity>();
+    public DbSet<PendingRegistrationEntity> PendingRegistrations => Set<PendingRegistrationEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,5 +70,13 @@ public class AppDbContext : DbContext
             .WithMany(s => s.Histories)
             .HasForeignKey(sh => sh.ScenarioId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<VerificationCodeEntity>()
+            .HasOne(v => v.User)
+            .WithMany(u => u.VerificationCodes)
+            .HasForeignKey(v => v.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PendingRegistrationEntity>().HasIndex(p => p.Email).IsUnique();
     }
 }

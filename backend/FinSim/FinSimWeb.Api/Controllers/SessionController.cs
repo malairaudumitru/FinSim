@@ -69,14 +69,51 @@ public class SessionController : ControllerBase
         return Ok(result.Data);
     }
 
-    [HttpPut("change-password")]
+    [HttpPost("change-password/start")]
     [Authorize]
-    [EnableRateLimiting("auth")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto passwordInfo)
+    public async Task<IActionResult> StartChangePassword([FromBody] ChangePasswordDto passwordInfo)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        var result = await _authLogic.ChangePasswordAsync(userId, passwordInfo);
+        var result = await _authLogic.StartChangePasswordAsync(userId, passwordInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPost("change-password/confirm")]
+    [Authorize]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> ConfirmChangePassword([FromBody] ConfirmCodeDto confirmInfo)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var result = await _authLogic.ConfirmChangePasswordAsync(userId, confirmInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotInfo)
+    {
+        var result = await _authLogic.ForgotPasswordAsync(forgotInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetInfo)
+    {
+        var result = await _authLogic.ResetPasswordAsync(resetInfo);
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
