@@ -54,6 +54,11 @@
     align-items: center;
 }
 
+.nav-actions .btn {
+    min-width: 140px;
+    justify-content: center;
+}
+
 .notif-bell {
     position: relative;
     display: inline-flex;

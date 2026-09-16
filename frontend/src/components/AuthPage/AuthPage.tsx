@@ -1,11 +1,13 @@
 ﻿import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
+import LanguageSwitcher from '../../shared/LanguageSwitcher/LanguageSwitcher'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
-import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
+import { isValidBirthDate, daysInMonth, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -33,6 +35,7 @@ const initialState: FormState = {
 }
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 function EyeIcon({ open }: { open: boolean }) {
     if (open) {
@@ -57,6 +60,7 @@ type Step = 'form' | 'code' | 'newPassword'
 const CODE_REGEX = /^\d{6}$/
 
 function AuthPage() {
+    const { t, i18n } = useTranslation()
     const { login } = useAuth()
     const { addUser, findByEmail } = useUsers()
     const navigate = useNavigate()
@@ -83,6 +87,7 @@ function AuthPage() {
     )
     const maxZile = daysInMonth(Number(form.luna) || undefined, Number(form.an) || undefined)
     const ziledisponibile = Array.from({ length: maxZile }, (_, i) => i + 1)
+    const luni = t('common.months', { returnObjects: true }) as string[]
 
     useEffect(() => {
         if (submitted && mode === 'login') {
@@ -126,9 +131,9 @@ function AuthPage() {
         const newErrors: Partial<Record<keyof FormState, string>> = {}
 
         if (!form.email.trim()) {
-            newErrors.email = 'Email-ul este obligatoriu.'
+            newErrors.email = t('auth.error_email_required')
         } else if (!EMAIL_REGEX.test(form.email.trim())) {
-            newErrors.email = 'Introdu o adresă de email validă.'
+            newErrors.email = t('auth.error_email_invalid')
         }
 
         if (isForgot) {
@@ -137,34 +142,34 @@ function AuthPage() {
         }
 
         if (isRegister) {
-            if (!form.nume.trim()) newErrors.nume = 'Numele este obligatoriu.'
-            if (!form.prenume.trim()) newErrors.prenume = 'Prenumele este obligatoriu.'
+            if (!form.nume.trim()) newErrors.nume = t('auth.error_nume_required')
+            if (!form.prenume.trim()) newErrors.prenume = t('auth.error_prenume_required')
 
             const zi = Number(form.zi)
             const luna = Number(form.luna)
             const an = Number(form.an)
 
             if (!form.zi || !form.luna || !form.an) {
-                newErrors.zi = 'Data nașterii este obligatorie.'
+                newErrors.zi = t('auth.error_birthdate_required')
             } else if (zi < 1 || zi > 31) {
-                newErrors.zi = 'Ziua trebuie să fie între 1 și 31.'
+                newErrors.zi = t('auth.error_day_range')
             } else if (luna < 1 || luna > 12) {
-                newErrors.luna = 'Luna trebuie să fie între 1 și 12.'
+                newErrors.luna = t('auth.error_month_range')
             } else if (an < anCurent - VARSTA_MAXIMA || an > anCurent - VARSTA_MINIMA) {
-                newErrors.an = 'Introdu un an de naștere valid.'
+                newErrors.an = t('auth.error_year_invalid')
             } else if (!isValidBirthDate(zi, luna, an)) {
-                newErrors.zi = 'Data introdusă nu este validă.'
+                newErrors.zi = t('auth.error_date_invalid')
             }
         }
 
         if (!form.parola) {
-            newErrors.parola = 'Parola este obligatorie.'
+            newErrors.parola = t('auth.error_password_required')
         } else if (form.parola.length < 8) {
-            newErrors.parola = 'Parola trebuie să aibă cel puțin 8 caractere.'
+            newErrors.parola = t('auth.error_password_length')
         }
 
         if (isRegister && form.parola !== form.confirmaParola) {
-            newErrors.confirmaParola = 'Parolele nu coincid.'
+            newErrors.confirmaParola = t('auth.error_passwords_mismatch')
         }
 
         setErrors(newErrors)
@@ -173,7 +178,7 @@ function AuthPage() {
 
     const validateCode = (): boolean => {
         if (!CODE_REGEX.test(code)) {
-            setCodeError('Codul trebuie să aibă exact 6 cifre.')
+            setCodeError(t('auth.error_code_invalid'))
             return false
         }
         setCodeError('')
@@ -184,13 +189,13 @@ function AuthPage() {
         const newErrors: Partial<Record<keyof FormState, string>> = {}
 
         if (!form.parola) {
-            newErrors.parola = 'Parola este obligatorie.'
+            newErrors.parola = t('auth.error_password_required')
         } else if (form.parola.length < 8) {
-            newErrors.parola = 'Parola trebuie să aibă cel puțin 8 caractere.'
+            newErrors.parola = t('auth.error_password_length')
         }
 
         if (form.parola !== form.confirmaParola) {
-            newErrors.confirmaParola = 'Parolele nu coincid.'
+            newErrors.confirmaParola = t('auth.error_passwords_mismatch')
         }
 
         setErrors(newErrors)
@@ -204,7 +209,7 @@ function AuthPage() {
             email: form.email,
             rol: form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user',
             status: 'activ',
-            dataInregistrare: new Date().toLocaleDateString('ro-RO'),
+            dataInregistrare: new Date().toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO'),
             scenariiFinalizate: 0,
             scorTotal: 0,
             zi: Number(form.zi),
@@ -234,7 +239,7 @@ function AuthPage() {
 
             const existing = findByEmail(form.email)
             if (existing && existing.status === 'blocat') {
-                setFormError('Acest cont a fost blocat de un administrator.')
+                setFormError(t('auth.error_account_blocked'))
                 return
             }
             login({
@@ -253,7 +258,7 @@ function AuthPage() {
                 setFormError('')
                 const exists = findByEmail(form.email)
                 if (exists) {
-                    setFormError('Există deja un cont înregistrat cu acest email.')
+                    setFormError(t('auth.error_email_taken'))
                     return
                 }
                 setStep('code')
@@ -289,9 +294,10 @@ function AuthPage() {
     return (
         <div className="auth-page">
             <Link to="/" className="auth-home-link">
-                ← Înapoi la pagina principală
+                {t('common.back_home')}
             </Link>
             <div className="auth-theme-toggle">
+                <LanguageSwitcher />
                 <ThemeToggle />
             </div>
             <div className="auth-card">
@@ -301,7 +307,7 @@ function AuthPage() {
                     </Link>
                     {isForgot && (
                         <button type="button" className="auth-back" onClick={() => switchMode('login')}>
-                            ← Înapoi la autentificare
+                            {t('auth.back_to_login')}
                         </button>
                     )}
                 </div>
@@ -313,61 +319,61 @@ function AuthPage() {
                             className={`auth-tab ${!isRegister ? 'active' : ''}`}
                             onClick={() => switchMode('login')}
                         >
-                            Autentificare
+                            {t('auth.tab_login')}
                         </button>
                         <button
                             type="button"
                             className={`auth-tab ${isRegister ? 'active' : ''}`}
                             onClick={() => switchMode('register')}
                         >
-                            Înregistrare
+                            {t('auth.tab_register')}
                         </button>
                     </div>
                 )}
 
                 <p className="auth-subtitle">
                     {step === 'code'
-                        ? 'Introdu codul de 6 cifre primit pe email.'
+                        ? t('auth.subtitle_code')
                         : step === 'newPassword'
-                            ? 'Alege o parolă nouă pentru contul tău.'
+                            ? t('auth.subtitle_new_password')
                             : isForgot
-                                ? 'Introdu adresa de email și îți trimitem un cod de verificare.'
+                                ? t('auth.subtitle_forgot')
                                 : isRegister
-                                    ? 'Câteva date și ești gata să începi prima simulare.'
-                                    : 'Introdu datele contului pentru a continua.'}
+                                    ? t('auth.subtitle_register')
+                                    : t('auth.subtitle_login')}
                 </p>
 
                 {submitted ? (
                     <div className="auth-success">
                         {isForgot
-                            ? 'Parola a fost resetată cu succes! Te poți autentifica cu noua parolă.'
+                            ? t('auth.success_forgot')
                             : isRegister
-                                ? 'Contul a fost creat cu succes! Te poți autentifica acum.'
-                                : 'Autentificare reușită! Te redirecționăm...'}
+                                ? t('auth.success_register')
+                                : t('auth.success_login')}
                     </div>
                 ) : (
                     <form className="auth-form" onSubmit={handleSubmit} noValidate>
                         {isRegister && step === 'form' && (
                             <div className="form-row">
                                 <div className="form-field">
-                                    <label htmlFor="nume">Nume</label>
+                                    <label htmlFor="nume">{t('auth.label_nume')}</label>
                                     <input
                                         id="nume"
                                         type="text"
                                         value={form.nume}
                                         onChange={handleChange('nume')}
-                                        placeholder="Popescu"
+                                        placeholder={t('auth.placeholder_nume')}
                                     />
                                     {errors.nume && <span className="field-error">{errors.nume}</span>}
                                 </div>
                                 <div className="form-field">
-                                    <label htmlFor="prenume">Prenume</label>
+                                    <label htmlFor="prenume">{t('auth.label_prenume')}</label>
                                     <input
                                         id="prenume"
                                         type="text"
                                         value={form.prenume}
                                         onChange={handleChange('prenume')}
-                                        placeholder="Ion"
+                                        placeholder={t('auth.placeholder_prenume')}
                                     />
                                     {errors.prenume && <span className="field-error">{errors.prenume}</span>}
                                 </div>
@@ -376,13 +382,13 @@ function AuthPage() {
 
                         {step === 'form' && (
                             <div className="form-field">
-                                <label htmlFor="email">Email</label>
+                                <label htmlFor="email">{t('auth.label_email')}</label>
                                 <input
                                     id="email"
                                     type="email"
                                     value={form.email}
                                     onChange={handleChange('email')}
-                                    placeholder="nume@exemplu.com"
+                                    placeholder={t('auth.placeholder_email')}
                                 />
                                 {errors.email && <span className="field-error">{errors.email}</span>}
                             </div>
@@ -390,25 +396,25 @@ function AuthPage() {
 
                         {isRegister && step === 'form' && (
                             <div className="form-field">
-                                <label>Data nașterii</label>
+                                <label>{t('auth.label_birthdate')}</label>
                                 <div className="form-row">
                                     <Dropdown
                                         value={form.zi}
                                         onChange={handleZiChange}
                                         options={ziledisponibile.map((d) => ({ value: String(d), label: String(d) }))}
-                                        placeholder="Ziua"
+                                        placeholder={t('auth.placeholder_day')}
                                     />
                                     <Dropdown
                                         value={form.luna}
                                         onChange={handleDateFieldChange('luna')}
-                                        options={LUNI.map((nume, i) => ({ value: String(i + 1), label: nume }))}
-                                        placeholder="Luna"
+                                        options={luni.map((nume, i) => ({ value: String(i + 1), label: nume }))}
+                                        placeholder={t('auth.placeholder_month')}
                                     />
                                     <Dropdown
                                         value={form.an}
                                         onChange={handleDateFieldChange('an')}
                                         options={aniDisponibili.map((an) => ({ value: String(an), label: String(an) }))}
-                                        placeholder="Anul"
+                                        placeholder={t('auth.placeholder_year')}
                                     />
                                 </div>
                                 {(errors.zi || errors.luna || errors.an) && (
@@ -419,20 +425,20 @@ function AuthPage() {
 
                         {((!isForgot && step === 'form') || (isForgot && step === 'newPassword')) && (
                             <div className="form-field">
-                                <label htmlFor="parola">{isForgot ? 'Parolă nouă' : 'Parolă'}</label>
+                                <label htmlFor="parola">{isForgot ? t('auth.label_new_password') : t('auth.label_password')}</label>
                                 <div className="password-input">
                                     <input
                                         id="parola"
                                         type={showPassword ? 'text' : 'password'}
                                         value={form.parola}
                                         onChange={handleChange('parola')}
-                                        placeholder="••••••••"
+                                        placeholder={t('auth.placeholder_password')}
                                     />
                                     <button
                                         type="button"
                                         className="password-toggle"
                                         onClick={() => setShowPassword((v) => !v)}
-                                        aria-label={showPassword ? 'Ascunde parola' : 'Arată parola'}
+                                        aria-label={showPassword ? t('auth.hide_password') : t('auth.show_password')}
                                     >
                                         <EyeIcon open={showPassword} />
                                     </button>
@@ -444,14 +450,14 @@ function AuthPage() {
                         {((isRegister && step === 'form') || (isForgot && step === 'newPassword')) && (
                             <div className="form-field">
                                 <label htmlFor="confirmaParola">
-                                    {isForgot ? 'Confirmă parola nouă' : 'Confirmă parola'}
+                                    {isForgot ? t('auth.label_confirm_new_password') : t('auth.label_confirm_password')}
                                 </label>
                                 <input
                                     id="confirmaParola"
                                     type={showPassword ? 'text' : 'password'}
                                     value={form.confirmaParola}
                                     onChange={handleChange('confirmaParola')}
-                                    placeholder="••••••••"
+                                    placeholder={t('auth.placeholder_password')}
                                 />
                                 {errors.confirmaParola && (
                                     <span className="field-error">{errors.confirmaParola}</span>
@@ -461,7 +467,7 @@ function AuthPage() {
 
                         {step === 'code' && (
                             <div className="form-field">
-                                <label htmlFor="code">Cod de verificare</label>
+                                <label htmlFor="code">{t('auth.label_code')}</label>
                                 <input
                                     id="code"
                                     type="text"
@@ -469,11 +475,11 @@ function AuthPage() {
                                     maxLength={6}
                                     value={code}
                                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                                    placeholder="123456"
+                                    placeholder={t('auth.placeholder_code')}
                                 />
                                 {codeError && <span className="field-error">{codeError}</span>}
                                 <span className="auth-form-hint">
-                                    Am trimis un cod de 6 cifre la adresa ta de email.
+                                    {t('auth.hint_code_sent')}
                                 </span>
                             </div>
                         )}
@@ -486,14 +492,14 @@ function AuthPage() {
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
                                     />
-                                    <span>Ține-mă minte</span>
+                                    <span>{t('auth.remember_me')}</span>
                                 </label>
                                 <button
                                     type="button"
                                     className="forgot-password"
                                     onClick={() => switchMode('forgot')}
                                 >
-                                    Ai uitat parola?
+                                    {t('auth.forgot_password')}
                                 </button>
                             </div>
                         )}
@@ -502,7 +508,7 @@ function AuthPage() {
 
                         {!isRegister && !isForgot && loginRateLimit.isLimited && (
                             <span className="field-error auth-form-error rate-limit-error">
-                                Ai atins limita de 5 încercări. Încearcă din nou peste {loginRateLimit.secondsLeft}s.
+                                {t('auth.rate_limit', { seconds: loginRateLimit.secondsLeft })}
                             </span>
                         )}
 
@@ -512,14 +518,12 @@ function AuthPage() {
                             disabled={mode === 'login' && loginRateLimit.isLimited}
                         >
                             {step === 'code'
-                                ? 'Confirmă codul'
+                                ? t('auth.submit_confirm_code')
                                 : step === 'newPassword'
-                                    ? 'Resetează parola'
-                                    : isForgot
-                                        ? 'Trimite codul pe email'
-                                        : isRegister
-                                            ? 'Trimite codul pe email'
-                                            : 'Autentificare'}
+                                    ? t('auth.submit_reset_password')
+                                    : isForgot || isRegister
+                                        ? t('auth.submit_send_code')
+                                        : t('auth.submit_login')}
                         </button>
                     </form>
                 )}

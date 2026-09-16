@@ -1,5 +1,7 @@
 ﻿import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import ThemeToggle from '../ThemeToggle/ThemeToggle'
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'
 import AvatarMenu from '../AvatarMenu/AvatarMenu'
 import { useAuth } from '../AuthContext/AuthContext'
 import { useNotifications } from '../NotificationsContext/NotificationsContext'
@@ -17,6 +19,7 @@ function BellIcon() {
 function Navbar() {
     const { isLoggedIn } = useAuth()
     const { unreadCount } = useNotifications()
+    const { t } = useTranslation()
 
     return (
         <header className="navbar">
@@ -26,17 +29,18 @@ function Navbar() {
                     FinSim
                 </Link>
                 <nav className="nav-links">
-                    <Link to="/scenarios">Scenarii</Link>
-                    <Link to="/resources">Resurse</Link>
-                    <Link to="/leaderboard">Clasament</Link>
-                    <Link to="/faq">Întrebări frecvente</Link>
-                    <Link to="/" hash="reviews">Recenzii</Link>
-                    <Link to="/contact">Contact</Link>
+                    <Link to="/scenarios">{t('navbar.scenarios')}</Link>
+                    <Link to="/resources">{t('navbar.resources')}</Link>
+                    <Link to="/leaderboard">{t('navbar.leaderboard')}</Link>
+                    <Link to="/faq">{t('navbar.faq')}</Link>
+                    <Link to="/" hash="reviews">{t('navbar.reviews')}</Link>
+                    <Link to="/contact">{t('navbar.contact')}</Link>
                 </nav>
                 <div className="nav-actions">
+                    <LanguageSwitcher />
                     <ThemeToggle />
                     {isLoggedIn && (
-                        <Link to="/notifications" className="notif-bell" aria-label="Notificări">
+                        <Link to="/notifications" className="notif-bell" aria-label={t('navbar.notifications_aria')}>
                             <BellIcon />
                             {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
                         </Link>
@@ -45,7 +49,7 @@ function Navbar() {
                         <AvatarMenu />
                     ) : (
                         <Link to="/login" className="btn btn-primary">
-                            Autentificare
+                            {t('navbar.login')}
                         </Link>
                     )}
                 </div>

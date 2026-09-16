@@ -1,4 +1,5 @@
 ﻿import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import './Footer.css'
 
 function InstagramIcon() {
@@ -20,38 +21,40 @@ function FacebookIcon() {
 }
 
 function Footer() {
+    const { t } = useTranslation()
+
     return (
         <footer id="contact" className="footer">
             <div className="container">
                 <div className="footer-inner">
                     <div className="footer-col">
                         <h4>FinSim</h4>
-                        <p>Învață să-ți gestionezi banii prin simulări practice, fără riscuri reale.</p>
+                        <p>{t('footer.tagline')}</p>
                     </div>
                     <div className="footer-col">
-                        <h4>Contact</h4>
+                        <h4>{t('footer.contact_title')}</h4>
                         <a href="mailto:contact@finsim.md">contact@finsim.md</a>
                         <span className="footer-text">Chișinău, Moldova</span>
                     </div>
                     <div className="footer-col">
-                        <h4>Despre proiect</h4>
-                        <Link to="/about">Despre noi</Link>
-                        <Link to="/terms">Termeni și condiții</Link>
+                        <h4>{t('footer.about_title')}</h4>
+                        <Link to="/about">{t('footer.about_link')}</Link>
+                        <Link to="/terms">{t('footer.terms_link')}</Link>
                     </div>
                     <div className="footer-col">
-                        <h4>Rețele sociale</h4>
+                        <h4>{t('footer.social_title')}</h4>
                         <a href="#" className="footer-social-link">
                             <InstagramIcon />
-                            Instagram
+                            {t('footer.instagram')}
                         </a>
                         <a href="#" className="footer-social-link">
                             <FacebookIcon />
-                            Facebook
+                            {t('footer.facebook')}
                         </a>
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    © {new Date().getFullYear()} FinSim. Toate drepturile rezervate.
+                    {t('footer.rights', { year: new Date().getFullYear() })}
                 </div>
             </div>
         </footer>
