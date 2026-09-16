@@ -9,11 +9,13 @@ bin/
 obj/
 *.user
 *.suo
+backend/FinSim/FinSimWeb.Api/Logs/
 
 # Editor / IDE
 .idea/
 .vs/
 .vscode/
+.claude/
 
 # OS
 .DS_Store
@@ -21,3 +23,8 @@ Thumbs.db
 
 # Docker env
 .env
+
+# Uploaded files (keep folder structure via .gitkeep)
+backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/*
+!backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/
+!backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/.gitkeep
