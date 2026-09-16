@@ -4,6 +4,7 @@ import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
+import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
 import { isValidBirthDate, daysInMonth, LUNI, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 import './AuthPage.css'
 
@@ -64,6 +65,7 @@ function AuthPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [formError, setFormError] = useState('')
+    const loginRateLimit = useRateLimit()
 
     const anCurent = new Date().getFullYear()
     const aniDisponibili = Array.from(
@@ -159,6 +161,11 @@ function AuthPage() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
+
+        if (!isRegister && !isForgot) {
+            if (loginRateLimit.isLimited) return
+            if (!loginRateLimit.registerAttempt()) return
+        }
 
         if (!validate()) return
         setFormError('')
@@ -391,7 +398,17 @@ function AuthPage() {
 
                         {formError && <span className="field-error auth-form-error">{formError}</span>}
 
-                        <button type="submit" className="btn btn-primary btn-lg auth-submit">
+                        {!isRegister && !isForgot && loginRateLimit.isLimited && (
+                            <span className="field-error auth-form-error rate-limit-error">
+                                Ai atins limita de 5 încercări. Încearcă din nou peste {loginRateLimit.secondsLeft}s.
+                            </span>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="btn btn-primary btn-lg auth-submit"
+                            disabled={!isRegister && !isForgot && loginRateLimit.isLimited}
+                        >
                             {isForgot ? 'Trimite link de resetare' : isRegister ? 'Creează cont' : 'Autentificare'}
                         </button>
                     </form>

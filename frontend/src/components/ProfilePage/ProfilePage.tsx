@@ -16,6 +16,7 @@ import {
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import StarRating from '../../shared/StarRating/StarRating'
 import Dropdown from '../../shared/Dropdown/Dropdown'
+import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
 import './ProfilePage.css'
 
 interface UserInfo {
@@ -150,6 +151,7 @@ function ProfilePage() {
     const [passwordErrors, setPasswordErrors] = useState<Partial<Record<keyof PasswordForm, string>>>({})
     const [showPassword, setShowPassword] = useState(false)
     const [passwordSaved, setPasswordSaved] = useState(false)
+    const passwordRateLimit = useRateLimit()
 
     const [reviewForm, setReviewForm] = useState<ReviewForm>(initialReviewForm)
     const [reviewError, setReviewError] = useState('')
@@ -278,6 +280,9 @@ function ProfilePage() {
 
     const handleSavePassword = (e: FormEvent) => {
         e.preventDefault()
+
+        if (passwordRateLimit.isLimited) return
+        if (!passwordRateLimit.registerAttempt()) return
 
         if (!validatePassword()) return
 
@@ -488,11 +493,17 @@ function ProfilePage() {
                                     )}
                                 </div>
 
+                                {passwordRateLimit.isLimited && (
+                                    <span className="field-error rate-limit-error">
+                                        Ai atins limita de 5 încercări. Încearcă din nou peste {passwordRateLimit.secondsLeft}s.
+                                    </span>
+                                )}
+
                                 <div className="profile-edit-actions">
                                     <button type="button" className="btn btn-ghost" onClick={cancelChangingPassword}>
                                         Anulează
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
+                                    <button type="submit" className="btn btn-primary" disabled={passwordRateLimit.isLimited}>
                                         Salvează parola
                                     </button>
                                 </div>

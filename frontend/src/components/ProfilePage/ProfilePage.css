@@ -233,6 +233,16 @@
     color: var(--rust);
 }
 
+.rate-limit-error {
+    display: block;
+    padding: 10px 12px;
+    background: rgba(191, 97, 76, 0.12);
+    border: 1px solid var(--rust);
+    border-radius: 3px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
 .profile-edit-actions {
     display: flex;
     gap: 12px;
