@@ -26,7 +26,7 @@ function extractYoutubeId(input: string): string {
         const v = url.searchParams.get('v')
         if (v) return v
     } catch {
-
+        // not a valid URL, fall through to returning the trimmed input as-is
     }
 
     return trimmed

@@ -36,12 +36,19 @@ function Dropdown({ value, onChange, options, placeholder, searchable = false, s
 
     useEffect(() => {
         if (open && searchable) {
-            setQuery('')
             searchRef.current?.focus()
         }
     }, [open, searchable])
 
     const selected = options.find((o) => o.value === value)
+
+    const toggleOpen = () => {
+        setOpen((v) => {
+            const next = !v
+            if (next) setQuery('')
+            return next
+        })
+    }
 
     const handleSelect = (v: string) => {
         onChange(v)
@@ -57,7 +64,7 @@ function Dropdown({ value, onChange, options, placeholder, searchable = false, s
             <button
                 type="button"
                 className="dropdown-trigger"
-                onClick={() => setOpen((v) => !v)}
+                onClick={toggleOpen}
                 aria-expanded={open}
             >
                 <span className={selected ? '' : 'dropdown-placeholder'}>

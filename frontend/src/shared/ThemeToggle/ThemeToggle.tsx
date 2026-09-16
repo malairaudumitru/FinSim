@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+﻿import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { applyTheme, getStoredTheme, getSystemTheme, type Theme } from '../theme/theme.ts'
 import './ThemeToggle.css'
@@ -22,11 +22,7 @@ function MoonIcon() {
 
 function ThemeToggle() {
     const { t } = useTranslation()
-    const [theme, setTheme] = useState<Theme>('light')
-
-    useEffect(() => {
-        setTheme(getStoredTheme() ?? getSystemTheme())
-    }, [])
+    const [theme, setTheme] = useState<Theme>(() => getStoredTheme() ?? getSystemTheme())
 
     const toggle = () => {
         const next: Theme = theme === 'dark' ? 'light' : 'dark'
