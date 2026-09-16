@@ -152,6 +152,9 @@ function ProfilePage() {
     const [showPassword, setShowPassword] = useState(false)
     const [passwordSaved, setPasswordSaved] = useState(false)
     const passwordRateLimit = useRateLimit()
+    const [passwordStep, setPasswordStep] = useState<'form' | 'code'>('form')
+    const [confirmCode, setConfirmCode] = useState('')
+    const [confirmCodeError, setConfirmCodeError] = useState('')
 
     const [reviewForm, setReviewForm] = useState<ReviewForm>(initialReviewForm)
     const [reviewError, setReviewError] = useState('')
@@ -249,12 +252,27 @@ function ProfilePage() {
         setPasswordForm(initialPasswordForm)
         setPasswordErrors({})
         setPasswordSaved(false)
+        setPasswordStep('form')
+        setConfirmCode('')
+        setConfirmCodeError('')
         setIsChangingPassword(true)
     }
 
     const cancelChangingPassword = () => {
         setIsChangingPassword(false)
         setPasswordErrors({})
+        setPasswordStep('form')
+        setConfirmCode('')
+        setConfirmCodeError('')
+    }
+
+    const validateConfirmCode = (): boolean => {
+        if (!/^\d{6}$/.test(confirmCode)) {
+            setConfirmCodeError('Codul trebuie să aibă exact 6 cifre.')
+            return false
+        }
+        setConfirmCodeError('')
+        return true
     }
 
     const validatePassword = (): boolean => {
@@ -281,13 +299,23 @@ function ProfilePage() {
     const handleSavePassword = (e: FormEvent) => {
         e.preventDefault()
 
-        if (passwordRateLimit.isLimited) return
-        if (!passwordRateLimit.registerAttempt()) return
+        if (passwordStep === 'form') {
+            if (passwordRateLimit.isLimited) return
+            if (!passwordRateLimit.registerAttempt()) return
 
-        if (!validatePassword()) return
+            if (!validatePassword()) return
 
-        setIsChangingPassword(false)
-        setPasswordSaved(true)
+            setPasswordStep('code')
+            return
+        }
+
+        if (passwordStep === 'code') {
+            if (!validateConfirmCode()) return
+
+            setIsChangingPassword(false)
+            setPasswordSaved(true)
+            setPasswordStep('form')
+        }
     }
 
     const handleReviewSubmit = (e: FormEvent) => {
@@ -444,59 +472,82 @@ function ProfilePage() {
 
                         {isChangingPassword ? (
                             <form className="password-form" onSubmit={handleSavePassword} noValidate>
-                                <div className="form-field">
-                                    <label htmlFor="parolaCurenta">Parola curentă</label>
-                                    <div className="password-input">
+                                {passwordStep === 'form' && (
+                                    <>
+                                        <div className="form-field">
+                                            <label htmlFor="parolaCurenta">Parola curentă</label>
+                                            <div className="password-input">
+                                                <input
+                                                    id="parolaCurenta"
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    value={passwordForm.parolaCurenta}
+                                                    onChange={handlePasswordChange('parolaCurenta')}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="password-toggle"
+                                                    onClick={() => setShowPassword((v) => !v)}
+                                                    aria-label={showPassword ? 'Ascunde parola' : 'Arată parola'}
+                                                >
+                                                    <EyeIcon open={showPassword} />
+                                                </button>
+                                            </div>
+                                            {passwordErrors.parolaCurenta && (
+                                                <span className="field-error">{passwordErrors.parolaCurenta}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="form-field">
+                                            <label htmlFor="parolaNoua">Parolă nouă</label>
+                                            <input
+                                                id="parolaNoua"
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={passwordForm.parolaNoua}
+                                                onChange={handlePasswordChange('parolaNoua')}
+                                            />
+                                            {passwordErrors.parolaNoua && (
+                                                <span className="field-error">{passwordErrors.parolaNoua}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="form-field">
+                                            <label htmlFor="confirmaParolaNoua">Confirmă parola nouă</label>
+                                            <input
+                                                id="confirmaParolaNoua"
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={passwordForm.confirmaParolaNoua}
+                                                onChange={handlePasswordChange('confirmaParolaNoua')}
+                                            />
+                                            {passwordErrors.confirmaParolaNoua && (
+                                                <span className="field-error">{passwordErrors.confirmaParolaNoua}</span>
+                                            )}
+                                        </div>
+
+                                        {passwordRateLimit.isLimited && (
+                                            <span className="field-error rate-limit-error">
+                                                Ai atins limita de 5 încercări. Încearcă din nou peste {passwordRateLimit.secondsLeft}s.
+                                            </span>
+                                        )}
+                                    </>
+                                )}
+
+                                {passwordStep === 'code' && (
+                                    <div className="form-field">
+                                        <label htmlFor="confirmCode">Cod de verificare</label>
                                         <input
-                                            id="parolaCurenta"
-                                            type={showPassword ? 'text' : 'password'}
-                                            value={passwordForm.parolaCurenta}
-                                            onChange={handlePasswordChange('parolaCurenta')}
+                                            id="confirmCode"
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={6}
+                                            value={confirmCode}
+                                            onChange={(e) => setConfirmCode(e.target.value.replace(/\D/g, ''))}
+                                            placeholder="123456"
                                         />
-                                        <button
-                                            type="button"
-                                            className="password-toggle"
-                                            onClick={() => setShowPassword((v) => !v)}
-                                            aria-label={showPassword ? 'Ascunde parola' : 'Arată parola'}
-                                        >
-                                            <EyeIcon open={showPassword} />
-                                        </button>
+                                        {confirmCodeError && <span className="field-error">{confirmCodeError}</span>}
+                                        <span className="auth-form-hint">
+                                            Am trimis un cod de 6 cifre la adresa ta de email.
+                                        </span>
                                     </div>
-                                    {passwordErrors.parolaCurenta && (
-                                        <span className="field-error">{passwordErrors.parolaCurenta}</span>
-                                    )}
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="parolaNoua">Parolă nouă</label>
-                                    <input
-                                        id="parolaNoua"
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={passwordForm.parolaNoua}
-                                        onChange={handlePasswordChange('parolaNoua')}
-                                    />
-                                    {passwordErrors.parolaNoua && (
-                                        <span className="field-error">{passwordErrors.parolaNoua}</span>
-                                    )}
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="confirmaParolaNoua">Confirmă parola nouă</label>
-                                    <input
-                                        id="confirmaParolaNoua"
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={passwordForm.confirmaParolaNoua}
-                                        onChange={handlePasswordChange('confirmaParolaNoua')}
-                                    />
-                                    {passwordErrors.confirmaParolaNoua && (
-                                        <span className="field-error">{passwordErrors.confirmaParolaNoua}</span>
-                                    )}
-                                </div>
-
-                                {passwordRateLimit.isLimited && (
-                                    <span className="field-error rate-limit-error">
-                                        Ai atins limita de 5 încercări. Încearcă din nou peste {passwordRateLimit.secondsLeft}s.
-                                    </span>
                                 )}
 
                                 <div className="profile-edit-actions">
@@ -504,7 +555,7 @@ function ProfilePage() {
                                         Anulează
                                     </button>
                                     <button type="submit" className="btn btn-primary" disabled={passwordRateLimit.isLimited}>
-                                        Salvează parola
+                                        {passwordStep === 'code' ? 'Confirmă codul' : 'Salvează parola'}
                                     </button>
                                 </div>
                             </form>
