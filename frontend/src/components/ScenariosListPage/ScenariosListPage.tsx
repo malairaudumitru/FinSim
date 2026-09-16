@@ -1,10 +1,12 @@
 ﻿import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ScenariosListPage.css'
 
 function ScenariosListPage() {
+    const { t } = useTranslation()
     const { isLoggedIn } = useAuth()
     const { scenarios } = useScenarios()
 
@@ -12,9 +14,9 @@ function ScenariosListPage() {
         <div className="scenarios-list-page">
             <section className="content-hero">
                 <div className="container">
-                    <h1>Scenarii de simulare</h1>
+                    <h1>{t('scenariosList.title')}</h1>
                     <p className="content-hero-subtitle">
-                        Alege o situație financiară reală și vezi cum s-ar descurca bugetul tău.
+                        {t('scenariosList.subtitle')}
                     </p>
                 </div>
             </section>
@@ -31,13 +33,13 @@ function ScenariosListPage() {
                                 <span className="scenario-tag">
                                     {s.dificultate}
                                     {s.necesitaCont && !isLoggedIn && (
-                                        <span className="scenario-lock" title="Necesită cont">
+                                        <span className="scenario-lock" title={t('scenariosList.requiresAccount')}>
                                             🔒
                                         </span>
                                     )}
                                 </span>
                                 <Link to="/scenarios/$slug" params={{ slug: s.slug }} className="btn btn-link">
-                                    Joacă scenariul →
+                                    {t('scenariosList.playScenario')}
                                 </Link>
                             </div>
                         ))}

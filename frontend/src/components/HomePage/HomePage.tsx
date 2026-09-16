@@ -2,33 +2,11 @@
 import { Link } from '@tanstack/react-router'
 import Typewriter from 'typewriter-effect'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import StarRating from '../../shared/StarRating/StarRating'
 import './HomePage.css'
-
-const features = [
-    {
-        title: 'Compari inteligent',
-        text: 'Nu doar rata lunară — vezi costul total, exact ca la o comparație reală de oferte de credit.',
-        icon: 'compara',
-    },
-    {
-        title: 'Decizii sub presiune',
-        text: 'Exersezi cum reacționezi când timpul e limitat — exact cum se simte o urgență reală.',
-        icon: 'timp',
-    },
-    {
-        title: 'Buget flexibil',
-        text: 'Muți bani între categorii cu un slider și vezi impactul instant asupra soldului.',
-        icon: 'slider',
-    },
-    {
-        title: 'Testezi ce știi',
-        text: 'Verifici rapid cât de bine înțelegi dobânzi, credite și economii — cu răspuns imediat.',
-        icon: 'quiz',
-    },
-]
 
 function IconCompara() {
     return (
@@ -76,28 +54,6 @@ const featureIcons: Record<string, ReactNode> = {
     quiz: <IconQuiz />,
 }
 
-const steps = [
-    {
-        title: 'Alegi un scenariu',
-        desc: 'Selectezi o situație financiară reală, de la primul salariu până la primul credit.',
-    },
-    {
-        title: 'Iei decizii pas cu pas',
-        desc: 'La fiecare etapă alegi cum cheltuiești, economisești sau împrumuți — și vezi efectul imediat.',
-    },
-    {
-        title: 'Primești un scor și sfaturi',
-        desc: 'La final vezi ce ai făcut bine, ce ai putea îmbunătăți și cum arată un buget echilibrat.',
-    },
-]
-
-const stats = [
-    { value: '4', label: 'scenarii disponibile' },
-    { value: '100%', label: 'gratuit' },
-    { value: '0 lei', label: 'risc real' },
-    { value: '~10 min', label: 'per scenariu' },
-]
-
 
 function chunk<T>(items: T[], size: number): T[][] {
     const result: T[][] = []
@@ -108,6 +64,7 @@ function chunk<T>(items: T[], size: number): T[][] {
 }
 
 function ReviewCarousel() {
+    const { t } = useTranslation()
     const { reviews } = useReviews()
     const pages = chunk(reviews, 3)
     const [pageIndex, setPageIndex] = useState(0)
@@ -137,7 +94,7 @@ function ReviewCarousel() {
     return (
         <div className="review-carousel-wrap">
             <div className="review-carousel">
-                <button type="button" className="review-nav" onClick={prev} aria-label="Pagina anterioară">
+                <button type="button" className="review-nav" onClick={prev} aria-label={t('home.reviewCarousel.prevAria')}>
                     ‹
                 </button>
 
@@ -162,7 +119,7 @@ function ReviewCarousel() {
                     </AnimatePresence>
                 </div>
 
-                <button type="button" className="review-nav" onClick={next} aria-label="Pagina următoare">
+                <button type="button" className="review-nav" onClick={next} aria-label={t('home.reviewCarousel.nextAria')}>
                     ›
                 </button>
             </div>
@@ -175,7 +132,7 @@ function ReviewCarousel() {
                             key={i}
                             className={`review-dot ${i === pageIndex ? 'active' : ''}`}
                             onClick={() => goTo(i)}
-                            aria-label={`Pagina ${i + 1}`}
+                            aria-label={t('home.reviewCarousel.pageAria', { page: i + 1 })}
                         />
                     ))}
                 </div>
@@ -196,40 +153,9 @@ interface LedgerCard {
     total: { label: string; value: string }
 }
 
-const ledgerCards: LedgerCard[] = [
-    {
-        title: 'Extras lunar — simulare',
-        rows: [
-            { label: 'Salariu', value: '+8 500 lei', sign: 'positive' },
-            { label: 'Chirie', value: '−2 200 lei', sign: 'negative' },
-            { label: 'Facturi', value: '−650 lei', sign: 'negative' },
-            { label: 'Economii', value: '+1 200 lei', sign: 'positive' },
-        ],
-        total: { label: 'Rămas la final de lună', value: '4 450 lei' },
-    },
-    {
-        title: 'Scenariu — Primul credit',
-        rows: [
-            { label: 'Sumă împrumutată', value: '15 000 lei' },
-            { label: 'Dobândă anuală', value: '11.5%' },
-            { label: 'Rată lunară', value: '−720 lei', sign: 'negative' },
-            { label: 'Cost total credit', value: '17 280 lei' },
-        ],
-        total: { label: 'Rămas din salariu după rată', value: '3 730 lei' },
-    },
-    {
-        title: 'Scenariu — Urgență medicală',
-        rows: [
-            { label: 'Fond de urgență', value: '3 000 lei', sign: 'positive' },
-            { label: 'Cheltuială neprevăzută', value: '−1 850 lei', sign: 'negative' },
-            { label: 'Rămas în fond', value: '1 150 lei' },
-            { label: 'Timp de refacere fond', value: '≈2 luni' },
-        ],
-        total: { label: 'Fondul acoperă cheltuiala', value: 'Da' },
-    },
-]
-
 function HeroLedgerCard() {
+    const { t } = useTranslation()
+    const ledgerCards = t('home.ledgerCards', { returnObjects: true }) as LedgerCard[]
     const [index, setIndex] = useState(0)
 
     useEffect(() => {
@@ -237,7 +163,7 @@ function HeroLedgerCard() {
             setIndex((i) => (i + 1) % ledgerCards.length)
         }, 5000)
         return () => clearInterval(id)
-    }, [])
+    }, [ledgerCards.length])
 
     const card = ledgerCards[index]
 
@@ -271,21 +197,23 @@ function HeroLedgerCard() {
 }
 
 function HomePage() {
+    const { t } = useTranslation()
+    const features = t('home.features', { returnObjects: true }) as { title: string; text: string; icon: string }[]
+    const steps = t('home.steps', { returnObjects: true }) as { title: string; desc: string }[]
+    const stats = t('home.stats', { returnObjects: true }) as { value: string; label: string }[]
+    const heroStrings = t('home.hero.typewriter', { returnObjects: true }) as string[]
+
     return (
         <>
             <section className="hero">
                 <div className="container hero-inner">
                     <div className="hero-text">
                         <h1>
-                            Învață să-ți gestionezi banii{' '}
+                            {t('home.hero.heading')}{' '}
                             <span className="hero-typewriter">
                                 <Typewriter
                                     options={{
-                                        strings: [
-                                            'înainte să conteze cu adevărat.',
-                                            'fără să riști vreun leu real.',
-                                            'cu scenarii, nu doar teorie.',
-                                        ],
+                                        strings: heroStrings,
                                         autoStart: true,
                                         loop: true,
                                         delay: 45,
@@ -298,8 +226,7 @@ function HomePage() {
                             </span>
                         </h1>
                         <p className="hero-subtitle">
-                            Simulează decizii financiare reale — salariu, chirie, credite — și vezi
-                            consecințele lor, fără să riști vreun leu.
+                            {t('home.hero.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -321,10 +248,9 @@ function HomePage() {
             <section id="features" className="scenarios">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Nu doar teorie</h2>
+                        <h2>{t('home.featuresHeading')}</h2>
                         <p className="section-subtitle">
-                            Fie că tocmai ai primit primul salariu, fie că te pregătești pentru primul credit —
-                            exersezi decizii reale, în situații construite să semene cu viața de zi cu zi.
+                            {t('home.featuresSubtitle')}
                         </p>
                     </div>
                     <div className="scenario-teaser-grid">
@@ -337,11 +263,11 @@ function HomePage() {
                         ))}
                     </div>
                     <p className="features-footer-note">
-                        Toate simulările sunt gratuite și nu necesită bani reali — greșelile costă doar în joc.
+                        {t('home.featuresFooterNote')}
                     </p>
                     <div className="scenario-teaser-footer">
                         <Link to="/scenarios" className="btn btn-ghost">
-                            Vezi toate scenariile →
+                            {t('home.viewAllScenarios')}
                         </Link>
                     </div>
                 </div>
@@ -351,7 +277,7 @@ function HomePage() {
                 <div className="container how-it-works-inner">
                     <div className="how-it-works-text">
                         <div className="section-heading">
-                            <h2>Cum funcționează</h2>
+                            <h2>{t('home.howItWorksHeading')}</h2>
                         </div>
                         <div className="timeline">
                             {steps.map((step, i) => (
@@ -373,7 +299,7 @@ function HomePage() {
             <section id="reviews" className="reviews">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Ce spun cei care au încercat</h2>
+                        <h2>{t('home.reviewCarousel.heading')}</h2>
                     </div>
                     <ReviewCarousel />
                 </div>

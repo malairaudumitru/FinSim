@@ -1,4 +1,5 @@
 ﻿import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
@@ -10,6 +11,11 @@ interface Badge {
     titlu: string
     descriere: string
     unlocked: boolean
+}
+
+interface BadgeContent {
+    titlu: string
+    descriere: string
 }
 
 function parseDate(data: string): number {
@@ -74,6 +80,7 @@ function ScoreLineChart({ entries }: { entries: { id: string; data: string; scor
 }
 
 function ProgressPage() {
+    const { t } = useTranslation()
     const { history } = useScenarioHistory()
     const { scenarios } = useScenarios()
 
@@ -103,46 +110,29 @@ function ProgressPage() {
 
     const scenariiDistincte = new Set(history.map((h) => h.scenariu)).size
 
-    const badges: Badge[] = [
-        {
-            id: 'prima',
-            titlu: 'Prima simulare',
-            descriere: 'Finalizează primul tău scenariu.',
-            unlocked: stats.total >= 1,
-        },
-        {
-            id: 'cinci',
-            titlu: 'Cinci simulări',
-            descriere: 'Joacă 5 scenarii, indiferent de rezultat.',
-            unlocked: stats.total >= 5,
-        },
-        {
-            id: 'toate',
-            titlu: 'Toate scenariile',
-            descriere: 'Încearcă toate cele 4 scenarii disponibile.',
-            unlocked: scenariiDistincte >= 4,
-        },
-        {
-            id: 'perfect',
-            titlu: 'Scor perfect',
-            descriere: 'Obține 100/100 la orice scenariu.',
-            unlocked: history.some((h) => h.scor === 100),
-        },
-        {
-            id: 'active',
-            titlu: 'Zile active',
-            descriere: 'Joacă în cel puțin 3 zile diferite.',
-            unlocked: stats.ziActive >= 3,
-        },
+    const badgeContent = t('progress.badges', { returnObjects: true }) as BadgeContent[]
+    const badgeIds = ['prima', 'cinci', 'toate', 'perfect', 'active']
+    const badgeUnlocked = [
+        stats.total >= 1,
+        stats.total >= 5,
+        scenariiDistincte >= 4,
+        history.some((h) => h.scor === 100),
+        stats.ziActive >= 3,
     ]
+    const badges: Badge[] = badgeContent.map((b, i) => ({
+        id: badgeIds[i],
+        titlu: b.titlu,
+        descriere: b.descriere,
+        unlocked: badgeUnlocked[i],
+    }))
 
     return (
         <div className="progress-page">
             <section className="content-hero">
                 <div className="container">
-                    <h1>Progresul tău</h1>
+                    <h1>{t('progress.h1')}</h1>
                     <p className="content-hero-subtitle">
-                        Tot ce ai realizat până acum, într-un singur loc.
+                        {t('progress.subtitle')}
                     </p>
                 </div>
             </section>
@@ -153,25 +143,25 @@ function ProgressPage() {
                         <span className="stat-value">
                             <AnimatedNumber value={`${stats.total}`} />
                         </span>
-                        <span className="stat-label">simulări finalizate</span>
+                        <span className="stat-label">{t('progress.stat_total')}</span>
                     </div>
                     <div className="stat">
                         <span className="stat-value">
                             <AnimatedNumber value={`${stats.mediu}`} />
                         </span>
-                        <span className="stat-label">scor mediu</span>
+                        <span className="stat-label">{t('progress.stat_mediu')}</span>
                     </div>
                     <div className="stat">
                         <span className="stat-value">
                             <AnimatedNumber value={`${stats.maxim}`} />
                         </span>
-                        <span className="stat-label">cel mai bun scor</span>
+                        <span className="stat-label">{t('progress.stat_maxim')}</span>
                     </div>
                     <div className="stat">
                         <span className="stat-value">
                             <AnimatedNumber value={`${stats.ziActive}`} />
                         </span>
-                        <span className="stat-label">zile active</span>
+                        <span className="stat-label">{t('progress.stat_ziActive')}</span>
                     </div>
                 </div>
             </section>
@@ -179,13 +169,13 @@ function ProgressPage() {
             <section className="progress-chart-section">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Evoluția scorurilor</h2>
-                        <p className="section-subtitle">Fiecare simulare jucată, în ordine cronologică.</p>
+                        <h2>{t('progress.chart_heading')}</h2>
+                        <p className="section-subtitle">{t('progress.chart_subtitle')}</p>
                     </div>
 
                     {chartEntries.length === 0 ? (
                         <p className="progress-empty">
-                            Nu ai finalizat încă nicio simulare — rezultatele tale vor apărea aici.
+                            {t('progress.empty')}
                         </p>
                     ) : (
                         <ScoreLineChart entries={chartEntries} />
@@ -196,8 +186,8 @@ function ProgressPage() {
             <section className="progress-breakdown-section">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Pe scenarii</h2>
-                        <p className="section-subtitle">Cel mai bun scor obținut la fiecare scenariu.</p>
+                        <h2>{t('progress.breakdown_heading')}</h2>
+                        <p className="section-subtitle">{t('progress.breakdown_subtitle')}</p>
                     </div>
                     <div className="progress-breakdown-list">
                         {perScenario.map((s) => (
@@ -205,7 +195,7 @@ function ProgressPage() {
                                 <div className="progress-breakdown-info">
                                     <h3>{s.nume}</h3>
                                     <span className="progress-breakdown-meta">
-                                        {s.dificultate} · {s.jucat} {s.jucat === 1 ? 'joc' : 'jocuri'}
+                                        {s.dificultate} · {t('progress.games_count', { count: s.jucat })}
                                     </span>
                                 </div>
                                 <div className="progress-breakdown-bar-wrap">
@@ -228,8 +218,8 @@ function ProgressPage() {
             <section className="progress-badges-section">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Realizări</h2>
-                        <p className="section-subtitle">Insigne deblocate pe măsură ce joci.</p>
+                        <h2>{t('progress.badges_heading')}</h2>
+                        <p className="section-subtitle">{t('progress.badges_subtitle')}</p>
                     </div>
                     <div className="progress-badges-grid">
                         {badges.map((b) => (

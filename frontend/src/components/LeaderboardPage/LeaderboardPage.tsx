@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import { useLeaderboard } from '../../shared/LeaderboardContext/LeaderboardContext'
 import '../../shared/ContentPage/ContentPage.css'
@@ -27,6 +28,7 @@ const podiumDelay: Record<number, number> = {
 const podiumBaseHeight: Record<number, number> = { 1: 108, 2: 76, 3: 48 }
 
 function PodiumCard({ entry, delay }: { entry: RankedEntry; delay: number }) {
+    const { t } = useTranslation()
     const [revealed, setRevealed] = useState(false)
 
     useEffect(() => {
@@ -42,7 +44,7 @@ function PodiumCard({ entry, delay }: { entry: RankedEntry; delay: number }) {
                 animate={{ opacity: revealed ? 1 : 0 }}
                 transition={{ duration: 0.5 }}
             >
-                {entry.esteTu && <span className="podium-you-badge">Tu</span>}
+                {entry.esteTu && <span className="podium-you-badge">{t('leaderboard.youBadge')}</span>}
                 <div className="podium-avatar">{initialsOf(entry)}</div>
                 <h3 className="podium-name">
                     {entry.prenume} {entry.nume}
@@ -64,6 +66,7 @@ function PodiumCard({ entry, delay }: { entry: RankedEntry; delay: number }) {
 }
 
 function LeaderboardPage() {
+    const { t } = useTranslation()
     const { entries } = useLeaderboard()
     const ranked: RankedEntry[] = [...entries]
         .sort((a, b) => b.scor - a.scor)
@@ -76,10 +79,9 @@ function LeaderboardPage() {
         <div className="leaderboard-page">
             <section className="content-hero">
                 <div className="container">
-                    <h1>Clasament</h1>
+                    <h1>{t('leaderboard.title')}</h1>
                     <p className="content-hero-subtitle">
-                        Top 10 utilizatori după scorul general, obținut din finalizarea
-                        scenariilor — cu cât iei decizii mai bune, cu atât scorul crește.
+                        {t('leaderboard.subtitle')}
                     </p>
                 </div>
             </section>
@@ -109,7 +111,7 @@ function LeaderboardPage() {
                                     <div className="leaderboard-avatar">{initialsOf(entry)}</div>
                                     <span className="leaderboard-name">
                                         {entry.prenume} {entry.nume}
-                                        {entry.esteTu && <span className="leaderboard-you-badge">Tu</span>}
+                                        {entry.esteTu && <span className="leaderboard-you-badge">{t('leaderboard.youBadge')}</span>}
                                     </span>
                                 </div>
                                 <span className="leaderboard-score figure">

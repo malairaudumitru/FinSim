@@ -1,4 +1,5 @@
 ﻿import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useUsers, type AppUser, type UserRole, type UserStatus } from '../../shared/UsersContext/UsersContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
@@ -6,10 +7,11 @@ import {
     isValidBirthDate,
     daysInMonth,
     formatBirthDate,
-    LUNI,
     VARSTA_MINIMA,
     VARSTA_MAXIMA,
 } from '../../shared/birthDate/birthDate'
+
+const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 type FormState = {
     nume: string
@@ -52,22 +54,29 @@ function toForm(u: AppUser): FormState {
     }
 }
 
-const rolOptions = [
-    { value: 'user', label: 'Utilizator' },
-    { value: 'admin', label: 'Admin' },
-]
-
-const statusOptions = [
-    { value: 'activ', label: 'Activ' },
-    { value: 'blocat', label: 'Blocat' },
-]
-
 function UsersSection() {
+    const { t, i18n } = useTranslation()
     const { users, addUser, updateUser, deleteUser } = useUsers()
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+
+    const luni = t('common.months', { returnObjects: true }) as string[]
+
+    const rolOptions = [
+        { value: 'user', label: t('admin.users.role_user') },
+        { value: 'admin', label: t('admin.users.role_admin') },
+    ]
+
+    const statusOptions = [
+        { value: 'activ', label: t('admin.users.status_active') },
+        { value: 'blocat', label: t('admin.users.status_blocked') },
+    ]
+
+    const roleLabel = (rol: UserRole) => (rol === 'admin' ? t('admin.users.role_admin') : t('admin.users.role_user'))
+    const statusLabel = (status: UserStatus) =>
+        status === 'activ' ? t('admin.users.status_active') : t('admin.users.status_blocked')
 
     const anCurent = new Date().getFullYear()
     const aniDisponibili = Array.from(
@@ -105,14 +114,14 @@ function UsersSection() {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.prenume.trim() || !form.email.trim()) {
-            setError('Numele, prenumele și email-ul sunt obligatorii.')
+            setError(t('admin.users.error_required'))
             return
         }
         const duplicate = users.find(
             (u) => u.email.toLowerCase() === form.email.trim().toLowerCase() && u.id !== editingId
         )
         if (duplicate) {
-            setError('Există deja un utilizator cu acest email.')
+            setError(t('admin.users.error_duplicate_email'))
             return
         }
 
@@ -121,7 +130,7 @@ function UsersSection() {
             const luna = Number(form.luna)
             const an = Number(form.an)
             if (!zi || !luna || !an || !isValidBirthDate(zi, luna, an)) {
-                setError('Data nașterii nu este validă sau este incompletă.')
+                setError(t('admin.users.error_birthdate_invalid'))
                 return
             }
         }
@@ -142,13 +151,13 @@ function UsersSection() {
         if (editingId) {
             updateUser(editingId, payload)
         } else {
-            addUser({ ...payload, dataInregistrare: new Date().toLocaleDateString('ro-RO') })
+            addUser({ ...payload, dataInregistrare: new Date().toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO') })
         }
         setShowForm(false)
     }
 
     const handleDelete = (u: AppUser) => {
-        if (confirm(`Ștergi utilizatorul ${u.prenume} ${u.nume}?`)) {
+        if (confirm(t('admin.users.confirm_delete', { name: `${u.prenume} ${u.nume}` }))) {
             deleteUser(u.id)
         }
     }
@@ -157,11 +166,11 @@ function UsersSection() {
         <div>
             <div className="admin-panel-header">
                 <div>
-                    <h2>Utilizatori</h2>
-                    <p>Toate conturile înregistrate în FinSim — {users.length} în total.</p>
+                    <h2>{t('admin.users.title')}</h2>
+                    <p>{t('admin.users.subtitle', { count: users.length })}</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAdd}>
-                    + Adaugă utilizator
+                    + {t('admin.users.add_button')}
                 </button>
             </div>
 
@@ -169,20 +178,20 @@ function UsersSection() {
                 <table className="admin-table">
                     <thead>
                         <tr>
-                            <th>Nume</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Status</th>
-                            <th>Înregistrat</th>
-                            <th>Data nașterii</th>
-                            <th>Scor</th>
+                            <th>{t('admin.users.col_name')}</th>
+                            <th>{t('admin.users.col_email')}</th>
+                            <th>{t('admin.users.col_role')}</th>
+                            <th>{t('admin.users.col_status')}</th>
+                            <th>{t('admin.users.col_registered')}</th>
+                            <th>{t('admin.users.col_birthdate')}</th>
+                            <th>{t('admin.users.col_score')}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={8}>Niciun utilizator momentan.</td>
+                                <td colSpan={8}>{t('admin.users.empty')}</td>
                             </tr>
                         )}
                         {users.map((u) => (
@@ -190,13 +199,13 @@ function UsersSection() {
                                 <td>{u.prenume} {u.nume}</td>
                                 <td className="admin-cell-muted">{u.email}</td>
                                 <td>
-                                    <span className={`admin-badge ${u.rol === 'admin' ? 'admin-badge-gold' : 'admin-badge-gray'}`}>
-                                        {u.rol === 'admin' ? 'Admin' : 'Utilizator'}
+                                    <span className={`admin-badge admin-badge-wide ${u.rol === 'admin' ? 'admin-badge-gold' : 'admin-badge-gray'}`}>
+                                        {roleLabel(u.rol)}
                                     </span>
                                 </td>
                                 <td>
-                                    <span className={`admin-badge ${u.status === 'activ' ? 'admin-badge-green' : 'admin-badge-red'}`}>
-                                        {u.status === 'activ' ? 'Activ' : 'Blocat'}
+                                    <span className={`admin-badge admin-badge-wide ${u.status === 'activ' ? 'admin-badge-green' : 'admin-badge-red'}`}>
+                                        {statusLabel(u.status)}
                                     </span>
                                 </td>
                                 <td className="admin-cell-muted">{u.dataInregistrare}</td>
@@ -207,14 +216,14 @@ function UsersSection() {
                                 <td>
                                     <div className="admin-row-actions">
                                         <button type="button" className="admin-icon-btn" onClick={() => openEdit(u)}>
-                                            Editează
+                                            {t('admin.users.edit')}
                                         </button>
                                         <button
                                             type="button"
                                             className="admin-icon-btn danger"
                                             onClick={() => handleDelete(u)}
                                         >
-                                            Șterge
+                                            {t('admin.users.delete')}
                                         </button>
                                     </div>
                                 </td>
@@ -225,11 +234,11 @@ function UsersSection() {
             </div>
 
             {showForm && (
-                <Modal title={editingId ? 'Editează utilizator' : 'Adaugă utilizator'} onClose={close}>
+                <Modal title={editingId ? t('admin.users.modal_edit_title') : t('admin.users.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="u-nume">Nume</label>
+                                <label htmlFor="u-nume">{t('admin.users.label_last_name')}</label>
                                 <input
                                     id="u-nume"
                                     value={form.nume}
@@ -237,7 +246,7 @@ function UsersSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="u-prenume">Prenume</label>
+                                <label htmlFor="u-prenume">{t('admin.users.label_first_name')}</label>
                                 <input
                                     id="u-prenume"
                                     value={form.prenume}
@@ -247,7 +256,7 @@ function UsersSection() {
                         </div>
 
                         <div className="admin-field">
-                            <label htmlFor="u-email">Email</label>
+                            <label htmlFor="u-email">{t('admin.users.label_email')}</label>
                             <input
                                 id="u-email"
                                 type="email"
@@ -257,53 +266,53 @@ function UsersSection() {
                         </div>
 
                         <div className="admin-field">
-                            <label>Data nașterii</label>
+                            <label>{t('admin.users.label_birthdate')}</label>
                             <div className="admin-date-row">
                                 <Dropdown
                                     value={form.zi}
                                     onChange={(v) => setForm((f) => ({ ...f, zi: v }))}
                                     options={ziledisponibile.map((d) => ({ value: String(d), label: String(d) }))}
-                                    placeholder="Ziua"
+                                    placeholder={t('admin.users.placeholder_day')}
                                 />
                                 <Dropdown
                                     value={form.luna}
                                     onChange={handleDateFieldChange('luna')}
-                                    options={LUNI.map((nume, i) => ({ value: String(i + 1), label: nume }))}
-                                    placeholder="Luna"
+                                    options={luni.map((nume, i) => ({ value: String(i + 1), label: nume }))}
+                                    placeholder={t('admin.users.placeholder_month')}
                                 />
                                 <Dropdown
                                     value={form.an}
                                     onChange={handleDateFieldChange('an')}
                                     options={aniDisponibili.map((an) => ({ value: String(an), label: String(an) }))}
-                                    placeholder="Anul"
+                                    placeholder={t('admin.users.placeholder_year')}
                                 />
                             </div>
                         </div>
 
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="u-rol">Rol</label>
+                                <label htmlFor="u-rol">{t('admin.users.label_role')}</label>
                                 <Dropdown
                                     value={form.rol}
                                     onChange={(v) => setForm((f) => ({ ...f, rol: v as UserRole }))}
                                     options={rolOptions}
-                                    placeholder="Rol"
+                                    placeholder={t('admin.users.label_role')}
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="u-status">Status</label>
+                                <label htmlFor="u-status">{t('admin.users.label_status')}</label>
                                 <Dropdown
                                     value={form.status}
                                     onChange={(v) => setForm((f) => ({ ...f, status: v as UserStatus }))}
                                     options={statusOptions}
-                                    placeholder="Status"
+                                    placeholder={t('admin.users.label_status')}
                                 />
                             </div>
                         </div>
 
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="u-scenarii">Scenarii finalizate</label>
+                                <label htmlFor="u-scenarii">{t('admin.users.label_scenarios_completed')}</label>
                                 <input
                                     id="u-scenarii"
                                     type="number"
@@ -313,7 +322,7 @@ function UsersSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="u-scor">Scor total</label>
+                                <label htmlFor="u-scor">{t('admin.users.label_total_score')}</label>
                                 <input
                                     id="u-scor"
                                     type="number"
@@ -328,10 +337,10 @@ function UsersSection() {
 
                         <div className="admin-form-actions">
                             <button type="button" className="btn btn-ghost" onClick={close}>
-                                Anulează
+                                {t('admin.users.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {editingId ? 'Salvează' : 'Adaugă'}
+                                {editingId ? t('admin.users.save') : t('admin.users.add_button')}
                             </button>
                         </div>
                     </form>

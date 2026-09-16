@@ -80,6 +80,7 @@
     font-size: 14px;
     font-weight: 500;
     padding: 10px 16px;
+    min-width: 140px;
     cursor: pointer;
     transition: all 0.15s;
 }
@@ -212,6 +213,16 @@
 
 .admin-badge-gray {
     color: var(--text);
+}
+
+.admin-badge-wide {
+    min-width: 90px;
+    justify-content: center;
+}
+
+.admin-badge-you {
+    min-width: 32px;
+    justify-content: center;
 }
 
 .admin-row-actions {

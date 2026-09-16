@@ -1,17 +1,19 @@
+import { useTranslation } from 'react-i18next'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ResourcesPage.css'
 
 function ResourcesPage() {
+    const { t } = useTranslation()
     const { videos, pdfs } = useResources()
 
     return (
         <div className="resources-page">
             <section className="content-hero">
                 <div className="container">
-                    <h1>Resurse</h1>
+                    <h1>{t('resources.title')}</h1>
                     <p className="content-hero-subtitle">
-                        Videoclipuri și ghiduri, pentru cei care vor să aprofundeze dincolo de scenarii.
+                        {t('resources.subtitle')}
                     </p>
                 </div>
             </section>
@@ -19,8 +21,8 @@ function ResourcesPage() {
             <section className="resources-videos-section">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Videoclipuri</h2>
-                        <p className="section-subtitle">Selectate din surse de educație financiară din România.</p>
+                        <h2>{t('resources.videosHeading')}</h2>
+                        <p className="section-subtitle">{t('resources.videosSubtitle')}</p>
                     </div>
                     <div className="resources-video-grid">
                         {videos.map((v) => (
@@ -46,8 +48,8 @@ function ResourcesPage() {
             <section className="resources-pdfs-section">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Ghiduri PDF</h2>
-                        <p className="section-subtitle">Materiale originale FinSim, scrise pe temele scenariilor.</p>
+                        <h2>{t('resources.pdfsHeading')}</h2>
+                        <p className="section-subtitle">{t('resources.pdfsSubtitle')}</p>
                     </div>
                     <div className="resources-pdf-list">
                         {pdfs.map((p) => (
@@ -58,7 +60,7 @@ function ResourcesPage() {
                                     <p>{p.descriere}</p>
                                 </div>
                                 <a href={p.fisier} download className="btn btn-ghost">
-                                    Descarcă PDF
+                                    {t('resources.downloadPdf')}
                                 </a>
                             </div>
                         ))}

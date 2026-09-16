@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { applyTheme, getStoredTheme, getSystemTheme, type Theme } from '../theme/theme.ts'
 import './ThemeToggle.css'
 
@@ -20,6 +21,7 @@ function MoonIcon() {
 }
 
 function ThemeToggle() {
+    const { t } = useTranslation()
     const [theme, setTheme] = useState<Theme>('light')
 
     useEffect(() => {
@@ -37,7 +39,7 @@ function ThemeToggle() {
             type="button"
             className="theme-toggle"
             onClick={toggle}
-            aria-label={theme === 'dark' ? 'Comută la tema deschisă' : 'Comută la tema întunecată'}
+            aria-label={theme === 'dark' ? t('themeToggle.switch_to_light') : t('themeToggle.switch_to_dark')}
         >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
         </button>

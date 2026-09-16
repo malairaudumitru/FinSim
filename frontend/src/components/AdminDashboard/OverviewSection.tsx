@@ -1,4 +1,5 @@
-﻿import { useUsers } from '../../shared/UsersContext/UsersContext'
+﻿import { useTranslation } from 'react-i18next'
+import { useUsers } from '../../shared/UsersContext/UsersContext'
 import { useLeaderboard } from '../../shared/LeaderboardContext/LeaderboardContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext'
@@ -8,6 +9,7 @@ import { useMessages } from '../../shared/MessagesContext/MessagesContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 
 function OverviewSection() {
+    const { t } = useTranslation()
     const { users } = useUsers()
     const { entries } = useLeaderboard()
     const { reviews } = useReviews()
@@ -20,25 +22,27 @@ function OverviewSection() {
         ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
         : '—'
 
+    const statLabels = t('admin.overview.stat_labels', { returnObjects: true }) as string[]
+
     const stats = [
-        { label: 'Utilizatori', value: users.length },
-        { label: 'Utilizatori blocați', value: users.filter((u) => u.status === 'blocat').length },
-        { label: 'Scenarii', value: scenarios.length },
-        { label: 'Intrări clasament', value: entries.length },
-        { label: 'Recenzii', value: reviews.length },
-        { label: 'Rating mediu', value: mediaRating },
-        { label: 'Notificări', value: notifications.length },
-        { label: 'Resurse (video + PDF)', value: videos.length + pdfs.length },
-        { label: 'Mesaje', value: messages.length },
-        { label: 'Mesaje necitite', value: unreadCount },
+        { label: statLabels[0], value: users.length },
+        { label: statLabels[1], value: users.filter((u) => u.status === 'blocat').length },
+        { label: statLabels[2], value: scenarios.length },
+        { label: statLabels[3], value: entries.length },
+        { label: statLabels[4], value: reviews.length },
+        { label: statLabels[5], value: mediaRating },
+        { label: statLabels[6], value: notifications.length },
+        { label: statLabels[7], value: videos.length + pdfs.length },
+        { label: statLabels[8], value: messages.length },
+        { label: statLabels[9], value: unreadCount },
     ]
 
     return (
         <div>
             <div className="admin-panel-header">
                 <div>
-                    <h2>Prezentare generală</h2>
-                    <p>O privire rapidă asupra datelor din platformă.</p>
+                    <h2>{t('admin.overview.title')}</h2>
+                    <p>{t('admin.overview.subtitle')}</p>
                 </div>
             </div>
             <div className="admin-stats-grid">

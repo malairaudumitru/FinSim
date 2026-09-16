@@ -1,5 +1,6 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
@@ -9,7 +10,6 @@ import {
     calculateAge,
     formatBirthDate,
     daysInMonth,
-    LUNI,
     VARSTA_MINIMA,
     VARSTA_MAXIMA,
 } from '../../shared/birthDate/birthDate'
@@ -40,10 +40,10 @@ const initialUser: UserInfo = {
 }
 
 const stats = [
-    { value: '742', label: 'scor general' },
-    { value: '5', label: 'scenarii finalizate' },
-    { value: '87%', label: 'progres mediu' },
-    { value: '3', label: 'zile consecutive' },
+    { value: '742', labelKey: 'profile.stat_general_score' },
+    { value: '5', labelKey: 'profile.stat_completed_scenarios' },
+    { value: '87%', labelKey: 'profile.stat_average_progress' },
+    { value: '3', labelKey: 'profile.stat_streak_days' },
 ]
 
 function scoreClass(scor: number) {
@@ -99,6 +99,7 @@ function EyeIcon({ open }: { open: boolean }) {
 }
 
 function ProfilePage() {
+    const { t } = useTranslation()
     const { user: authUser, logout } = useAuth()
     const { history } = useScenarioHistory()
     const { reviews, addReview } = useReviews()
@@ -143,6 +144,7 @@ function ProfilePage() {
     })
     const maxZile = daysInMonth(Number(nameForm.luna) || undefined, Number(nameForm.an) || undefined)
     const ziledisponibile = Array.from({ length: maxZile }, (_, i) => i + 1)
+    const luni = t('common.months', { returnObjects: true }) as string[]
     const [nameErrors, setNameErrors] = useState<Partial<Record<NameField, string>>>({})
     const [infoSaved, setInfoSaved] = useState(false)
 
@@ -204,23 +206,23 @@ function ProfilePage() {
     const validateName = (): boolean => {
         const newErrors: Partial<Record<NameField, string>> = {}
 
-        if (!nameForm.nume.trim()) newErrors.nume = 'Numele este obligatoriu.'
-        if (!nameForm.prenume.trim()) newErrors.prenume = 'Prenumele este obligatoriu.'
+        if (!nameForm.nume.trim()) newErrors.nume = t('profile.error_nume_required')
+        if (!nameForm.prenume.trim()) newErrors.prenume = t('profile.error_prenume_required')
 
         const zi = Number(nameForm.zi)
         const luna = Number(nameForm.luna)
         const an = Number(nameForm.an)
 
         if (!nameForm.zi || !nameForm.luna || !nameForm.an) {
-            newErrors.zi = 'Data nașterii este obligatorie.'
+            newErrors.zi = t('profile.error_birthdate_required')
         } else if (zi < 1 || zi > 31) {
-            newErrors.zi = 'Ziua trebuie să fie între 1 și 31.'
+            newErrors.zi = t('profile.error_day_range')
         } else if (luna < 1 || luna > 12) {
-            newErrors.luna = 'Luna trebuie să fie între 1 și 12.'
+            newErrors.luna = t('profile.error_month_range')
         } else if (an < anCurent - VARSTA_MAXIMA || an > anCurent - VARSTA_MINIMA) {
-            newErrors.an = 'Introdu un an de naștere valid.'
+            newErrors.an = t('profile.error_year_invalid')
         } else if (!isValidBirthDate(zi, luna, an)) {
-            newErrors.zi = 'Data introdusă nu este validă.'
+            newErrors.zi = t('profile.error_date_invalid')
         }
 
         setNameErrors(newErrors)
@@ -268,7 +270,7 @@ function ProfilePage() {
 
     const validateConfirmCode = (): boolean => {
         if (!/^\d{6}$/.test(confirmCode)) {
-            setConfirmCodeError('Codul trebuie să aibă exact 6 cifre.')
+            setConfirmCodeError(t('profile.error_confirm_code_invalid'))
             return false
         }
         setConfirmCodeError('')
@@ -279,17 +281,17 @@ function ProfilePage() {
         const newErrors: Partial<Record<keyof PasswordForm, string>> = {}
 
         if (!passwordForm.parolaCurenta) {
-            newErrors.parolaCurenta = 'Introdu parola curentă.'
+            newErrors.parolaCurenta = t('profile.error_current_password_required')
         }
 
         if (!passwordForm.parolaNoua) {
-            newErrors.parolaNoua = 'Parola nouă este obligatorie.'
+            newErrors.parolaNoua = t('profile.error_new_password_required')
         } else if (passwordForm.parolaNoua.length < 8) {
-            newErrors.parolaNoua = 'Parola trebuie să aibă cel puțin 8 caractere.'
+            newErrors.parolaNoua = t('profile.error_new_password_length')
         }
 
         if (passwordForm.confirmaParolaNoua !== passwordForm.parolaNoua) {
-            newErrors.confirmaParolaNoua = 'Parolele nu coincid.'
+            newErrors.confirmaParolaNoua = t('profile.error_passwords_mismatch')
         }
 
         setPasswordErrors(newErrors)
@@ -322,11 +324,11 @@ function ProfilePage() {
         e.preventDefault()
 
         if (reviewForm.rating === 0) {
-            setReviewError('Alege un rating de la 1 la 5 stele.')
+            setReviewError(t('profile.error_review_rating'))
             return
         }
         if (reviewForm.mesaj.trim().length < 25) {
-            setReviewError('Mesajul trebuie să aibă cel puțin 25 de caractere.')
+            setReviewError(t('profile.error_review_length'))
             return
         }
 
@@ -352,7 +354,7 @@ function ProfilePage() {
                         <form className="profile-edit-form" onSubmit={handleSaveInfo}>
                             <div className="profile-edit-row">
                                 <div className="form-field">
-                                    <label htmlFor="prenume">Prenume</label>
+                                    <label htmlFor="prenume">{t('profile.label_prenume')}</label>
                                     <input
                                         id="prenume"
                                         type="text"
@@ -362,7 +364,7 @@ function ProfilePage() {
                                     {nameErrors.prenume && <span className="field-error">{nameErrors.prenume}</span>}
                                 </div>
                                 <div className="form-field">
-                                    <label htmlFor="nume">Nume</label>
+                                    <label htmlFor="nume">{t('profile.label_nume')}</label>
                                     <input
                                         id="nume"
                                         type="text"
@@ -374,25 +376,25 @@ function ProfilePage() {
                             </div>
 
                             <div className="form-field">
-                                <label>Data nașterii</label>
+                                <label>{t('profile.label_birthdate')}</label>
                                 <div className="profile-edit-row">
                                     <Dropdown
                                         value={nameForm.zi}
                                         onChange={handleZiChange}
                                         options={ziledisponibile.map((d) => ({ value: String(d), label: String(d) }))}
-                                        placeholder="Ziua"
+                                        placeholder={t('profile.placeholder_day')}
                                     />
                                     <Dropdown
                                         value={nameForm.luna}
                                         onChange={handleEditDateFieldChange('luna')}
-                                        options={LUNI.map((nume, i) => ({ value: String(i + 1), label: nume }))}
-                                        placeholder="Luna"
+                                        options={luni.map((nume, i) => ({ value: String(i + 1), label: nume }))}
+                                        placeholder={t('profile.placeholder_month')}
                                     />
                                     <Dropdown
                                         value={nameForm.an}
                                         onChange={handleEditDateFieldChange('an')}
                                         options={aniDisponibili.map((an) => ({ value: String(an), label: String(an) }))}
-                                        placeholder="Anul"
+                                        placeholder={t('profile.placeholder_year')}
                                     />
                                 </div>
                                 {(nameErrors.zi || nameErrors.luna || nameErrors.an) && (
@@ -405,10 +407,10 @@ function ProfilePage() {
                             <p className="profile-email-static">{user.email}</p>
                             <div className="profile-edit-actions">
                                 <button type="button" className="btn btn-ghost" onClick={cancelEditingInfo}>
-                                    Anulează
+                                    {t('profile.btn_cancel')}
                                 </button>
                                 <button type="submit" className="btn btn-primary">
-                                    Salvează
+                                    {t('profile.btn_save')}
                                 </button>
                             </div>
                         </form>
@@ -420,15 +422,15 @@ function ProfilePage() {
                                 </h1>
                                 <p>{user.email}</p>
                                 <span className="profile-birthdate">
-                                    {formatBirthDate(user.zi, user.luna, user.an)} (
-                                    {calculateAge(user.zi, user.luna, user.an)} ani)
+                                    {formatBirthDate(user.zi, user.luna, user.an)}{' '}
+                                    {t('profile.birthdate_age', { age: calculateAge(user.zi, user.luna, user.an) })}
                                 </span>
-                                <span className="profile-since">Membru din {user.dataInregistrare}</span>
-                                {infoSaved && <span className="profile-saved">Profil actualizat.</span>}
+                                <span className="profile-since">{t('profile.member_since', { date: user.dataInregistrare })}</span>
+                                {infoSaved && <span className="profile-saved">{t('profile.profile_updated')}</span>}
                             </div>
                             <div className="profile-actions">
                                 <button type="button" className="btn btn-ghost" onClick={startEditingInfo}>
-                                    Editează profilul
+                                    {t('profile.btn_edit_profile')}
                                 </button>
                                 <button
                                     type="button"
@@ -438,7 +440,7 @@ function ProfilePage() {
                                         navigate({ to: '/' })
                                     }}
                                 >
-                                    Deconectare
+                                    {t('profile.btn_logout')}
                                 </button>
                             </div>
                         </>
@@ -449,16 +451,16 @@ function ProfilePage() {
             <section className="profile-stats">
                 <div className="container profile-stats-inner">
                     {stats.map((s) => (
-                        <div className="stat" key={s.label}>
+                        <div className="stat" key={s.labelKey}>
                             <span className="stat-value">
                                 <AnimatedNumber value={s.value} />
                             </span>
-                            <span className="stat-label">{s.label}</span>
+                            <span className="stat-label">{t(s.labelKey)}</span>
                         </div>
                     ))}
                 </div>
                 <div className="container profile-leaderboard-link">
-                    <Link to="/leaderboard">Vezi clasamentul utilizatorilor →</Link>
+                    <Link to="/leaderboard">{t('profile.leaderboard_link')}</Link>
                 </div>
             </section>
 
@@ -466,8 +468,8 @@ function ProfilePage() {
                 <div className="container profile-secondary-grid">
                     <div className="profile-secondary-col">
                         <div className="section-heading">
-                            <h2>Securitate cont</h2>
-                            <p className="section-subtitle">Schimbă parola contului tău.</p>
+                            <h2>{t('profile.security_title')}</h2>
+                            <p className="section-subtitle">{t('profile.security_subtitle')}</p>
                         </div>
 
                         {isChangingPassword ? (
@@ -475,7 +477,7 @@ function ProfilePage() {
                                 {passwordStep === 'form' && (
                                     <>
                                         <div className="form-field">
-                                            <label htmlFor="parolaCurenta">Parola curentă</label>
+                                            <label htmlFor="parolaCurenta">{t('profile.label_current_password')}</label>
                                             <div className="password-input">
                                                 <input
                                                     id="parolaCurenta"
@@ -487,7 +489,7 @@ function ProfilePage() {
                                                     type="button"
                                                     className="password-toggle"
                                                     onClick={() => setShowPassword((v) => !v)}
-                                                    aria-label={showPassword ? 'Ascunde parola' : 'Arată parola'}
+                                                    aria-label={showPassword ? t('profile.hide_password') : t('profile.show_password')}
                                                 >
                                                     <EyeIcon open={showPassword} />
                                                 </button>
@@ -498,7 +500,7 @@ function ProfilePage() {
                                         </div>
 
                                         <div className="form-field">
-                                            <label htmlFor="parolaNoua">Parolă nouă</label>
+                                            <label htmlFor="parolaNoua">{t('profile.label_new_password')}</label>
                                             <input
                                                 id="parolaNoua"
                                                 type={showPassword ? 'text' : 'password'}
@@ -511,7 +513,7 @@ function ProfilePage() {
                                         </div>
 
                                         <div className="form-field">
-                                            <label htmlFor="confirmaParolaNoua">Confirmă parola nouă</label>
+                                            <label htmlFor="confirmaParolaNoua">{t('profile.label_confirm_new_password')}</label>
                                             <input
                                                 id="confirmaParolaNoua"
                                                 type={showPassword ? 'text' : 'password'}
@@ -525,7 +527,7 @@ function ProfilePage() {
 
                                         {passwordRateLimit.isLimited && (
                                             <span className="field-error rate-limit-error">
-                                                Ai atins limita de 5 încercări. Încearcă din nou peste {passwordRateLimit.secondsLeft}s.
+                                                {t('profile.rate_limit', { seconds: passwordRateLimit.secondsLeft })}
                                             </span>
                                         )}
                                     </>
@@ -533,7 +535,7 @@ function ProfilePage() {
 
                                 {passwordStep === 'code' && (
                                     <div className="form-field">
-                                        <label htmlFor="confirmCode">Cod de verificare</label>
+                                        <label htmlFor="confirmCode">{t('profile.label_confirm_code')}</label>
                                         <input
                                             id="confirmCode"
                                             type="text"
@@ -541,21 +543,21 @@ function ProfilePage() {
                                             maxLength={6}
                                             value={confirmCode}
                                             onChange={(e) => setConfirmCode(e.target.value.replace(/\D/g, ''))}
-                                            placeholder="123456"
+                                            placeholder={t('profile.placeholder_code')}
                                         />
                                         {confirmCodeError && <span className="field-error">{confirmCodeError}</span>}
                                         <span className="auth-form-hint">
-                                            Am trimis un cod de 6 cifre la adresa ta de email.
+                                            {t('profile.hint_code_sent')}
                                         </span>
                                     </div>
                                 )}
 
                                 <div className="profile-edit-actions">
                                     <button type="button" className="btn btn-ghost" onClick={cancelChangingPassword}>
-                                        Anulează
+                                        {t('profile.btn_cancel')}
                                     </button>
                                     <button type="submit" className="btn btn-primary" disabled={passwordRateLimit.isLimited}>
-                                        {passwordStep === 'code' ? 'Confirmă codul' : 'Salvează parola'}
+                                        {passwordStep === 'code' ? t('profile.btn_confirm_code') : t('profile.btn_save_password')}
                                     </button>
                                 </div>
                             </form>
@@ -563,10 +565,10 @@ function ProfilePage() {
                             <div className="password-summary">
                                 <div>
                                     <span className="password-dots">••••••••</span>
-                                    {passwordSaved && <span className="profile-saved">Parola a fost schimbată.</span>}
+                                    {passwordSaved && <span className="profile-saved">{t('profile.password_changed')}</span>}
                                 </div>
                                 <button type="button" className="btn btn-ghost" onClick={startChangingPassword}>
-                                    Schimbă parola
+                                    {t('profile.btn_change_password')}
                                 </button>
                             </div>
                         )}
@@ -574,23 +576,25 @@ function ProfilePage() {
 
                     <div className="profile-secondary-col">
                         <div className="section-heading">
-                            <h2>Lasă o recenzie</h2>
-                            <p className="section-subtitle">Spune-ne ce părere ai despre FinSim.</p>
+                            <h2>{t('profile.review_title')}</h2>
+                            <p className="section-subtitle">{t('profile.review_subtitle')}</p>
                         </div>
 
                         {reviewSubmitted ? (
                             <div className="profile-saved">
-                                Mulțumim pentru recenzie! Poți lăsa următoarea peste {REVIEW_COOLDOWN_DAYS} de zile.
+                                {t('profile.review_thanks', { days: REVIEW_COOLDOWN_DAYS })}
                             </div>
                         ) : daysUntilNextReview > 0 ? (
                             <div className="review-cooldown">
-                                Ai lăsat deja o recenzie. Poți lăsa următoarea peste {daysUntilNextReview}{' '}
-                                {daysUntilNextReview === 1 ? 'zi' : 'zile'}.
+                                {t('profile.review_cooldown', {
+                                    days: daysUntilNextReview,
+                                    unit: daysUntilNextReview === 1 ? t('profile.unit_day_singular') : t('profile.unit_day_plural'),
+                                })}
                             </div>
                         ) : (
                             <form className="review-form" onSubmit={handleReviewSubmit} noValidate>
                                 <div className="form-field">
-                                    <label>Rating</label>
+                                    <label>{t('profile.label_rating')}</label>
                                     <StarRating
                                         rating={reviewForm.rating}
                                         onChange={(rating) => setReviewForm((prev) => ({ ...prev, rating }))}
@@ -598,7 +602,7 @@ function ProfilePage() {
                                     />
                                 </div>
                                 <div className="form-field">
-                                    <label htmlFor="review-mesaj">Mesajul tău</label>
+                                    <label htmlFor="review-mesaj">{t('profile.label_review_message')}</label>
                                     <textarea
                                         id="review-mesaj"
                                         rows={4}
@@ -606,12 +610,12 @@ function ProfilePage() {
                                         onChange={(e) =>
                                             setReviewForm((prev) => ({ ...prev, mesaj: e.target.value }))
                                         }
-                                        placeholder="Ce ți-a plăcut, ce ai îmbunătăți... (minim 25 caractere)"
+                                        placeholder={t('profile.placeholder_review')}
                                     />
                                 </div>
                                 {reviewError && <span className="field-error">{reviewError}</span>}
                                 <button type="submit" className="btn btn-primary">
-                                    Trimite recenzia
+                                    {t('profile.btn_submit_review')}
                                 </button>
                             </form>
                         )}
@@ -622,9 +626,9 @@ function ProfilePage() {
             <section className="profile-history">
                 <div className="container">
                     <div className="section-heading">
-                        <h2>Istoricul simulărilor</h2>
+                        <h2>{t('profile.history_title')}</h2>
                         <p className="section-subtitle">
-                            Scenariile pe care le-ai jucat până acum și scorul obținut.
+                            {t('profile.history_subtitle')}
                         </p>
                     </div>
 
@@ -646,10 +650,10 @@ function ProfilePage() {
                                             params={{ slug }}
                                             className="btn btn-link"
                                         >
-                                            Rejoacă →
+                                            {t('profile.btn_replay')}
                                         </Link>
                                     ) : (
-                                        <span className="history-unavailable">indisponibil</span>
+                                        <span className="history-unavailable">{t('profile.unavailable')}</span>
                                     )}
                                 </div>
                             )

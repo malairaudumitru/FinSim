@@ -1,7 +1,10 @@
 ﻿import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useReviews, type Review } from '../../shared/ReviewsContext/ReviewsContext'
 import StarRating from '../../shared/StarRating/StarRating'
 import Modal from '../../shared/Modal/Modal'
+
+const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 type FormState = {
     nume: string
@@ -30,18 +33,19 @@ function buildAutor(nume: string, varsta: string): string {
     return varstaTrim ? `${numeTrim}, ${varstaTrim} ani` : numeTrim
 }
 
-function formatDate(iso: string) {
-    const d = new Date(iso)
-    if (Number.isNaN(d.getTime())) return iso
-    return d.toLocaleDateString('ro-RO')
-}
-
 function ReviewsSection() {
+    const { t, i18n } = useTranslation()
     const { reviews, addReview, updateReview, deleteReview } = useReviews()
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+
+    const formatDate = (iso: string) => {
+        const d = new Date(iso)
+        if (Number.isNaN(d.getTime())) return iso
+        return d.toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO')
+    }
 
     const openAdd = () => {
         setEditingId(null)
@@ -62,7 +66,7 @@ function ReviewsSection() {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.mesaj.trim()) {
-            setError('Numele și mesajul sunt obligatorii.')
+            setError(t('admin.reviews.error_required'))
             return
         }
         const autor = buildAutor(form.nume, form.varsta)
@@ -86,7 +90,7 @@ function ReviewsSection() {
     }
 
     const handleDelete = (r: Review) => {
-        if (confirm(`Ștergi recenzia de la ${r.autor}?`)) {
+        if (confirm(t('admin.reviews.confirm_delete', { name: r.autor }))) {
             deleteReview(r.id)
         }
     }
@@ -95,11 +99,11 @@ function ReviewsSection() {
         <div>
             <div className="admin-panel-header">
                 <div>
-                    <h2>Recenzii</h2>
-                    <p>Recenziile afișate pe pagina principală — {reviews.length} în total.</p>
+                    <h2>{t('admin.reviews.title')}</h2>
+                    <p>{t('admin.reviews.subtitle', { count: reviews.length })}</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAdd}>
-                    + Adaugă recenzie
+                    + {t('admin.reviews.add_button')}
                 </button>
             </div>
 
@@ -107,18 +111,18 @@ function ReviewsSection() {
                 <table className="admin-table">
                     <thead>
                         <tr>
-                            <th>Autor</th>
-                            <th>Email</th>
-                            <th>Rating</th>
-                            <th>Mesaj</th>
-                            <th>Data</th>
+                            <th>{t('admin.reviews.col_author')}</th>
+                            <th>{t('admin.reviews.col_email')}</th>
+                            <th>{t('admin.reviews.col_rating')}</th>
+                            <th>{t('admin.reviews.col_message')}</th>
+                            <th>{t('admin.reviews.col_date')}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {reviews.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={6}>Nicio recenzie momentan.</td>
+                                <td colSpan={6}>{t('admin.reviews.empty')}</td>
                             </tr>
                         )}
                         {reviews.map((r) => (
@@ -131,14 +135,14 @@ function ReviewsSection() {
                                 <td>
                                     <div className="admin-row-actions">
                                         <button type="button" className="admin-icon-btn" onClick={() => openEdit(r)}>
-                                            Editează
+                                            {t('admin.reviews.edit')}
                                         </button>
                                         <button
                                             type="button"
                                             className="admin-icon-btn danger"
                                             onClick={() => handleDelete(r)}
                                         >
-                                            Șterge
+                                            {t('admin.reviews.delete')}
                                         </button>
                                     </div>
                                 </td>
@@ -149,33 +153,33 @@ function ReviewsSection() {
             </div>
 
             {showForm && (
-                <Modal title={editingId ? 'Editează recenzia' : 'Adaugă recenzie'} onClose={close}>
+                <Modal title={editingId ? t('admin.reviews.modal_edit_title') : t('admin.reviews.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="rv-nume">Nume</label>
+                                <label htmlFor="rv-nume">{t('admin.reviews.label_name')}</label>
                                 <input
                                     id="rv-nume"
                                     value={form.nume}
                                     onChange={(e) => setForm((f) => ({ ...f, nume: e.target.value }))}
-                                    placeholder="Alexandru"
+                                    placeholder={t('admin.reviews.placeholder_name')}
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="rv-varsta">Vârstă (opțional)</label>
+                                <label htmlFor="rv-varsta">{t('admin.reviews.label_age')}</label>
                                 <input
                                     id="rv-varsta"
                                     type="number"
                                     min={0}
                                     value={form.varsta}
                                     onChange={(e) => setForm((f) => ({ ...f, varsta: e.target.value }))}
-                                    placeholder="19"
+                                    placeholder={t('admin.reviews.placeholder_age')}
                                 />
                             </div>
                         </div>
 
                         <div className="admin-field">
-                            <label htmlFor="rv-email">Email</label>
+                            <label htmlFor="rv-email">{t('admin.reviews.label_email')}</label>
                             <input
                                 id="rv-email"
                                 type="email"
@@ -185,12 +189,12 @@ function ReviewsSection() {
                         </div>
 
                         <div className="admin-field">
-                            <label>Rating</label>
+                            <label>{t('admin.reviews.label_rating')}</label>
                             <StarRating rating={form.rating} onChange={(v) => setForm((f) => ({ ...f, rating: v }))} />
                         </div>
 
                         <div className="admin-field">
-                            <label htmlFor="rv-mesaj">Mesaj</label>
+                            <label htmlFor="rv-mesaj">{t('admin.reviews.label_message')}</label>
                             <textarea
                                 id="rv-mesaj"
                                 value={form.mesaj}
@@ -203,10 +207,10 @@ function ReviewsSection() {
 
                         <div className="admin-form-actions">
                             <button type="button" className="btn btn-ghost" onClick={close}>
-                                Anulează
+                                {t('admin.reviews.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {editingId ? 'Salvează' : 'Adaugă'}
+                                {editingId ? t('admin.reviews.save') : t('admin.reviews.add_button')}
                             </button>
                         </div>
                     </form>

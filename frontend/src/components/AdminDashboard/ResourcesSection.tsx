@@ -1,4 +1,5 @@
 ﻿import { useState, useRef, type FormEvent, type DragEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
@@ -31,16 +32,17 @@ function extractYoutubeId(input: string): string {
     return trimmed
 }
 
-const temaOptions = [
-    { value: 'General', label: 'General' },
-    { value: 'Buget', label: 'Buget' },
-    { value: 'Economii', label: 'Economii' },
-    { value: 'Decizii financiare', label: 'Decizii financiare' },
-    { value: 'Credite', label: 'Credite' },
-]
-
 function ResourcesSection() {
+    const { t } = useTranslation()
     const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf } = useResources()
+
+    const temaOptions = [
+        { value: 'General', label: t('admin.resources.theme_general') },
+        { value: 'Buget', label: t('admin.resources.theme_budget') },
+        { value: 'Economii', label: t('admin.resources.theme_savings') },
+        { value: 'Decizii financiare', label: t('admin.resources.theme_financial_decisions') },
+        { value: 'Credite', label: t('admin.resources.theme_credit') },
+    ]
 
     const [videoEditId, setVideoEditId] = useState<string | null>(null)
     const [showVideoForm, setShowVideoForm] = useState(false)
@@ -71,12 +73,12 @@ function ResourcesSection() {
     const handleVideoSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!videoForm.titlu.trim() || !videoForm.youtubeId.trim()) {
-            setVideoError('Titlul și linkul YouTube sunt obligatorii.')
+            setVideoError(t('admin.resources.error_video_required'))
             return
         }
         const youtubeId = extractYoutubeId(videoForm.youtubeId)
         if (!youtubeId) {
-            setVideoError('Nu am putut extrage ID-ul din linkul dat — verifică-l.')
+            setVideoError(t('admin.resources.error_video_link_invalid'))
             return
         }
         const payload = {
@@ -91,7 +93,7 @@ function ResourcesSection() {
     }
 
     const handleDeleteVideo = (v: VideoResource) => {
-        if (confirm(`Ștergi videoclipul „${v.titlu}"?`)) deleteVideo(v.id)
+        if (confirm(t('admin.resources.confirm_delete_video', { title: v.titlu }))) deleteVideo(v.id)
     }
 
     const openAddPdf = () => {
@@ -111,7 +113,7 @@ function ResourcesSection() {
     const handlePdfSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!pdfForm.titlu.trim() || !pdfForm.fisier.trim()) {
-            setPdfError('Titlul și calea fișierului sunt obligatorii.')
+            setPdfError(t('admin.resources.error_pdf_required'))
             return
         }
         const payload = {
@@ -126,13 +128,13 @@ function ResourcesSection() {
     }
 
     const handleDeletePdf = (p: PdfResource) => {
-        if (confirm(`Ștergi ghidul „${p.titlu}"?`)) deletePdf(p.id)
+        if (confirm(t('admin.resources.confirm_delete_pdf', { title: p.titlu }))) deletePdf(p.id)
     }
 
     const acceptPdfFile = (file: File | undefined) => {
         if (!file) return
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-            setPdfError('Poți încărca doar fișiere PDF.')
+            setPdfError(t('admin.resources.error_pdf_type'))
             return
         }
         setPdfError('')
@@ -159,11 +161,11 @@ function ResourcesSection() {
         <div>
             <div className="admin-panel-header">
                 <div>
-                    <h2>Resurse — Videoclipuri</h2>
-                    <p>{videos.length} videoclipuri afișate pe pagina Resurse.</p>
+                    <h2>{t('admin.resources.videos_title')}</h2>
+                    <p>{t('admin.resources.videos_subtitle', { count: videos.length })}</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAddVideo}>
-                    + Adaugă video
+                    + {t('admin.resources.add_video_button')}
                 </button>
             </div>
 
@@ -171,17 +173,17 @@ function ResourcesSection() {
                 <table className="admin-table">
                     <thead>
                         <tr>
-                            <th>Titlu</th>
-                            <th>Sursă</th>
-                            <th>Temă</th>
-                            <th>YouTube ID</th>
+                            <th>{t('admin.resources.col_title')}</th>
+                            <th>{t('admin.resources.col_source')}</th>
+                            <th>{t('admin.resources.col_theme')}</th>
+                            <th>{t('admin.resources.col_youtube_id')}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {videos.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={5}>Niciun videoclip momentan.</td>
+                                <td colSpan={5}>{t('admin.resources.empty_videos')}</td>
                             </tr>
                         )}
                         {videos.map((v) => (
@@ -193,10 +195,10 @@ function ResourcesSection() {
                                 <td>
                                     <div className="admin-row-actions">
                                         <button type="button" className="admin-icon-btn" onClick={() => openEditVideo(v)}>
-                                            Editează
+                                            {t('admin.resources.edit')}
                                         </button>
                                         <button type="button" className="admin-icon-btn danger" onClick={() => handleDeleteVideo(v)}>
-                                            Șterge
+                                            {t('admin.resources.delete')}
                                         </button>
                                     </div>
                                 </td>
@@ -208,11 +210,11 @@ function ResourcesSection() {
 
             <div className="admin-panel-header">
                 <div>
-                    <h2>Resurse — Ghiduri PDF</h2>
-                    <p>{pdfs.length} ghiduri disponibile pentru descărcare.</p>
+                    <h2>{t('admin.resources.pdfs_title')}</h2>
+                    <p>{t('admin.resources.pdfs_subtitle', { count: pdfs.length })}</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAddPdf}>
-                    + Adaugă PDF
+                    + {t('admin.resources.add_pdf_button')}
                 </button>
             </div>
 
@@ -220,17 +222,17 @@ function ResourcesSection() {
                 <table className="admin-table">
                     <thead>
                         <tr>
-                            <th>Titlu</th>
-                            <th>Descriere</th>
-                            <th>Temă</th>
-                            <th>Fișier</th>
+                            <th>{t('admin.resources.col_title')}</th>
+                            <th>{t('admin.resources.col_description')}</th>
+                            <th>{t('admin.resources.col_theme')}</th>
+                            <th>{t('admin.resources.col_file')}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {pdfs.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={5}>Niciun ghid momentan.</td>
+                                <td colSpan={5}>{t('admin.resources.empty_pdfs')}</td>
                             </tr>
                         )}
                         {pdfs.map((p) => (
@@ -242,10 +244,10 @@ function ResourcesSection() {
                                 <td>
                                     <div className="admin-row-actions">
                                         <button type="button" className="admin-icon-btn" onClick={() => openEditPdf(p)}>
-                                            Editează
+                                            {t('admin.resources.edit')}
                                         </button>
                                         <button type="button" className="admin-icon-btn danger" onClick={() => handleDeletePdf(p)}>
-                                            Șterge
+                                            {t('admin.resources.delete')}
                                         </button>
                                     </div>
                                 </td>
@@ -256,10 +258,10 @@ function ResourcesSection() {
             </div>
 
             {showVideoForm && (
-                <Modal title={videoEditId ? 'Editează videoclipul' : 'Adaugă videoclip'} onClose={() => setShowVideoForm(false)}>
+                <Modal title={videoEditId ? t('admin.resources.modal_edit_video_title') : t('admin.resources.modal_add_video_title')} onClose={() => setShowVideoForm(false)}>
                     <form className="admin-form" onSubmit={handleVideoSubmit}>
                         <div className="admin-field">
-                            <label htmlFor="vd-titlu">Titlu</label>
+                            <label htmlFor="vd-titlu">{t('admin.resources.label_title')}</label>
                             <input
                                 id="vd-titlu"
                                 value={videoForm.titlu}
@@ -268,7 +270,7 @@ function ResourcesSection() {
                         </div>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="vd-sursa">Sursă</label>
+                                <label htmlFor="vd-sursa">{t('admin.resources.label_source')}</label>
                                 <input
                                     id="vd-sursa"
                                     value={videoForm.sursa}
@@ -276,17 +278,17 @@ function ResourcesSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="vd-tema">Temă</label>
+                                <label htmlFor="vd-tema">{t('admin.resources.label_theme')}</label>
                                 <Dropdown
                                     value={videoForm.tema}
                                     onChange={(v) => setVideoForm((f) => ({ ...f, tema: v }))}
                                     options={temaOptions}
-                                    placeholder="Alege tema"
+                                    placeholder={t('admin.resources.placeholder_theme')}
                                 />
                             </div>
                         </div>
                         <div className="admin-field">
-                            <label htmlFor="vd-yt">Link YouTube</label>
+                            <label htmlFor="vd-yt">{t('admin.resources.label_youtube_link')}</label>
                             <input
                                 id="vd-yt"
                                 value={videoForm.youtubeId}
@@ -294,16 +296,16 @@ function ResourcesSection() {
                                 placeholder="https://www.youtube.com/watch?v=FtP-S4mmidQ"
                             />
                             <span className="admin-form-hint">
-                                Lipește linkul complet copiat din YouTube (funcționează și youtu.be) — ID-ul se extrage automat.
+                                {t('admin.resources.hint_youtube_link')}
                             </span>
                         </div>
                         {videoError && <span className="admin-form-error">{videoError}</span>}
                         <div className="admin-form-actions">
                             <button type="button" className="btn btn-ghost" onClick={() => setShowVideoForm(false)}>
-                                Anulează
+                                {t('admin.resources.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {videoEditId ? 'Salvează' : 'Adaugă'}
+                                {videoEditId ? t('admin.resources.save') : t('admin.resources.add_video_button')}
                             </button>
                         </div>
                     </form>
@@ -311,10 +313,10 @@ function ResourcesSection() {
             )}
 
             {showPdfForm && (
-                <Modal title={pdfEditId ? 'Editează ghidul' : 'Adaugă ghid PDF'} onClose={() => setShowPdfForm(false)}>
+                <Modal title={pdfEditId ? t('admin.resources.modal_edit_pdf_title') : t('admin.resources.modal_add_pdf_title')} onClose={() => setShowPdfForm(false)}>
                     <form className="admin-form" onSubmit={handlePdfSubmit}>
                         <div className="admin-field">
-                            <label htmlFor="pd-titlu">Titlu</label>
+                            <label htmlFor="pd-titlu">{t('admin.resources.label_title')}</label>
                             <input
                                 id="pd-titlu"
                                 value={pdfForm.titlu}
@@ -322,7 +324,7 @@ function ResourcesSection() {
                             />
                         </div>
                         <div className="admin-field">
-                            <label htmlFor="pd-descriere">Descriere</label>
+                            <label htmlFor="pd-descriere">{t('admin.resources.label_description')}</label>
                             <textarea
                                 id="pd-descriere"
                                 value={pdfForm.descriere}
@@ -332,16 +334,16 @@ function ResourcesSection() {
                         </div>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="pd-tema">Temă</label>
+                                <label htmlFor="pd-tema">{t('admin.resources.label_theme')}</label>
                                 <Dropdown
                                     value={pdfForm.tema}
                                     onChange={(v) => setPdfForm((f) => ({ ...f, tema: v }))}
                                     options={temaOptions}
-                                    placeholder="Alege tema"
+                                    placeholder={t('admin.resources.placeholder_theme')}
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="pd-fisier">Fișier PDF</label>
+                                <label htmlFor="pd-fisier">{t('admin.resources.label_pdf_file')}</label>
                                 <div
                                     className={`admin-dropzone ${pdfDragActive ? 'active' : ''}`}
                                     onDrop={handlePdfDrop}
@@ -361,7 +363,7 @@ function ResourcesSection() {
                                         <span className="admin-dropzone-file">{pdfForm.fisier}</span>
                                     ) : (
                                         <span className="admin-dropzone-hint">
-                                            Trage fișierul PDF aici sau apasă pentru a-l alege
+                                            {t('admin.resources.dropzone_hint')}
                                         </span>
                                     )}
                                 </div>
@@ -370,10 +372,10 @@ function ResourcesSection() {
                         {pdfError && <span className="admin-form-error">{pdfError}</span>}
                         <div className="admin-form-actions">
                             <button type="button" className="btn btn-ghost" onClick={() => setShowPdfForm(false)}>
-                                Anulează
+                                {t('admin.resources.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {pdfEditId ? 'Salvează' : 'Adaugă'}
+                                {pdfEditId ? t('admin.resources.save') : t('admin.resources.add_pdf_button')}
                             </button>
                         </div>
                     </form>

@@ -1,9 +1,11 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../AuthContext/AuthContext.ts'
 import './AvatarMenu.css'
 
 function AvatarMenu() {
+    const { t } = useTranslation()
     const { user, logout } = useAuth()
     const [open, setOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement>(null)
@@ -39,7 +41,7 @@ function AvatarMenu() {
                 type="button"
                 className="avatar-trigger"
                 onClick={() => setOpen((v) => !v)}
-                aria-label="Meniul contului"
+                aria-label={t('avatarMenu.aria_menu')}
                 aria-expanded={open}
             >
                 {initials}
@@ -51,18 +53,18 @@ function AvatarMenu() {
                         <span className="avatar-dropdown-name">{displayName}</span>
                     </div>
                     <Link to="/profile" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
-                        Profilul meu
+                        {t('avatarMenu.my_profile')}
                     </Link>
                     <Link to="/progress" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
-                        Progresul meu
+                        {t('avatarMenu.my_progress')}
                     </Link>
                     {user.rol === 'admin' && (
                         <Link to="/admin" className="avatar-dropdown-item" onClick={() => setOpen(false)}>
-                            Panou admin
+                            {t('avatarMenu.admin_panel')}
                         </Link>
                     )}
                     <button type="button" className="avatar-dropdown-item avatar-dropdown-logout" onClick={handleLogout}>
-                        Deconectare
+                        {t('avatarMenu.logout')}
                     </button>
                 </div>
             )}

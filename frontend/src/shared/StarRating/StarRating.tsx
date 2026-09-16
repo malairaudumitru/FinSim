@@ -1,4 +1,5 @@
-﻿import './StarRating.css'
+﻿import { useTranslation } from 'react-i18next'
+import './StarRating.css'
 
 interface StarRatingProps {
     rating: number
@@ -7,6 +8,7 @@ interface StarRatingProps {
 }
 
 function StarRating({ rating, onChange, size = 18 }: StarRatingProps) {
+    const { t } = useTranslation()
     const interactive = Boolean(onChange)
 
     return (
@@ -18,7 +20,7 @@ function StarRating({ rating, onChange, size = 18 }: StarRatingProps) {
                     className={`star ${n <= rating ? 'filled' : ''}`}
                     onClick={interactive ? () => onChange?.(n) : undefined}
                     disabled={!interactive}
-                    aria-label={`${n} din 5 stele`}
+                    aria-label={t('starRating.ariaTemplate', { n })}
                 >
                     ★
                 </button>

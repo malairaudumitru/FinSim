@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import OverviewSection from './OverviewSection'
 import UsersSection from './UsersSection'
@@ -14,34 +15,32 @@ import './AdminDashboard.css'
 
 type Tab = 'overview' | 'users' | 'leaderboard' | 'scenarios' | 'reviews' | 'notifications' | 'resources' | 'messages'
 
-const tabs: { id: Tab; label: string }[] = [
-    { id: 'overview', label: 'Prezentare generală' },
-    { id: 'users', label: 'Utilizatori' },
-    { id: 'leaderboard', label: 'Clasament' },
-    { id: 'scenarios', label: 'Scenarii' },
-    { id: 'reviews', label: 'Recenzii' },
-    { id: 'notifications', label: 'Notificări' },
-    { id: 'resources', label: 'Resurse' },
-    { id: 'messages', label: 'Mesaje' },
-]
-
 function AdminDashboard() {
+    const { t } = useTranslation()
     const { user } = useAuth()
     const { unreadCount } = useMessages()
     const [tab, setTab] = useState<Tab>('overview')
+
+    const tabs: { id: Tab; label: string }[] = [
+        { id: 'overview', label: t('admin.dashboard.tab_overview') },
+        { id: 'users', label: t('admin.dashboard.tab_users') },
+        { id: 'leaderboard', label: t('admin.dashboard.tab_leaderboard') },
+        { id: 'scenarios', label: t('admin.dashboard.tab_scenarios') },
+        { id: 'reviews', label: t('admin.dashboard.tab_reviews') },
+        { id: 'notifications', label: t('admin.dashboard.tab_notifications') },
+        { id: 'resources', label: t('admin.dashboard.tab_resources') },
+        { id: 'messages', label: t('admin.dashboard.tab_messages') },
+    ]
 
     if (!user || user.rol !== 'admin') {
         return (
             <div className="admin-page">
                 <div className="container">
                     <div className="admin-guard">
-                        <h1>Acces restricționat</h1>
-                        <p>
-                            Panoul de administrare este disponibil doar conturilor cu rol de admin.
-                            Autentifică-te cu un cont de administrator pentru a continua.
-                        </p>
+                        <h1>{t('admin.dashboard.guard_title')}</h1>
+                        <p>{t('admin.dashboard.guard_message')}</p>
                         <Link to="/login" className="btn btn-primary">
-                            Mergi la autentificare
+                            {t('admin.dashboard.guard_cta')}
                         </Link>
                     </div>
                 </div>
@@ -53,20 +52,20 @@ function AdminDashboard() {
         <div className="admin-page">
             <div className="container">
                 <div className="admin-header">
-                    <h1>Panou de administrare</h1>
-                    <p>Gestionează utilizatorii, clasamentul, scenariile, recenziile, notificările, resursele și mesajele FinSim.</p>
+                    <h1>{t('admin.dashboard.title')}</h1>
+                    <p>{t('admin.dashboard.subtitle')}</p>
                 </div>
 
                 <div className="admin-tabs">
-                    {tabs.map((t) => (
+                    {tabs.map((tabItem) => (
                         <button
                             type="button"
-                            key={t.id}
-                            className={`admin-tab ${tab === t.id ? 'active' : ''}`}
-                            onClick={() => setTab(t.id)}
+                            key={tabItem.id}
+                            className={`admin-tab ${tab === tabItem.id ? 'active' : ''}`}
+                            onClick={() => setTab(tabItem.id)}
                         >
-                            {t.label}
-                            {t.id === 'messages' && unreadCount > 0 && (
+                            {tabItem.label}
+                            {tabItem.id === 'messages' && unreadCount > 0 && (
                                 <span className="admin-tab-badge">{unreadCount}</span>
                             )}
                         </button>

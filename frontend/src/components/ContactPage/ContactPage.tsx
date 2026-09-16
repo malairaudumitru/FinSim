@@ -1,4 +1,5 @@
-﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useMessages } from '../../shared/MessagesContext/MessagesContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ContactPage.css'
@@ -18,6 +19,7 @@ const initialState: ContactForm = {
 }
 
 function ContactPage() {
+    const { t } = useTranslation()
     const { addMessage } = useMessages()
     const [form, setForm] = useState<ContactForm>(initialState)
     const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({})
@@ -32,18 +34,18 @@ function ContactPage() {
     const validate = (): boolean => {
         const newErrors: Partial<Record<keyof ContactForm, string>> = {}
 
-        if (!form.nume.trim()) newErrors.nume = 'Numele este obligatoriu.'
+        if (!form.nume.trim()) newErrors.nume = t('contact.error_nume_required')
 
         if (!form.email.trim()) {
-            newErrors.email = 'Email-ul este obligatoriu.'
+            newErrors.email = t('contact.error_email_required')
         } else if (!EMAIL_REGEX.test(form.email.trim())) {
-            newErrors.email = 'Introdu o adresă de email validă.'
+            newErrors.email = t('contact.error_email_invalid')
         }
 
         if (!form.mesaj.trim()) {
-            newErrors.mesaj = 'Mesajul este obligatoriu.'
+            newErrors.mesaj = t('contact.error_mesaj_required')
         } else if (form.mesaj.trim().length < 25) {
-            newErrors.mesaj = 'Mesajul trebuie să aibă cel puțin 25 caractere.'
+            newErrors.mesaj = t('contact.error_mesaj_length')
         }
 
         setErrors(newErrors)
@@ -68,9 +70,9 @@ function ContactPage() {
         <>
             <section className="content-hero">
                 <div className="container">
-                    <h1>Contact</h1>
+                    <h1>{t('contact.h1')}</h1>
                     <p className="content-hero-subtitle">
-                        Ai o întrebare, un feedback sau ai găsit o eroare? Scrie-ne.
+                        {t('contact.subtitle')}
                     </p>
                 </div>
             </section>
@@ -79,65 +81,64 @@ function ContactPage() {
                 <div className="container contact-grid">
                     <div className="contact-info">
                         <div className="contact-info-item">
-                            <span className="contact-info-label">Email</span>
+                            <span className="contact-info-label">{t('contact.label_email')}</span>
                             <a href="mailto:contact@finsim.md">contact@finsim.md</a>
                         </div>
                         <div className="contact-info-item">
-                            <span className="contact-info-label">Locație</span>
+                            <span className="contact-info-label">{t('contact.label_location')}</span>
                             <span>Chișinău, Moldova</span>
                         </div>
                         <div className="contact-info-item">
-                            <span className="contact-info-label">Timp de răspuns</span>
-                            <span>De obicei în 1-2 zile lucrătoare</span>
+                            <span className="contact-info-label">{t('contact.label_response_time')}</span>
+                            <span>{t('contact.response_time_value')}</span>
                         </div>
                     </div>
 
                     <div className="contact-form-wrap">
                         {submitted ? (
                             <div className="contact-success">
-                                Mulțumim! Mesajul tău a fost trimis. Îți răspundem cât mai
-                                curând posibil.
+                                {t('contact.success')}
                             </div>
                         ) : (
                             <form className="contact-form" onSubmit={handleSubmit} noValidate>
                                 <div className="form-field">
-                                    <label htmlFor="nume">Nume</label>
+                                    <label htmlFor="nume">{t('contact.label_nume')}</label>
                                     <input
                                         id="nume"
                                         type="text"
                                         value={form.nume}
                                         onChange={handleChange('nume')}
-                                        placeholder="Numele tău"
+                                        placeholder={t('contact.placeholder_nume')}
                                     />
                                     {errors.nume && <span className="field-error">{errors.nume}</span>}
                                 </div>
 
                                 <div className="form-field">
-                                    <label htmlFor="email">Email</label>
+                                    <label htmlFor="email">{t('contact.label_email')}</label>
                                     <input
                                         id="email"
                                         type="email"
                                         value={form.email}
                                         onChange={handleChange('email')}
-                                        placeholder="nume@exemplu.com"
+                                        placeholder={t('contact.placeholder_email')}
                                     />
                                     {errors.email && <span className="field-error">{errors.email}</span>}
                                 </div>
 
                                 <div className="form-field">
-                                    <label htmlFor="mesaj">Mesaj</label>
+                                    <label htmlFor="mesaj">{t('contact.label_mesaj')}</label>
                                     <textarea
                                         id="mesaj"
                                         rows={5}
                                         value={form.mesaj}
                                         onChange={handleChange('mesaj')}
-                                        placeholder="Scrie mesajul tău aici..."
+                                        placeholder={t('contact.placeholder_mesaj')}
                                     />
                                     {errors.mesaj && <span className="field-error">{errors.mesaj}</span>}
                                 </div>
 
                                 <button type="submit" className="btn btn-primary btn-lg">
-                                    Trimite mesajul
+                                    {t('contact.submit')}
                                 </button>
                             </form>
                         )}

@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './Dropdown.css'
 
 interface DropdownOption {
@@ -15,7 +16,9 @@ interface DropdownProps {
     searchPlaceholder?: string
 }
 
-function Dropdown({ value, onChange, options, placeholder, searchable = false, searchPlaceholder = 'Caută...' }: DropdownProps) {
+function Dropdown({ value, onChange, options, placeholder, searchable = false, searchPlaceholder }: DropdownProps) {
+    const { t } = useTranslation()
+    const resolvedSearchPlaceholder = searchPlaceholder ?? t('common.dropdown_search_placeholder')
     const [open, setOpen] = useState(false)
     const [query, setQuery] = useState('')
     const ref = useRef<HTMLDivElement>(null)
@@ -72,12 +75,12 @@ function Dropdown({ value, onChange, options, placeholder, searchable = false, s
                             className="dropdown-search"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder={searchPlaceholder}
+                            placeholder={resolvedSearchPlaceholder}
                             onClick={(e) => e.stopPropagation()}
                         />
                     )}
                     {filteredOptions.length === 0 && (
-                        <div className="dropdown-empty">Niciun rezultat.</div>
+                        <div className="dropdown-empty">{t('common.dropdown_no_results')}</div>
                     )}
                     {filteredOptions.map((o) => (
                         <button

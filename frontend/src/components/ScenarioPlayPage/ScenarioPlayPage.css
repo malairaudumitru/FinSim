@@ -568,6 +568,7 @@
 
 .truefalse-btn {
     flex: 1;
+    min-width: 90px;
     padding: 10px;
     background: var(--paper);
     border: 1px solid var(--rule);

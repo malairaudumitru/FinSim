@@ -1,15 +1,12 @@
 ﻿import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import type { ScenarioDef, ScenarioStep } from '../../shared/scenarios/scenariosData'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import Checkbox from '../../shared/Checkbox/Checkbox'
 
-const dificultateOptions = [
-    { value: 'Ușor', label: 'Ușor' },
-    { value: 'Mediu', label: 'Mediu' },
-    { value: 'Avansat', label: 'Avansat' },
-]
+const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 type FormState = {
     slug: string
@@ -56,11 +53,18 @@ function toForm(s: ScenarioDef): FormState {
 }
 
 function ScenariosSection() {
+    const { t, i18n } = useTranslation()
     const { scenarios, addScenario, updateScenario, deleteScenario } = useScenarios()
     const [editingSlug, setEditingSlug] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+
+    const dificultateOptions = [
+        { value: 'Ușor', label: t('admin.scenarios.difficulty_easy') },
+        { value: 'Mediu', label: t('admin.scenarios.difficulty_medium') },
+        { value: 'Avansat', label: t('admin.scenarios.difficulty_advanced') },
+    ]
 
     const openAdd = () => {
         setEditingSlug(null)
@@ -81,7 +85,7 @@ function ScenariosSection() {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.descriere.trim()) {
-            setError('Numele și descrierea sunt obligatorii.')
+            setError(t('admin.scenarios.error_required'))
             return
         }
 
@@ -91,13 +95,13 @@ function ScenariosSection() {
             if (!Array.isArray(parsed)) throw new Error('not array')
             pasi = parsed
         } catch {
-            setError('Pașii scenariului trebuie să fie un JSON valid (o listă).')
+            setError(t('admin.scenarios.error_invalid_json'))
             return
         }
 
         const slug = editingSlug ?? (form.slug.trim() ? slugify(form.slug) : slugify(form.nume))
         if (!editingSlug && scenarios.some((s) => s.slug === slug)) {
-            setError('Există deja un scenariu cu acest identificator (slug).')
+            setError(t('admin.scenarios.error_duplicate_slug'))
             return
         }
 
@@ -121,7 +125,7 @@ function ScenariosSection() {
     }
 
     const handleDelete = (s: ScenarioDef) => {
-        if (confirm(`Ștergi scenariul „${s.nume}"? Această acțiune nu poate fi anulată.`)) {
+        if (confirm(t('admin.scenarios.confirm_delete', { name: s.nume }))) {
             deleteScenario(s.slug)
         }
     }
@@ -130,11 +134,11 @@ function ScenariosSection() {
         <div>
             <div className="admin-panel-header">
                 <div>
-                    <h2>Scenarii</h2>
-                    <p>Scenariile de simulare disponibile în aplicație — {scenarios.length} în total.</p>
+                    <h2>{t('admin.scenarios.title')}</h2>
+                    <p>{t('admin.scenarios.subtitle', { count: scenarios.length })}</p>
                 </div>
                 <button type="button" className="btn btn-primary" onClick={openAdd}>
-                    + Adaugă scenariu
+                    + {t('admin.scenarios.add_button')}
                 </button>
             </div>
 
@@ -142,38 +146,38 @@ function ScenariosSection() {
                 <table className="admin-table">
                     <thead>
                         <tr>
-                            <th>Nume</th>
-                            <th>Dificultate</th>
-                            <th>Sold inițial</th>
-                            <th>Necesită cont</th>
-                            <th>Pași</th>
+                            <th>{t('admin.scenarios.col_name')}</th>
+                            <th>{t('admin.scenarios.col_difficulty')}</th>
+                            <th>{t('admin.scenarios.col_initial_balance')}</th>
+                            <th>{t('admin.scenarios.col_requires_account')}</th>
+                            <th>{t('admin.scenarios.col_steps')}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {scenarios.length === 0 && (
                             <tr className="admin-empty-row">
-                                <td colSpan={6}>Niciun scenariu momentan.</td>
+                                <td colSpan={6}>{t('admin.scenarios.empty')}</td>
                             </tr>
                         )}
                         {scenarios.map((s) => (
                             <tr key={s.slug}>
                                 <td>{s.nume}</td>
-                                <td><span className="admin-badge admin-badge-gray">{s.dificultate}</span></td>
-                                <td>{s.soldInitial.toLocaleString('ro-RO')} lei</td>
-                                <td className="admin-cell-muted">{s.necesitaCont ? 'Da' : 'Nu'}</td>
+                                <td><span className="admin-badge admin-badge-gray admin-badge-wide">{s.dificultate}</span></td>
+                                <td>{s.soldInitial.toLocaleString(LOCALE_MAP[i18n.language] ?? 'ro-RO')} lei</td>
+                                <td className="admin-cell-muted">{s.necesitaCont ? t('admin.scenarios.yes') : t('admin.scenarios.no')}</td>
                                 <td className="admin-cell-muted">{s.pasi.length}</td>
                                 <td>
                                     <div className="admin-row-actions">
                                         <button type="button" className="admin-icon-btn" onClick={() => openEdit(s)}>
-                                            Editează
+                                            {t('admin.scenarios.edit')}
                                         </button>
                                         <button
                                             type="button"
                                             className="admin-icon-btn danger"
                                             onClick={() => handleDelete(s)}
                                         >
-                                            Șterge
+                                            {t('admin.scenarios.delete')}
                                         </button>
                                     </div>
                                 </td>
@@ -184,11 +188,11 @@ function ScenariosSection() {
             </div>
 
             {showForm && (
-                <Modal title={editingSlug ? 'Editează scenariul' : 'Adaugă scenariu'} onClose={close}>
+                <Modal title={editingSlug ? t('admin.scenarios.modal_edit_title') : t('admin.scenarios.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="sc-nume">Nume</label>
+                                <label htmlFor="sc-nume">{t('admin.scenarios.label_name')}</label>
                                 <input
                                     id="sc-nume"
                                     value={form.nume}
@@ -196,30 +200,30 @@ function ScenariosSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="sc-dificultate">Dificultate</label>
+                                <label htmlFor="sc-dificultate">{t('admin.scenarios.label_difficulty')}</label>
                                 <Dropdown
                                     value={form.dificultate}
                                     onChange={(v) => setForm((f) => ({ ...f, dificultate: v }))}
                                     options={dificultateOptions}
-                                    placeholder="Dificultate"
+                                    placeholder={t('admin.scenarios.label_difficulty')}
                                 />
                             </div>
                         </div>
 
                         {!editingSlug && (
                             <div className="admin-field">
-                                <label htmlFor="sc-slug">Identificator (slug, opțional)</label>
+                                <label htmlFor="sc-slug">{t('admin.scenarios.label_slug')}</label>
                                 <input
                                     id="sc-slug"
                                     value={form.slug}
                                     onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-                                    placeholder="se generează automat din nume dacă îl lași gol"
+                                    placeholder={t('admin.scenarios.placeholder_slug')}
                                 />
                             </div>
                         )}
 
                         <div className="admin-field">
-                            <label htmlFor="sc-descriere">Descriere</label>
+                            <label htmlFor="sc-descriere">{t('admin.scenarios.label_description')}</label>
                             <textarea
                                 id="sc-descriere"
                                 value={form.descriere}
@@ -230,7 +234,7 @@ function ScenariosSection() {
 
                         <div className="admin-form-row">
                             <div className="admin-field">
-                                <label htmlFor="sc-sold">Sold inițial (lei)</label>
+                                <label htmlFor="sc-sold">{t('admin.scenarios.label_initial_balance')}</label>
                                 <input
                                     id="sc-sold"
                                     type="number"
@@ -239,7 +243,7 @@ function ScenariosSection() {
                                 />
                             </div>
                             <div className="admin-field">
-                                <label htmlFor="sc-scorcredit">Scor credit inițial (opțional)</label>
+                                <label htmlFor="sc-scorcredit">{t('admin.scenarios.label_initial_credit_score')}</label>
                                 <input
                                     id="sc-scorcredit"
                                     type="number"
@@ -254,19 +258,19 @@ function ScenariosSection() {
                                 id="sc-cont"
                                 checked={form.necesitaCont}
                                 onChange={(v) => setForm((f) => ({ ...f, necesitaCont: v }))}
-                                label="Necesită cont autentificat"
+                                label={t('admin.scenarios.label_requires_account')}
                             />
                         </div>
 
                         <div className="admin-field">
-                            <label htmlFor="sc-pasi">Pașii scenariului (JSON avansat)</label>
+                            <label htmlFor="sc-pasi">{t('admin.scenarios.label_steps_json')}</label>
                             <textarea
                                 id="sc-pasi"
                                 value={form.pasiJson}
                                 onChange={(e) => setForm((f) => ({ ...f, pasiJson: e.target.value }))}
                             />
                             <span className="admin-form-hint">
-                                Structura completă a pașilor (întrebări, opțiuni, punctaje). Editează cu atenție — trebuie să rămână un JSON valid.
+                                {t('admin.scenarios.hint_steps_json')}
                             </span>
                         </div>
 
@@ -274,10 +278,10 @@ function ScenariosSection() {
 
                         <div className="admin-form-actions">
                             <button type="button" className="btn btn-ghost" onClick={close}>
-                                Anulează
+                                {t('admin.scenarios.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {editingSlug ? 'Salvează' : 'Adaugă'}
+                                {editingSlug ? t('admin.scenarios.save') : t('admin.scenarios.add_button')}
                             </button>
                         </div>
                     </form>

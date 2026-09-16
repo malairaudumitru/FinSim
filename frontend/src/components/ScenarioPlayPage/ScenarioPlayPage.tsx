@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
     maxScoreFor,
     type AllocationStepDef,
@@ -38,6 +39,7 @@ function AllocationStep({
     def: AllocationStepDef
     onConfirm: (option: ScenarioOption) => void
 }) {
+    const { t } = useTranslation()
     const [values, setValues] = useState<Record<string, number>>(() =>
         Object.fromEntries(def.categorii.map((c) => [c.id, c.implicit]))
     )
@@ -67,14 +69,14 @@ function AllocationStep({
 
         let feedback: string
         if (chirieShare > 0.5) {
-            feedback = 'Chiria depășește jumătate din venit — un buget foarte strâns pentru restul lunii.'
+            feedback = t('scenarioPlay.feedback.rentTooHigh')
         } else if (economii === 0) {
-            feedback = 'Ai echilibrat chiria, dar fără economii, orice urgență te lasă descoperit.'
+            feedback = t('scenarioPlay.feedback.noSavings')
         } else {
-            feedback = 'Un buget echilibrat — chirie rezonabilă și un fond pentru neprevăzut.'
+            feedback = t('scenarioPlay.feedback.balancedBudget')
         }
 
-        onConfirm({ id: 'alocare', eticheta: 'Alocare buget', bani: -total, puncte, feedback })
+        onConfirm({ id: 'alocare', eticheta: t('scenarioPlay.labels.allocationBudget'), bani: -total, puncte, feedback })
     }
 
     return (
@@ -97,11 +99,11 @@ function AllocationStep({
                 </div>
             ))}
             <div className={`allocation-remaining ${remaining < 0 ? 'negative' : ''}`}>
-                <span>Rămas pentru mâncare și cheltuieli variabile</span>
+                <span>{t('scenarioPlay.remainingForVariable')}</span>
                 <span className="figure">{remaining} lei</span>
             </div>
             <button type="button" className="btn btn-primary btn-lg" onClick={confirm} disabled={!isValid}>
-                Confirmă alocarea
+                {t('scenarioPlay.buttons.confirmAllocation')}
             </button>
         </div>
     )
@@ -114,6 +116,7 @@ function MultiSelectStep({
     def: MultiSelectStepDef
     onConfirm: (option: ScenarioOption) => void
 }) {
+    const { t } = useTranslation()
     const [selected, setSelected] = useState<Set<string>>(new Set())
 
     const toggle = (id: string) => {
@@ -133,12 +136,12 @@ function MultiSelectStep({
     const confirm = () => {
         const feedback =
             selectedItems.length === 0
-                ? 'Nu ai redus nimic — bugetul rămâne la fel de strâns luna asta.'
-                : `Ai găsit ${totalBani} lei în plus reducând ${selectedItems.length} ${selectedItems.length === 1 ? 'cheltuială' : 'cheltuieli'}.`
+                ? t('scenarioPlay.feedback.noReductions')
+                : t('scenarioPlay.feedback.reductionsFound', { amount: totalBani, count: selectedItems.length })
 
         onConfirm({
             id: 'reduceri',
-            eticheta: 'Reduceri de buget',
+            eticheta: t('scenarioPlay.labels.budgetReductions'),
             bani: totalBani,
             puncte: totalPuncte,
             stres: totalStres,
@@ -160,7 +163,7 @@ function MultiSelectStep({
                 </label>
             ))}
             <button type="button" className="btn btn-primary btn-lg" onClick={confirm}>
-                Confirmă reducerile
+                {t('scenarioPlay.buttons.confirmReductions')}
             </button>
         </div>
     )
@@ -173,6 +176,7 @@ function TimePressureStep({
     def: TimePressureStepDef
     onConfirm: (option: ScenarioOption) => void
 }) {
+    const { t } = useTranslation()
     const [timpRamas, setTimpRamas] = useState(def.secunde)
     const hasResolved = useRef(false)
 
@@ -200,7 +204,7 @@ function TimePressureStep({
         <div className="timepressure-step">
             <div className={`timepressure-clock ${urgent ? 'urgent' : ''}`}>
                 <span className="figure">{timpRamas}</span>
-                <span className="timepressure-clock-label">secunde rămase</span>
+                <span className="timepressure-clock-label">{t('scenarioPlay.secondsRemaining')}</span>
             </div>
             <div className="scenario-options">
                 {def.optiuni.map((opt) => (
@@ -228,6 +232,7 @@ function OfferComparisonStep({
     def: ComparatieOferteStepDef
     onConfirm: (option: ScenarioOption) => void
 }) {
+    const { t } = useTranslation()
     const choose = (oferta: (typeof def.oferte)[number]) => {
         onConfirm({
             id: oferta.id,
@@ -246,19 +251,19 @@ function OfferComparisonStep({
                 <button type="button" className="offer-card" key={oferta.id} onClick={() => choose(oferta)}>
                     <h3 className="offer-title">{oferta.eticheta}</h3>
                     <div className="offer-row">
-                        <span>Dobândă anuală</span>
+                        <span>{t('scenarioPlay.offer.annualRate')}</span>
                         <span className="figure">{oferta.dobanda}%</span>
                     </div>
                     <div className="offer-row">
-                        <span>Durată</span>
-                        <span className="figure">{oferta.durataLuni} luni</span>
+                        <span>{t('scenarioPlay.offer.duration')}</span>
+                        <span className="figure">{oferta.durataLuni} {t('scenarioPlay.offer.months')}</span>
                     </div>
                     <div className="offer-row">
-                        <span>Rată lunară</span>
+                        <span>{t('scenarioPlay.offer.monthlyRate')}</span>
                         <span className="figure">{oferta.rataLunara} lei</span>
                     </div>
                     <div className="offer-row offer-total">
-                        <span>Cost total</span>
+                        <span>{t('scenarioPlay.offer.totalCost')}</span>
                         <span className="figure">{oferta.costTotal} lei</span>
                     </div>
                 </button>
@@ -274,6 +279,7 @@ function TrueFalseStep({
     def: AdevaratFalsStepDef
     onConfirm: (option: ScenarioOption) => void
 }) {
+    const { t } = useTranslation()
     const [answers, setAnswers] = useState<Record<string, boolean>>({})
     const [revealed, setRevealed] = useState(false)
 
@@ -296,10 +302,10 @@ function TrueFalseStep({
         const corecte = def.intrebari.filter((q) => answers[q.id] === q.raspunsCorect).length
         onConfirm({
             id: 'quiz-credit',
-            eticheta: 'Quiz credite',
+            eticheta: t('scenarioPlay.labels.creditQuiz'),
             bani: 0,
             puncte,
-            feedback: `Ai răspuns corect la ${corecte} din ${def.intrebari.length} afirmații.`,
+            feedback: t('scenarioPlay.feedback.quizResult', { correct: corecte, total: def.intrebari.length }),
         })
     }
 
@@ -320,7 +326,7 @@ function TrueFalseStep({
                                 onClick={() => answer(q.id, true)}
                                 disabled={revealed}
                             >
-                                Adevărat
+                                {t('scenarioPlay.buttons.true')}
                             </button>
                             <button
                                 type="button"
@@ -330,7 +336,7 @@ function TrueFalseStep({
                                 onClick={() => answer(q.id, false)}
                                 disabled={revealed}
                             >
-                                Fals
+                                {t('scenarioPlay.buttons.false')}
                             </button>
                         </div>
                         {revealed && <p className="truefalse-explicatie">{q.explicatie}</p>}
@@ -343,13 +349,14 @@ function TrueFalseStep({
                 onClick={finish}
                 disabled={!allAnswered}
             >
-                {revealed ? 'Continuă' : 'Verifică răspunsurile'}
+                {revealed ? t('scenarioPlay.buttons.continue') : t('scenarioPlay.buttons.checkAnswers')}
             </button>
         </div>
     )
 }
 
 function ScenarioPlayPage() {
+    const { t } = useTranslation()
 
     const { slug } = useParams({ from: '/_app/scenarios/$slug' })
     const { getBySlug } = useScenarios()
@@ -410,9 +417,9 @@ function ScenarioPlayPage() {
     if (!scenario) {
         return (
             <div className="scenario-missing">
-                <p>Acest scenariu nu există.</p>
+                <p>{t('scenarioPlay.scenarioNotFound')}</p>
                 <Link to="/scenarios" className="btn btn-primary">
-                    Înapoi la scenarii
+                    {t('scenarioPlay.buttons.backToScenarios')}
                 </Link>
             </div>
         )
@@ -423,13 +430,13 @@ function ScenarioPlayPage() {
             <div className="scenario-missing">
                 <span className="scenario-difficulty">{scenario.dificultate}</span>
                 <h1>{scenario.nume}</h1>
-                <p>Acest scenariu este disponibil doar cu cont creat.</p>
+                <p>{t('scenarioPlay.accountRequired')}</p>
                 <div className="scenario-locked-actions">
                     <Link to="/login" className="btn btn-primary">
-                        Autentificare / Înregistrare
+                        {t('scenarioPlay.buttons.loginRegister')}
                     </Link>
                     <Link to="/scenarios" className="btn btn-ghost">
-                        Înapoi la scenarii
+                        {t('scenarioPlay.buttons.backToScenarios')}
                     </Link>
                 </div>
             </div>
@@ -440,9 +447,9 @@ function ScenarioPlayPage() {
         return (
             <div className="scenario-missing">
                 <h1>{scenario.nume}</h1>
-                <p>Acest scenariu este în lucru — revino curând.</p>
+                <p>{t('scenarioPlay.inProgress')}</p>
                 <Link to="/scenarios" className="btn btn-primary">
-                    Înapoi la scenarii
+                    {t('scenarioPlay.buttons.backToScenarios')}
                 </Link>
             </div>
         )
@@ -481,11 +488,11 @@ function ScenarioPlayPage() {
                         <h1>{scenario.nume}</h1>
                         <p className="scenario-intro-desc">{scenario.descriere}</p>
                         <div className="scenario-intro-balance">
-                            <span>Sold de start</span>
+                            <span>{t('scenarioPlay.startingBalance')}</span>
                             <span className="figure">{scenario.soldInitial} lei</span>
                         </div>
                         <button type="button" className="btn btn-primary btn-lg" onClick={startScenario}>
-                            Începe scenariul
+                            {t('scenarioPlay.buttons.start')}
                         </button>
                     </div>
                 </section>
@@ -499,7 +506,7 @@ function ScenarioPlayPage() {
                 <section className="scenario-header">
                     <div className="container scenario-header-inner">
                                                 <span className="scenario-step-count">
-                            Pasul {stepIndex + 1} din {steps.length}
+                            {t('scenarioPlay.stepCount', { current: stepIndex + 1, total: steps.length })}
                         </span>
                         <div className="scenario-header-stats">
                             <button
@@ -509,18 +516,18 @@ function ScenarioPlayPage() {
                                 aria-expanded={showInfo}
                             >
                                 <span className="scenario-info-toggle-icon">ⓘ</span>
-                                Ce înseamnă?
+                                {t('scenarioPlay.whatDoesItMean')}
                             </button>
                             {hasScorCredit && (
                                 <span className={`scenario-scor-credit figure ${scorCredit < 60 ? 'low' : ''}`}>
-                                    Scor credit: {scorCredit}
+                                    {t('scenarioPlay.creditScoreLabel', { score: scorCredit })}
                                 </span>
                             )}
                             {hasStres && (
-                                <span className="scenario-stres figure">Stres: {stres}</span>
+                                <span className="scenario-stres figure">{t('scenarioPlay.stressLabel', { value: stres })}</span>
                             )}
                             <span className="scenario-balance-wrap">
-                                <span className="scenario-balance figure">Sold: {bani} lei</span>
+                                <span className="scenario-balance figure">{t('scenarioPlay.balanceLabel', { value: bani })}</span>
                                 {lastChoice && (
                                     <span
                                         className={`scenario-delta figure ${
@@ -540,20 +547,16 @@ function ScenarioPlayPage() {
                     <section className="scenario-info-panel">
                         <div className="container scenario-info-panel-inner">
                             <div>
-                                <strong>Sold</strong> — banii tăi disponibili. Se modifică automat, în plus sau în
-                                minus, cu fiecare decizie pe care o iei.
+                                <strong>{t('scenarioPlay.infoBalanceTitle')}</strong> {t('scenarioPlay.infoBalanceText')}
                             </div>
                             {hasStres && (
                                 <div>
-                                    <strong>Stres</strong> — reflectă cât de tensionate sunt deciziile tale. La
-                                    final, stresul acumulat se scade direct din scor.
+                                    <strong>{t('scenarioPlay.infoStressTitle')}</strong> {t('scenarioPlay.infoStressText')}
                                 </div>
                             )}
                             {hasScorCredit && (
                                 <div>
-                                    <strong>Scor de credit</strong> — arată cât de responsabile sunt deciziile tale
-                                    legate de împrumut. Unele opțiuni sunt disponibile doar dacă scorul tău trece
-                                    de un prag minim.
+                                    <strong>{t('scenarioPlay.infoCreditTitle')}</strong> {t('scenarioPlay.infoCreditText')}
                                 </div>
                             )}
                             <button
@@ -561,7 +564,7 @@ function ScenarioPlayPage() {
                                 className="scenario-info-close"
                                 onClick={() => setShowInfo(false)}
                             >
-                                Am înțeles
+                                {t('scenarioPlay.buttons.iUnderstand')}
                             </button>
                         </div>
                     </section>
@@ -604,8 +607,10 @@ function ScenarioPlayPage() {
                                                             {opt.eticheta}
                                                             {locked && (
                                                                 <span className="scenario-option-lock">
-                                                                    Necesită scor de credit minim: {opt.scorMinim} (ai:{' '}
-                                                                    {scorCredit})
+                                                                    {t('scenarioPlay.minCreditRequired', {
+                                                                        min: opt.scorMinim,
+                                                                        current: scorCredit,
+                                                                    })}
                                                                 </span>
                                                             )}
                                                         </span>
@@ -627,7 +632,7 @@ function ScenarioPlayPage() {
                             <div className="scenario-feedback">
                                 <p className="scenario-feedback-text">{lastChoice.feedback}</p>
                                 <button type="button" className="btn btn-primary btn-lg" onClick={continueToNext}>
-                                    {isLastStep ? 'Vezi rezultatul' : 'Continuă'}
+                                    {isLastStep ? t('scenarioPlay.buttons.seeResult') : t('scenarioPlay.buttons.continue')}
                                 </button>
                             </div>
                         )}
@@ -642,26 +647,26 @@ function ScenarioPlayPage() {
             <section className="scenario-result">
                 <div className="container">
                     <span className="scenario-difficulty">{scenario.nume}</span>
-                    <h1>Scenariu finalizat</h1>
+                    <h1>{t('scenarioPlay.resultTitle')}</h1>
                     <div className="scenario-result-score">
                         <AnimatedNumber value={`${scorFinal}`} />
                         <span className="scenario-result-score-max">/100</span>
                     </div>
-                    <p className="scenario-result-balance figure">Sold final: {bani} lei</p>
+                    <p className="scenario-result-balance figure">{t('scenarioPlay.finalBalance', { value: bani })}</p>
                     {hasStres && (
                         <p className="scenario-result-stres figure">
-                            Nivel de stres acumulat: {stres} (scăzut direct din scor)
+                            {t('scenarioPlay.stressAccumulated', { value: stres })}
                         </p>
                     )}
                     {hasScorCredit && (
-                        <p className="scenario-result-scor-credit figure">Scor de credit final: {scorCredit}</p>
+                        <p className="scenario-result-scor-credit figure">{t('scenarioPlay.finalCreditScore', { value: scorCredit })}</p>
                     )}
                     <div className="scenario-result-actions">
                         <Link to="/profile" className="btn btn-primary">
-                            Vezi în profil
+                            {t('scenarioPlay.buttons.viewProfile')}
                         </Link>
                         <Link to="/scenarios" className="btn btn-ghost">
-                            Alte scenarii
+                            {t('scenarioPlay.buttons.otherScenarios')}
                         </Link>
                     </div>
                 </div>

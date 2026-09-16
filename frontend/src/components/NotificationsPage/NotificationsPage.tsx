@@ -1,30 +1,32 @@
-﻿import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext.ts'
+import { useTranslation } from 'react-i18next'
+import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext.ts'
 import './NotificationsPage.css'
 
-const typeLabel: Record<string, string> = {
-    scenariu: 'Scenariu',
-    cont: 'Cont',
-    sistem: 'Platformă',
-}
-
 function NotificationsPage() {
+    const { t } = useTranslation()
     const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+
+    const typeLabel: Record<string, string> = {
+        scenariu: t('notifications.typeLabel.scenariu'),
+        cont: t('notifications.typeLabel.cont'),
+        sistem: t('notifications.typeLabel.sistem'),
+    }
 
     return (
         <div className="notifications-page">
             <section className="notifications-hero">
                 <div className="container notifications-hero-inner">
                     <div>
-                        <h1>Notificări</h1>
+                        <h1>{t('notifications.h1')}</h1>
                         <p className="notifications-hero-subtitle">
                             {unreadCount > 0
-                                ? `Ai ${unreadCount} notificări necitite.`
-                                : 'Ești la zi — nicio notificare necitită.'}
+                                ? t('notifications.subtitle_unread', { count: unreadCount })
+                                : t('notifications.subtitle_caught_up')}
                         </p>
                     </div>
                     {unreadCount > 0 && (
                         <button type="button" className="btn btn-ghost" onClick={markAllAsRead}>
-                            Marchează tot ca citit
+                            {t('notifications.mark_all_read')}
                         </button>
                     )}
                 </div>
@@ -33,7 +35,7 @@ function NotificationsPage() {
             <section className="notifications-body">
                 <div className="container">
                     {notifications.length === 0 ? (
-                        <p className="notifications-empty">Nu ai nicio notificare momentan.</p>
+                        <p className="notifications-empty">{t('notifications.empty')}</p>
                     ) : (
                         <div className="notifications-list">
                             {notifications.map((n) => (
