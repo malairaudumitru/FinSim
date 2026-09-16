@@ -1,3 +1,6 @@
+using FinSim.Domain.Entities.Errors;
+using FinSim.Domain.Models.Responses;
+
 namespace FinSim.Api.Middleware;
 
 public class ExceptionHandlingMiddleware
@@ -21,13 +24,18 @@ public class ExceptionHandlingMiddleware
         {
             var userId = RequestContextHelpers.GetUserId(context);
             var ip = RequestContextHelpers.GetIp(context);
+            var errorId = Guid.NewGuid();
 
-            _logger.LogError(ex, "Unhandled exception on {Method} {Path} (User: {UserId}, IP: {Ip})",
-                context.Request.Method, context.Request.Path, userId, ip);
+            _logger.LogError(ex, "Unhandled exception on {Method} {Path} (User: {UserId}, IP: {Ip}, ErrorId: {ErrorId})",
+                context.Request.Method, context.Request.Path, userId, ip, errorId);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsJsonAsync(new { message = "A apărut o eroare internă neașteptată." });
+            await context.Response.WriteAsJsonAsync(new ErrorResponse
+            {
+                ErrorKey = ErrorKey.InternalServerError,
+                ErrorId = errorId
+            });
         }
     }
 }
