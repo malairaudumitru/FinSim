@@ -13,7 +13,7 @@ export interface AuthUser {
 export interface AuthContextValue {
     isLoggedIn: boolean
     user: AuthUser | null
-    login: (user: AuthUser) => void
+    login: (user: AuthUser, rememberMe?: boolean) => void
     logout: () => void
 }
 

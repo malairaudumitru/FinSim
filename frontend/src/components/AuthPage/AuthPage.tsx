@@ -67,6 +67,7 @@ function AuthPage() {
     const [form, setForm] = useState<FormState>(initialState)
     const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({})
     const [showPassword, setShowPassword] = useState(false)
+    const [rememberMe, setRememberMe] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [formError, setFormError] = useState('')
     const loginRateLimit = useRateLimit()
@@ -241,7 +242,7 @@ function AuthPage() {
                 nume: existing?.nume,
                 prenume: existing?.prenume,
                 rol: existing?.rol ?? (form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user'),
-            })
+            }, rememberMe)
             setSubmitted(true)
             return
         }
@@ -480,7 +481,11 @@ function AuthPage() {
                         {!isRegister && !isForgot && step === 'form' && (
                             <div className="auth-extra-row">
                                 <label className="remember-me">
-                                    <input type="checkbox" />
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                    />
                                     <span>Ține-mă minte</span>
                                 </label>
                                 <button
