@@ -1,4 +1,4 @@
-﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
+﻿import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
@@ -17,6 +17,7 @@ import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 import StarRating from '../../shared/StarRating/StarRating'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
+import { useResendCountdown } from '../../shared/useResendCountdown/useResendCountdown'
 import './ProfilePage.css'
 
 interface UserInfo {
@@ -157,6 +158,7 @@ function ProfilePage() {
     const [passwordStep, setPasswordStep] = useState<'form' | 'code'>('form')
     const [confirmCode, setConfirmCode] = useState('')
     const [confirmCodeError, setConfirmCodeError] = useState('')
+    const { secondsLeft: resendSecondsLeft, canResend, restart: restartResend } = useResendCountdown()
 
     const [reviewForm, setReviewForm] = useState<ReviewForm>(initialReviewForm)
     const [reviewError, setReviewError] = useState('')
@@ -248,6 +250,17 @@ function ProfilePage() {
 
     const handlePasswordChange = (field: keyof PasswordForm) => (e: ChangeEvent<HTMLInputElement>) => {
         setPasswordForm((prev) => ({ ...prev, [field]: e.target.value }))
+    }
+
+    useEffect(() => {
+        if (passwordStep === 'code') {
+            restartResend()
+        }
+    }, [passwordStep, restartResend])
+
+    const handleResendCode = () => {
+        if (!canResend) return
+        restartResend()
     }
 
     const startChangingPassword = () => {
@@ -549,6 +562,17 @@ function ProfilePage() {
                                         <span className="auth-form-hint">
                                             {t('profile.hint_code_sent')}
                                         </span>
+                                        <div className="auth-resend-row">
+                                            {canResend ? (
+                                                <button type="button" className="btn-link" onClick={handleResendCode}>
+                                                    {t('profile.resend_code')}
+                                                </button>
+                                            ) : (
+                                                <span className="auth-resend-countdown">
+                                                    {t('profile.resend_in', { seconds: resendSecondsLeft })}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
 

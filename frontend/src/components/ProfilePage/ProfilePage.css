@@ -250,6 +250,19 @@
     color: var(--text);
 }
 
+.auth-resend-row {
+    margin-top: 10px;
+}
+
+.auth-resend-row .btn-link {
+    font-size: 13px;
+}
+
+.auth-resend-countdown {
+    font-size: 13px;
+    color: var(--text);
+}
+
 .profile-edit-actions {
     display: flex;
     gap: 12px;

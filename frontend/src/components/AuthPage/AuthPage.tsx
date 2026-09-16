@@ -7,6 +7,7 @@ import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
+import { useResendCountdown } from '../../shared/useResendCountdown/useResendCountdown'
 import { isValidBirthDate, daysInMonth, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
 import './AuthPage.css'
 
@@ -79,6 +80,7 @@ function AuthPage() {
     const [step, setStep] = useState<Step>('form')
     const [code, setCode] = useState('')
     const [codeError, setCodeError] = useState('')
+    const { secondsLeft: resendSecondsLeft, canResend, restart: restartResend } = useResendCountdown()
 
     const anCurent = new Date().getFullYear()
     const aniDisponibili = Array.from(
@@ -97,6 +99,17 @@ function AuthPage() {
             return () => clearTimeout(id)
         }
     }, [submitted, mode, navigate])
+
+    useEffect(() => {
+        if (step === 'code') {
+            restartResend()
+        }
+    }, [step, restartResend])
+
+    const handleResendCode = () => {
+        if (!canResend) return
+        restartResend()
+    }
 
     const switchMode = (next: Mode) => {
         setMode(next)
@@ -481,6 +494,17 @@ function AuthPage() {
                                 <span className="auth-form-hint">
                                     {t('auth.hint_code_sent')}
                                 </span>
+                                <div className="auth-resend-row">
+                                    {canResend ? (
+                                        <button type="button" className="btn-link" onClick={handleResendCode}>
+                                            {t('auth.resend_code')}
+                                        </button>
+                                    ) : (
+                                        <span className="auth-resend-countdown">
+                                            {t('auth.resend_in', { seconds: resendSecondsLeft })}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         )}
 
