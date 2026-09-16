@@ -1,11 +1,10 @@
 using System.Security.Claims;
-using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
-using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Auth;
 using FinSim.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FinSim.Api.Controllers;
 
@@ -16,15 +15,15 @@ public class SessionController : ControllerBase
     private readonly IAuthLogic _authLogic;
     private readonly IUserLogic _userLogic;
 
-    public SessionController(AppDbContext context)
+    public SessionController(IAuthLogic authLogic, IUserLogic userLogic)
     {
-        var bl = new BusinessLogic();
-        _authLogic = bl.GetAuthLogic(context);
-        _userLogic = bl.GetUserLogic(context);
+        _authLogic = authLogic;
+        _userLogic = userLogic;
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto loginInfo)
     {
         var result = await _authLogic.LoginAsync(loginInfo);
@@ -36,6 +35,7 @@ public class SessionController : ControllerBase
 
     [HttpPost("refresh")]
     [AllowAnonymous]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto refreshInfo)
     {
         var result = await _authLogic.RefreshAsync(refreshInfo);
@@ -71,6 +71,7 @@ public class SessionController : ControllerBase
 
     [HttpPut("change-password")]
     [Authorize]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto passwordInfo)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

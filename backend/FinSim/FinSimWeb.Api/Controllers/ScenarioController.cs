@@ -1,6 +1,4 @@
-using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
-using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Scenarios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +11,9 @@ public class ScenarioController : ControllerBase
 {
     private readonly IScenarioLogic _scenarioLogic;
 
-    public ScenarioController(AppDbContext context)
+    public ScenarioController(IScenarioLogic scenarioLogic)
     {
-        var bl = new BusinessLogic();
-        _scenarioLogic = bl.GetScenarioLogic(context);
+        _scenarioLogic = scenarioLogic;
     }
 
     [HttpPost("create")]

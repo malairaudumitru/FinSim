@@ -1,6 +1,4 @@
-using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
-using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +11,9 @@ public class ResourceController : ControllerBase
 {
     private readonly IResourceLogic _resourceLogic;
 
-    public ResourceController(AppDbContext context)
+    public ResourceController(IResourceLogic resourceLogic)
     {
-        var bl = new BusinessLogic();
-        _resourceLogic = bl.GetResourceLogic(context);
+        _resourceLogic = resourceLogic;
     }
 
     [HttpGet("videos")]

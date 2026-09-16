@@ -1,23 +1,22 @@
-using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
-using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FinSim.Api.Controllers;
 
 [ApiController]
 [Route("api/register")]
 [AllowAnonymous]
+[EnableRateLimiting("auth")]
 public class RegisterController : ControllerBase
 {
     private readonly IAuthLogic _authLogic;
 
-    public RegisterController(AppDbContext context)
+    public RegisterController(IAuthLogic authLogic)
     {
-        var bl = new BusinessLogic();
-        _authLogic = bl.GetAuthLogic(context);
+        _authLogic = authLogic;
     }
 
     [HttpPost]

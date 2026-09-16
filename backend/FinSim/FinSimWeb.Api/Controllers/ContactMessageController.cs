@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using FinSim.BusinessLayer;
 using FinSim.BusinessLayer.Interfaces;
-using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Models.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +12,9 @@ public class ContactMessageController : ControllerBase
 {
     private readonly IContactMessageLogic _contactMessageLogic;
 
-    public ContactMessageController(AppDbContext context)
+    public ContactMessageController(IContactMessageLogic contactMessageLogic)
     {
-        var bl = new BusinessLogic();
-        _contactMessageLogic = bl.GetContactMessageLogic(context);
+        _contactMessageLogic = contactMessageLogic;
     }
 
     [HttpPost("create")]
