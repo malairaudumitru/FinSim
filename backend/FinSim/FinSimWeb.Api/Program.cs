@@ -59,6 +59,17 @@ try
     });
     builder.Services.AddControllers();
 
+    var corsAllowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("Frontend", policy =>
+        {
+            policy.WithOrigins(corsAllowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -138,6 +149,7 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+    app.UseCors("Frontend");
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseRateLimiter();
