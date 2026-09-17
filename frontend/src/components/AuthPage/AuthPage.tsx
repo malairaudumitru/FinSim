@@ -1,11 +1,10 @@
-﻿import { useEffect, useState, type FormEvent } from 'react'
+﻿import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import ThemeToggle from '../../shared/ThemeToggle/ThemeToggle'
 import LanguageSwitcher from '../../shared/LanguageSwitcher/LanguageSwitcher'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
-import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
 import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
 import { useResendCountdown } from '../../shared/useResendCountdown/useResendCountdown'
@@ -40,12 +39,16 @@ const initialState: FormState = {
 }
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 function parseBirthDate(birthDate: string | null): { zi?: number; luna?: number; an?: number } {
     if (!birthDate) return {}
     const [an, luna, zi] = birthDate.split('-').map(Number)
     return { zi, luna, an }
+}
+
+function toIsoBirthDate(zi: string, luna: string, an: string): string | null {
+    if (!zi || !luna || !an) return null
+    return `${an}-${luna.padStart(2, '0')}-${zi.padStart(2, '0')}`
 }
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -71,9 +74,8 @@ type Step = 'form' | 'code' | 'newPassword'
 const CODE_REGEX = /^\d{6}$/
 
 function AuthPage() {
-    const { t, i18n } = useTranslation()
+    const { t } = useTranslation()
     const { login } = useAuth()
-    const { addUser, findByEmail } = useUsers()
     const { showError } = useErrorModal()
     const navigate = useNavigate()
     const [mode, setMode] = useState<Mode>('login')
@@ -86,12 +88,13 @@ function AuthPage() {
     const [rememberMe, setRememberMe] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [formError, setFormError] = useState('')
-    const [isLoginSubmitting, setIsLoginSubmitting] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const loginRateLimit = useRateLimit()
 
     const [step, setStep] = useState<Step>('form')
     const [code, setCode] = useState('')
     const [codeError, setCodeError] = useState('')
+    const [resendError, setResendError] = useState('')
     const { secondsLeft: resendSecondsLeft, canResend, restart: restartResend } = useResendCountdown()
 
     const anCurent = new Date().getFullYear()
@@ -104,7 +107,7 @@ function AuthPage() {
     const luni = t('common.months', { returnObjects: true }) as string[]
 
     useEffect(() => {
-        if (submitted && mode === 'login') {
+        if (submitted && (mode === 'login' || mode === 'register')) {
             const id = setTimeout(() => {
                 navigate({ to: '/' })
             }, 1200)
@@ -118,12 +121,37 @@ function AuthPage() {
         }
     }, [step, restartResend])
 
-    const handleResendCode = () => {
+    const handleResendCode = async () => {
         if (!canResend) return
-        restartResend()
+        setResendError('')
+        try {
+            if (mode === 'register') {
+                await authApi.registerStart({
+                    lastName: form.nume,
+                    firstName: form.prenume,
+                    email: form.email,
+                    password: form.parola,
+                    birthDate: toIsoBirthDate(form.zi, form.luna, form.an),
+                })
+            } else if (mode === 'forgot') {
+                await authApi.forgotPassword(form.email)
+            }
+            restartResend()
+        } catch (err) {
+            const normalized = normalizeApiError(err)
+            if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                showError(normalized.errorKey, normalized.errorId)
+            } else if (normalized.status === 429) {
+                setResendError(t('auth.error_too_many_requests'))
+            } else if (normalized.kind === 'network') {
+                setResendError(t('auth.error_network'))
+            } else {
+                setResendError(normalized.message ?? t('auth.error_resend_generic'))
+            }
+        }
     }
 
-    const switchMode = (next: Mode) => {
+    const switchMode = useCallback((next: Mode) => {
         setMode(next)
         setErrors({})
         setSubmitted(false)
@@ -131,7 +159,17 @@ function AuthPage() {
         setStep('form')
         setCode('')
         setCodeError('')
-    }
+        setResendError('')
+    }, [])
+
+    useEffect(() => {
+        if (submitted && mode === 'forgot') {
+            const id = setTimeout(() => {
+                switchMode('login')
+            }, 5000)
+            return () => clearTimeout(id)
+        }
+    }, [submitted, mode, switchMode])
 
     const handleChange = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm((prev) => ({ ...prev, [field]: e.target.value }))
@@ -227,31 +265,6 @@ function AuthPage() {
         return Object.keys(newErrors).length === 0
     }
 
-    const completeRegister = () => {
-        const created = addUser({
-            nume: form.nume,
-            prenume: form.prenume,
-            email: form.email,
-            rol: form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user',
-            status: 'activ',
-            dataInregistrare: new Date().toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO'),
-            scenariiFinalizate: 0,
-            scorTotal: 0,
-            zi: Number(form.zi),
-            luna: Number(form.luna),
-            an: Number(form.an),
-        })
-        login({
-            email: created.email,
-            nume: created.nume,
-            prenume: created.prenume,
-            zi: Number(form.zi),
-            luna: Number(form.luna),
-            an: Number(form.an),
-            rol: created.rol,
-        })
-    }
-
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
@@ -261,7 +274,7 @@ function AuthPage() {
 
             if (!validate()) return
             setFormError('')
-            setIsLoginSubmitting(true)
+            setIsSubmitting(true)
 
             try {
                 const authRes = await authApi.login(form.email, form.parola)
@@ -291,7 +304,7 @@ function AuthPage() {
                     setFormError(normalized.message ?? t('auth.error_login_generic'))
                 }
             } finally {
-                setIsLoginSubmitting(false)
+                setIsSubmitting(false)
             }
             return
         }
@@ -300,18 +313,68 @@ function AuthPage() {
             if (step === 'form') {
                 if (!validate()) return
                 setFormError('')
-                const exists = findByEmail(form.email)
-                if (exists) {
-                    setFormError(t('auth.error_email_taken'))
-                    return
+                setIsSubmitting(true)
+                try {
+                    await authApi.registerStart({
+                        lastName: form.nume,
+                        firstName: form.prenume,
+                        email: form.email,
+                        password: form.parola,
+                        birthDate: toIsoBirthDate(form.zi, form.luna, form.an),
+                    })
+                    setStep('code')
+                } catch (err) {
+                    const normalized = normalizeApiError(err)
+                    if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                        showError(normalized.errorKey, normalized.errorId)
+                    } else if (normalized.status === 429) {
+                        setFormError(t('auth.error_too_many_requests'))
+                    } else if (normalized.kind === 'network') {
+                        setFormError(t('auth.error_network'))
+                    } else {
+                        setFormError(normalized.message ?? t('auth.error_register_generic'))
+                    }
+                } finally {
+                    setIsSubmitting(false)
                 }
-                setStep('code')
                 return
             }
             if (step === 'code') {
                 if (!validateCode()) return
-                completeRegister()
-                setSubmitted(true)
+                setFormError('')
+                setIsSubmitting(true)
+                try {
+                    await authApi.registerConfirm(form.email, code)
+
+                    const authRes = await authApi.login(form.email, form.parola)
+                    setTokens(authRes.accessToken, authRes.refreshToken, false)
+
+                    const me = await authApi.me()
+                    const { zi, luna, an } = parseBirthDate(me.birthDate)
+                    login({
+                        email: me.email,
+                        nume: me.lastName,
+                        prenume: me.firstName,
+                        zi,
+                        luna,
+                        an,
+                        rol: me.role === authApi.UserRole.Admin ? 'admin' : 'user',
+                    }, false)
+                    setSubmitted(true)
+                } catch (err) {
+                    const normalized = normalizeApiError(err)
+                    if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                        showError(normalized.errorKey, normalized.errorId)
+                    } else if (normalized.status === 429) {
+                        setFormError(t('auth.error_too_many_requests'))
+                    } else if (normalized.kind === 'network') {
+                        setFormError(t('auth.error_network'))
+                    } else {
+                        setCodeError(normalized.message ?? t('auth.error_code_generic'))
+                    }
+                } finally {
+                    setIsSubmitting(false)
+                }
                 return
             }
         }
@@ -319,17 +382,74 @@ function AuthPage() {
         if (mode === 'forgot') {
             if (step === 'form') {
                 if (!validate()) return
-                setStep('code')
+                setFormError('')
+                setIsSubmitting(true)
+                try {
+                    await authApi.forgotPassword(form.email)
+                    setStep('code')
+                } catch (err) {
+                    const normalized = normalizeApiError(err)
+                    if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                        showError(normalized.errorKey, normalized.errorId)
+                    } else if (normalized.status === 429) {
+                        setFormError(t('auth.error_too_many_requests'))
+                    } else if (normalized.kind === 'network') {
+                        setFormError(t('auth.error_network'))
+                    } else {
+                        setFormError(normalized.message ?? t('auth.error_forgot_generic'))
+                    }
+                } finally {
+                    setIsSubmitting(false)
+                }
                 return
             }
             if (step === 'code') {
                 if (!validateCode()) return
-                setStep('newPassword')
+                setFormError('')
+                setIsSubmitting(true)
+                try {
+                    await authApi.verifyResetCode(form.email, code)
+                    setStep('newPassword')
+                } catch (err) {
+                    const normalized = normalizeApiError(err)
+                    if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                        showError(normalized.errorKey, normalized.errorId)
+                    } else if (normalized.status === 429) {
+                        setFormError(t('auth.error_too_many_requests'))
+                    } else if (normalized.kind === 'network') {
+                        setFormError(t('auth.error_network'))
+                    } else {
+                        setCodeError(normalized.message ?? t('auth.error_code_invalid_or_expired'))
+                    }
+                } finally {
+                    setIsSubmitting(false)
+                }
                 return
             }
             if (step === 'newPassword') {
                 if (!validateNewPassword()) return
-                setSubmitted(true)
+                setFormError('')
+                setIsSubmitting(true)
+                try {
+                    await authApi.resetPassword(form.email, code, form.parola)
+                    setSubmitted(true)
+                } catch (err) {
+                    const normalized = normalizeApiError(err)
+                    if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                        showError(normalized.errorKey, normalized.errorId)
+                    } else if (normalized.status === 429) {
+                        setFormError(t('auth.error_too_many_requests'))
+                    } else if (normalized.kind === 'network') {
+                        setFormError(t('auth.error_network'))
+                    } else if (normalized.kind === 'validation') {
+                        setStep('code')
+                        setCodeError(normalized.message ?? t('auth.error_code_invalid_or_expired'))
+                    } else {
+                        setFormError(normalized.message ?? t('auth.error_reset_generic'))
+                    }
+                } finally {
+                    setIsSubmitting(false)
+                }
                 return
             }
         }
@@ -535,6 +655,7 @@ function AuthPage() {
                                             {t('auth.resend_in', { seconds: resendSecondsLeft })}
                                         </span>
                                     )}
+                                    {resendError && <span className="field-error">{resendError}</span>}
                                 </div>
                             </div>
                         )}
@@ -570,7 +691,7 @@ function AuthPage() {
                         <button
                             type="submit"
                             className="btn btn-primary btn-lg auth-submit"
-                            disabled={mode === 'login' && (loginRateLimit.isLimited || isLoginSubmitting)}
+                            disabled={isSubmitting || (mode === 'login' && loginRateLimit.isLimited)}
                         >
                             {step === 'code'
                                 ? t('auth.submit_confirm_code')
