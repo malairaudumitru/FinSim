@@ -1,4 +1,4 @@
-import apiClient from './apiClient'
+import { api } from './api'
 
 export interface AuthResponseDto {
     accessToken: string
@@ -25,18 +25,16 @@ export interface UserInfoDto {
     isDeleted: boolean
 }
 
-export async function login(email: string, password: string): Promise<AuthResponseDto> {
-    const res = await apiClient.post<AuthResponseDto>('/session/login', { email, password })
-    return res.data
+export function login(email: string, password: string): Promise<AuthResponseDto> {
+    return api.post<AuthResponseDto>('/session/login', { email, password })
 }
 
-export async function me(): Promise<UserInfoDto> {
-    const res = await apiClient.get<UserInfoDto>('/session/me')
-    return res.data
+export function me(): Promise<UserInfoDto> {
+    return api.get<UserInfoDto>('/session/me')
 }
 
-export async function logout(refreshToken: string): Promise<void> {
-    await apiClient.post('/session/logout', { refreshToken })
+export function logout(refreshToken: string): Promise<void> {
+    return api.post<void>('/session/logout', { refreshToken })
 }
 
 export interface UserRegisterDto {
@@ -47,27 +45,22 @@ export interface UserRegisterDto {
     birthDate: string | null
 }
 
-export async function registerStart(data: UserRegisterDto): Promise<string> {
-    const res = await apiClient.post<string>('/register/start', data)
-    return res.data
+export function registerStart(data: UserRegisterDto): Promise<string> {
+    return api.post<string>('/register/start', data)
 }
 
-export async function registerConfirm(email: string, code: string): Promise<string> {
-    const res = await apiClient.post<string>('/register/confirm', { email, code })
-    return res.data
+export function registerConfirm(email: string, code: string): Promise<string> {
+    return api.post<string>('/register/confirm', { email, code })
 }
 
-export async function forgotPassword(email: string): Promise<string> {
-    const res = await apiClient.post<string>('/session/forgot-password', { email })
-    return res.data
+export function forgotPassword(email: string): Promise<string> {
+    return api.post<string>('/session/forgot-password', { email })
 }
 
-export async function verifyResetCode(email: string, code: string): Promise<string> {
-    const res = await apiClient.post<string>('/session/verify-reset-code', { email, code })
-    return res.data
+export function verifyResetCode(email: string, code: string): Promise<string> {
+    return api.post<string>('/session/verify-reset-code', { email, code })
 }
 
-export async function resetPassword(email: string, code: string, newPassword: string): Promise<string> {
-    const res = await apiClient.post<string>('/session/reset-password', { email, code, newPassword })
-    return res.data
+export function resetPassword(email: string, code: string, newPassword: string): Promise<string> {
+    return api.post<string>('/session/reset-password', { email, code, newPassword })
 }
