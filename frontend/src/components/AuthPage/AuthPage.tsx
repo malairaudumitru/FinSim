@@ -6,9 +6,13 @@ import LanguageSwitcher from '../../shared/LanguageSwitcher/LanguageSwitcher'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useUsers, ADMIN_EMAIL } from '../../shared/UsersContext/UsersContext'
+import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
 import { useResendCountdown } from '../../shared/useResendCountdown/useResendCountdown'
 import { isValidBirthDate, daysInMonth, VARSTA_MINIMA, VARSTA_MAXIMA } from '../../shared/birthDate/birthDate'
+import * as authApi from '../../api/authApi'
+import { setTokens } from '../../api/tokenStorage'
+import { normalizeApiError } from '../../api/apiClient'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -38,6 +42,12 @@ const initialState: FormState = {
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
+function parseBirthDate(birthDate: string | null): { zi?: number; luna?: number; an?: number } {
+    if (!birthDate) return {}
+    const [an, luna, zi] = birthDate.split('-').map(Number)
+    return { zi, luna, an }
+}
+
 function EyeIcon({ open }: { open: boolean }) {
     if (open) {
         return (
@@ -64,6 +74,7 @@ function AuthPage() {
     const { t, i18n } = useTranslation()
     const { login } = useAuth()
     const { addUser, findByEmail } = useUsers()
+    const { showError } = useErrorModal()
     const navigate = useNavigate()
     const [mode, setMode] = useState<Mode>('login')
     const isRegister = mode === 'register'
@@ -75,6 +86,7 @@ function AuthPage() {
     const [rememberMe, setRememberMe] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [formError, setFormError] = useState('')
+    const [isLoginSubmitting, setIsLoginSubmitting] = useState(false)
     const loginRateLimit = useRateLimit()
 
     const [step, setStep] = useState<Step>('form')
@@ -240,7 +252,7 @@ function AuthPage() {
         })
     }
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
         if (mode === 'login') {
@@ -249,19 +261,38 @@ function AuthPage() {
 
             if (!validate()) return
             setFormError('')
+            setIsLoginSubmitting(true)
 
-            const existing = findByEmail(form.email)
-            if (existing && existing.status === 'blocat') {
-                setFormError(t('auth.error_account_blocked'))
-                return
+            try {
+                const authRes = await authApi.login(form.email, form.parola)
+                setTokens(authRes.accessToken, authRes.refreshToken, rememberMe)
+
+                const me = await authApi.me()
+                const { zi, luna, an } = parseBirthDate(me.birthDate)
+                login({
+                    email: me.email,
+                    nume: me.lastName,
+                    prenume: me.firstName,
+                    zi,
+                    luna,
+                    an,
+                    rol: me.role === authApi.UserRole.Admin ? 'admin' : 'user',
+                }, rememberMe)
+                setSubmitted(true)
+            } catch (err) {
+                const normalized = normalizeApiError(err)
+                if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                    showError(normalized.errorKey, normalized.errorId)
+                } else if (normalized.status === 429) {
+                    setFormError(t('auth.error_too_many_requests'))
+                } else if (normalized.kind === 'network') {
+                    setFormError(t('auth.error_network'))
+                } else {
+                    setFormError(normalized.message ?? t('auth.error_login_generic'))
+                }
+            } finally {
+                setIsLoginSubmitting(false)
             }
-            login({
-                email: form.email,
-                nume: existing?.nume,
-                prenume: existing?.prenume,
-                rol: existing?.rol ?? (form.email.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user'),
-            }, rememberMe)
-            setSubmitted(true)
             return
         }
 
@@ -539,7 +570,7 @@ function AuthPage() {
                         <button
                             type="submit"
                             className="btn btn-primary btn-lg auth-submit"
-                            disabled={mode === 'login' && loginRateLimit.isLimited}
+                            disabled={mode === 'login' && (loginRateLimit.isLimited || isLoginSubmitting)}
                         >
                             {step === 'code'
                                 ? t('auth.submit_confirm_code')

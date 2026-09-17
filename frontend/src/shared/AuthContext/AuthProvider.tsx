@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { AuthContext, type AuthUser } from './AuthContext.ts'
+import { clearTokens, getRefreshToken } from '../../api/tokenStorage'
+import { logout as logoutApi } from '../../api/authApi'
 
 const REMEMBER_KEY = 'finsim_auth_remember'
 const SESSION_KEY = 'finsim_auth_session'
@@ -65,6 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             sessionStorage.removeItem(SESSION_KEY)
         } catch {
             // ignoram
+        }
+
+        const refreshToken = getRefreshToken()
+        clearTokens()
+        if (refreshToken) {
+            logoutApi(refreshToken).catch(() => {
+                // best-effort - token-urile locale sunt oricum sterse deja
+            })
         }
     }
 
