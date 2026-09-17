@@ -14,5 +14,6 @@ public interface IAuthLogic
     Task<ActionResponse> StartChangePasswordAsync(int userId, ChangePasswordDto data);
     Task<ActionResponse> ConfirmChangePasswordAsync(int userId, ConfirmCodeDto data);
     Task<ActionResponse> ForgotPasswordAsync(ForgotPasswordDto data);
+    Task<ActionResponse> VerifyResetCodeAsync(VerifyResetCodeDto data);
     Task<ActionResponse> ResetPasswordAsync(ResetPasswordDto data);
 }

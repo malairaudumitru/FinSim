@@ -108,6 +108,18 @@ public class SessionController : ControllerBase
         return Ok(result.Message);
     }
 
+    [HttpPost("verify-reset-code")]
+    [AllowAnonymous]
+    [EnableRateLimiting("auth")]
+    public async Task<IActionResult> VerifyResetCode([FromBody] VerifyResetCodeDto verifyInfo)
+    {
+        var result = await _authLogic.VerifyResetCodeAsync(verifyInfo);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Message);
+    }
+
     [HttpPost("reset-password")]
     [AllowAnonymous]
     [EnableRateLimiting("auth")]

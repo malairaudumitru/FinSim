@@ -73,6 +73,14 @@ public class AuthLogic : AuthAction, IAuthLogic
         return ActionResponse.Ok("Daca adresa exista in sistem, vei primi un cod pe email");
     }
 
+    public async Task<ActionResponse> VerifyResetCodeAsync(VerifyResetCodeDto data)
+    {
+        var result = await VerifyResetCodeActionAsync(data);
+        if (result == false)
+            return ActionResponse.BadRequest("Cod invalid sau expirat");
+        return ActionResponse.Ok("Cod valid");
+    }
+
     public async Task<ActionResponse> ResetPasswordAsync(ResetPasswordDto data)
     {
         var result = await ResetPasswordActionAsync(data);

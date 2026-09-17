@@ -211,6 +211,21 @@ public class AuthAction
             "Foloseste codul de mai jos ca sa iti resetezi parola contului FinSim.", code);
     }
 
+    protected async Task<bool> VerifyResetCodeActionAsync(VerifyResetCodeDto data)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
+        if (user == null)
+            return false;
+
+        var verification = await _context.VerificationCodes.FirstOrDefaultAsync(v =>
+            v.UserId == user.Id && v.Purpose == VerificationPurpose.PasswordReset);
+
+        if (verification == null || verification.Code != data.Code || verification.ExpiresAt < DateTime.UtcNow)
+            return false;
+
+        return true;
+    }
+
     protected async Task<bool> ResetPasswordActionAsync(ResetPasswordDto data)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
