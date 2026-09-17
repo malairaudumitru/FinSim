@@ -16,6 +16,11 @@ backend/FinSim/FinSimWeb.Api/Logs/
 .vs/
 .vscode/
 .claude/
+.agents/
+
+# graphify (knowledge graph tooling)
+graphify-out/
+skills-lock.json
 
 # OS
 .DS_Store
