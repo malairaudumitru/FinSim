@@ -9,7 +9,7 @@ bin/
 obj/
 *.user
 *.suo
-backend/FinSim/FinSimWeb.Api/Logs/
+server/FinSim/FinSimWeb.Api/Logs/
 
 # Editor / IDE
 .idea/
@@ -31,6 +31,6 @@ Thumbs.db
 .env
 
 # Uploaded files (keep folder structure via .gitkeep)
-backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/*
-!backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/
-!backend/FinSim/FinSimWeb.Api/wwwroot/uploads/**/.gitkeep
+server/FinSim/FinSimWeb.Api/wwwroot/uploads/**/*
+!server/FinSim/FinSimWeb.Api/wwwroot/uploads/**/
+!server/FinSim/FinSimWeb.Api/wwwroot/uploads/**/.gitkeep
