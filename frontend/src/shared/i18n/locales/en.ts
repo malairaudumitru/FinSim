@@ -796,6 +796,7 @@ export default {
             label_description: 'Description',
             label_pdf_file: 'PDF file',
             dropzone_hint: 'Drag a PDF file here or click to choose one',
+            uploading: 'Uploading…',
         },
         messages: {
             status_replied: 'Reply sent',

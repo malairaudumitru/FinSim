@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
+import { resolveFileUrl } from '../../shared/resolveFileUrl'
 import '../../shared/ContentPage/ContentPage.css'
 import './ResourcesPage.css'
 
@@ -59,7 +60,7 @@ function ResourcesPage() {
                                     <h3>{p.titlu}</h3>
                                     <p>{p.descriere}</p>
                                 </div>
-                                <a href={p.fisier} download className="btn btn-ghost">
+                                <a href={resolveFileUrl(p.fisier)} download className="btn btn-ghost">
                                     {t('resources.downloadPdf')}
                                 </a>
                             </div>

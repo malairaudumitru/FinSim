@@ -1,6 +1,7 @@
 ﻿import { useState, useRef, type FormEvent, type DragEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
+import { uploadPdf } from '../../api/resourcesApi'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 
@@ -54,6 +55,7 @@ function ResourcesSection() {
     const [pdfForm, setPdfForm] = useState<PdfForm>(emptyPdf)
     const [pdfError, setPdfError] = useState('')
     const [pdfDragActive, setPdfDragActive] = useState(false)
+    const [pdfUploading, setPdfUploading] = useState(false)
     const pdfFileInputRef = useRef<HTMLInputElement>(null)
 
     const openAddVideo = () => {
@@ -70,7 +72,7 @@ function ResourcesSection() {
         setShowVideoForm(true)
     }
 
-    const handleVideoSubmit = (e: FormEvent) => {
+    const handleVideoSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!videoForm.titlu.trim() || !videoForm.youtubeId.trim()) {
             setVideoError(t('admin.resources.error_video_required'))
@@ -87,13 +89,17 @@ function ResourcesSection() {
             sursa: videoForm.sursa.trim(),
             tema: videoForm.tema.trim() || 'General',
         }
-        if (videoEditId) updateVideo(videoEditId, payload)
-        else addVideo(payload)
-        setShowVideoForm(false)
+        try {
+            if (videoEditId) await updateVideo(videoEditId, payload)
+            else await addVideo(payload)
+            setShowVideoForm(false)
+        } catch {
+            setVideoError(t('admin.resources.error_video_required'))
+        }
     }
 
-    const handleDeleteVideo = (v: VideoResource) => {
-        if (confirm(t('admin.resources.confirm_delete_video', { title: v.titlu }))) deleteVideo(v.id)
+    const handleDeleteVideo = async (v: VideoResource) => {
+        if (confirm(t('admin.resources.confirm_delete_video', { title: v.titlu }))) await deleteVideo(v.id)
     }
 
     const openAddPdf = () => {
@@ -110,7 +116,7 @@ function ResourcesSection() {
         setShowPdfForm(true)
     }
 
-    const handlePdfSubmit = (e: FormEvent) => {
+    const handlePdfSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!pdfForm.titlu.trim() || !pdfForm.fisier.trim()) {
             setPdfError(t('admin.resources.error_pdf_required'))
@@ -122,23 +128,35 @@ function ResourcesSection() {
             fisier: pdfForm.fisier.trim(),
             tema: pdfForm.tema.trim() || 'General',
         }
-        if (pdfEditId) updatePdf(pdfEditId, payload)
-        else addPdf(payload)
-        setShowPdfForm(false)
+        try {
+            if (pdfEditId) await updatePdf(pdfEditId, payload)
+            else await addPdf(payload)
+            setShowPdfForm(false)
+        } catch {
+            setPdfError(t('admin.resources.error_pdf_required'))
+        }
     }
 
-    const handleDeletePdf = (p: PdfResource) => {
-        if (confirm(t('admin.resources.confirm_delete_pdf', { title: p.titlu }))) deletePdf(p.id)
+    const handleDeletePdf = async (p: PdfResource) => {
+        if (confirm(t('admin.resources.confirm_delete_pdf', { title: p.titlu }))) await deletePdf(p.id)
     }
 
-    const acceptPdfFile = (file: File | undefined) => {
+    const acceptPdfFile = async (file: File | undefined) => {
         if (!file) return
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
             setPdfError(t('admin.resources.error_pdf_type'))
             return
         }
         setPdfError('')
-        setPdfForm((f) => ({ ...f, fisier: `/${file.name}` }))
+        setPdfUploading(true)
+        try {
+            const { url } = await uploadPdf(file)
+            setPdfForm((f) => ({ ...f, fisier: url }))
+        } catch {
+            setPdfError(t('admin.resources.error_pdf_type'))
+        } finally {
+            setPdfUploading(false)
+        }
     }
 
     const handlePdfDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -359,7 +377,11 @@ function ResourcesSection() {
                                         style={{ display: 'none' }}
                                         onChange={(e) => acceptPdfFile(e.target.files?.[0])}
                                     />
-                                    {pdfForm.fisier ? (
+                                    {pdfUploading ? (
+                                        <span className="admin-dropzone-hint">
+                                            {t('admin.resources.uploading')}
+                                        </span>
+                                    ) : pdfForm.fisier ? (
                                         <span className="admin-dropzone-file">{pdfForm.fisier}</span>
                                     ) : (
                                         <span className="admin-dropzone-hint">
@@ -374,7 +396,7 @@ function ResourcesSection() {
                             <button type="button" className="btn btn-ghost" onClick={() => setShowPdfForm(false)}>
                                 {t('admin.resources.cancel')}
                             </button>
-                            <button type="submit" className="btn btn-primary">
+                            <button type="submit" className="btn btn-primary" disabled={pdfUploading}>
                                 {pdfEditId ? t('admin.resources.save') : t('admin.resources.add_pdf_button')}
                             </button>
                         </div>

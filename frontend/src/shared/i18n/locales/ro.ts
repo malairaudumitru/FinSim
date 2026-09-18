@@ -796,6 +796,7 @@ export default {
             label_description: 'Descriere',
             label_pdf_file: 'Fișier PDF',
             dropzone_hint: 'Trage fișierul PDF aici sau apasă pentru a-l alege',
+            uploading: 'Se încarcă…',
         },
         messages: {
             status_replied: 'Răspuns trimis',

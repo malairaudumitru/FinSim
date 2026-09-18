@@ -1,43 +1,67 @@
-﻿import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
     ResourcesContext,
-    initialVideos,
-    initialPdfs,
     type VideoResource,
     type PdfResource,
 } from './ResourcesContext.ts'
+import * as resourcesApi from '../../api/resourcesApi'
+import { toPdfCreateDto, toPdfResource, toVideoCreateDto, toVideoResource } from '../resources/resourceMapper'
 
 export function ResourcesProvider({ children }: { children: ReactNode }) {
-    const [videos, setVideos] = useState<VideoResource[]>(initialVideos)
-    const [pdfs, setPdfs] = useState<PdfResource[]>(initialPdfs)
+    const [videos, setVideos] = useState<VideoResource[]>([])
+    const [pdfs, setPdfs] = useState<PdfResource[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const addVideo = (video: Omit<VideoResource, 'id'>) => {
-        setVideos((prev) => [...prev, { ...video, id: `v${Date.now()}` }])
+    useEffect(() => {
+        Promise.all([resourcesApi.getVideoList(), resourcesApi.getPdfList()])
+            .then(([videoList, pdfList]) => {
+                setVideos(videoList.map(toVideoResource))
+                setPdfs(pdfList.map(toPdfResource))
+            })
+            .catch(() => {
+                setVideos([])
+                setPdfs([])
+            })
+            .finally(() => setLoading(false))
+    }, [])
+
+    const addVideo = async (video: Omit<VideoResource, 'id'>) => {
+        await resourcesApi.createVideo(toVideoCreateDto(video))
+        const list = await resourcesApi.getVideoList()
+        setVideos(list.map(toVideoResource))
     }
 
-    const updateVideo = (id: string, patch: Partial<Omit<VideoResource, 'id'>>) => {
-        setVideos((prev) => prev.map((v) => (v.id === id ? { ...v, ...patch } : v)))
+    const updateVideo = async (id: string, patch: Omit<VideoResource, 'id'>) => {
+        await resourcesApi.updateVideo(Number(id), toVideoCreateDto(patch))
+        const list = await resourcesApi.getVideoList()
+        setVideos(list.map(toVideoResource))
     }
 
-    const deleteVideo = (id: string) => {
+    const deleteVideo = async (id: string) => {
+        await resourcesApi.deleteVideo(Number(id))
         setVideos((prev) => prev.filter((v) => v.id !== id))
     }
 
-    const addPdf = (pdf: Omit<PdfResource, 'id'>) => {
-        setPdfs((prev) => [...prev, { ...pdf, id: `p${Date.now()}` }])
+    const addPdf = async (pdf: Omit<PdfResource, 'id'>) => {
+        await resourcesApi.createPdf(toPdfCreateDto(pdf))
+        const list = await resourcesApi.getPdfList()
+        setPdfs(list.map(toPdfResource))
     }
 
-    const updatePdf = (id: string, patch: Partial<Omit<PdfResource, 'id'>>) => {
-        setPdfs((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)))
+    const updatePdf = async (id: string, patch: Omit<PdfResource, 'id'>) => {
+        await resourcesApi.updatePdf(Number(id), toPdfCreateDto(patch))
+        const list = await resourcesApi.getPdfList()
+        setPdfs(list.map(toPdfResource))
     }
 
-    const deletePdf = (id: string) => {
+    const deletePdf = async (id: string) => {
+        await resourcesApi.deletePdf(Number(id))
         setPdfs((prev) => prev.filter((p) => p.id !== id))
     }
 
     return (
         <ResourcesContext.Provider
-            value={{ videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf }}
+            value={{ videos, pdfs, loading, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf }}
         >
             {children}
         </ResourcesContext.Provider>

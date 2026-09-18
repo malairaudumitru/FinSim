@@ -800,6 +800,7 @@ export default {
             label_description: 'Описание',
             label_pdf_file: 'PDF-файл',
             dropzone_hint: 'Перетащи PDF-файл сюда или нажми, чтобы выбрать',
+            uploading: 'Загрузка…',
         },
         messages: {
             status_replied: 'Ответ отправлен',
