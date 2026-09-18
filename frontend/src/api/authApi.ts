@@ -64,3 +64,11 @@ export function verifyResetCode(email: string, code: string): Promise<string> {
 export function resetPassword(email: string, code: string, newPassword: string): Promise<string> {
     return api.post<string>('/session/reset-password', { email, code, newPassword })
 }
+
+export function changePasswordStart(currentPassword: string, newPassword: string): Promise<string> {
+    return api.post<string>('/session/change-password/start', { currentPassword, newPassword })
+}
+
+export function changePasswordConfirm(code: string): Promise<string> {
+    return api.post<string>('/session/change-password/confirm', { code })
+}

@@ -4,7 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
+import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
 import { scenarios } from '../../shared/scenarios/scenariosData'
+import * as authApi from '../../api/authApi'
+import { normalizeApiError } from '../../api/apiClient'
 import {
     isValidBirthDate,
     calculateAge,
@@ -104,6 +107,7 @@ function ProfilePage() {
     const { user: authUser, logout } = useAuth()
     const { history } = useScenarioHistory()
     const { reviews, addReview } = useReviews()
+    const { showError } = useErrorModal()
     const navigate = useNavigate()
 
     const [user, setUser] = useState<UserInfo>(() => ({
@@ -258,9 +262,23 @@ function ProfilePage() {
         }
     }, [passwordStep, restartResend])
 
-    const handleResendCode = () => {
+    const handleResendCode = async () => {
         if (!canResend) return
-        restartResend()
+        try {
+            await authApi.changePasswordStart(passwordForm.parolaCurenta, passwordForm.parolaNoua)
+            restartResend()
+        } catch (err) {
+            const normalized = normalizeApiError(err)
+            if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                showError(normalized.errorKey, normalized.errorId)
+            } else if (normalized.status === 429) {
+                setConfirmCodeError(t('auth.error_too_many_requests'))
+            } else if (normalized.kind === 'network') {
+                setConfirmCodeError(t('auth.error_network'))
+            } else {
+                setConfirmCodeError(normalized.message ?? t('auth.error_resend_generic'))
+            }
+        }
     }
 
     const startChangingPassword = () => {
@@ -311,7 +329,7 @@ function ProfilePage() {
         return Object.keys(newErrors).length === 0
     }
 
-    const handleSavePassword = (e: FormEvent) => {
+    const handleSavePassword = async (e: FormEvent) => {
         e.preventDefault()
 
         if (passwordStep === 'form') {
@@ -320,16 +338,46 @@ function ProfilePage() {
 
             if (!validatePassword()) return
 
-            setPasswordStep('code')
+            try {
+                await authApi.changePasswordStart(passwordForm.parolaCurenta, passwordForm.parolaNoua)
+                setPasswordStep('code')
+            } catch (err) {
+                const normalized = normalizeApiError(err)
+                if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                    showError(normalized.errorKey, normalized.errorId)
+                } else if (normalized.status === 401 || normalized.status === 400) {
+                    setPasswordErrors({ parolaCurenta: t('profile.error_current_password_wrong') })
+                } else if (normalized.status === 429) {
+                    setPasswordErrors({ parolaCurenta: t('auth.error_too_many_requests') })
+                } else if (normalized.kind === 'network') {
+                    setPasswordErrors({ parolaCurenta: t('auth.error_network') })
+                } else {
+                    setPasswordErrors({ parolaCurenta: normalized.message ?? t('profile.error_current_password_wrong') })
+                }
+            }
             return
         }
 
         if (passwordStep === 'code') {
             if (!validateConfirmCode()) return
 
-            setIsChangingPassword(false)
-            setPasswordSaved(true)
-            setPasswordStep('form')
+            try {
+                await authApi.changePasswordConfirm(confirmCode)
+                setIsChangingPassword(false)
+                setPasswordSaved(true)
+                setPasswordStep('form')
+            } catch (err) {
+                const normalized = normalizeApiError(err)
+                if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
+                    showError(normalized.errorKey, normalized.errorId)
+                } else if (normalized.status === 429) {
+                    setConfirmCodeError(t('auth.error_too_many_requests'))
+                } else if (normalized.kind === 'network') {
+                    setConfirmCodeError(t('auth.error_network'))
+                } else {
+                    setConfirmCodeError(normalized.message ?? t('profile.error_confirm_code_invalid'))
+                }
+            }
         }
     }
 

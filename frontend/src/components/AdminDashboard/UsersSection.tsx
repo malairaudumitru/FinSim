@@ -11,12 +11,11 @@ import {
     VARSTA_MAXIMA,
 } from '../../shared/birthDate/birthDate'
 
-const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
-
 type FormState = {
     nume: string
     prenume: string
     email: string
+    parola: string
     rol: UserRole
     status: UserStatus
     scenariiFinalizate: string
@@ -30,6 +29,7 @@ const emptyForm: FormState = {
     nume: '',
     prenume: '',
     email: '',
+    parola: '',
     rol: 'user',
     status: 'activ',
     scenariiFinalizate: '0',
@@ -44,6 +44,7 @@ function toForm(u: AppUser): FormState {
         nume: u.nume,
         prenume: u.prenume,
         email: u.email,
+        parola: '',
         rol: u.rol,
         status: u.status,
         scenariiFinalizate: String(u.scenariiFinalizate),
@@ -55,7 +56,7 @@ function toForm(u: AppUser): FormState {
 }
 
 function UsersSection() {
-    const { t, i18n } = useTranslation()
+    const { t } = useTranslation()
     const { users, addUser, updateUser, deleteUser } = useUsers()
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
@@ -111,7 +112,7 @@ function UsersSection() {
         })
     }
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.prenume.trim() || !form.email.trim()) {
             setError(t('admin.users.error_required'))
@@ -125,14 +126,21 @@ function UsersSection() {
             return
         }
 
-        if (form.zi || form.luna || form.an) {
-            const zi = Number(form.zi)
-            const luna = Number(form.luna)
-            const an = Number(form.an)
-            if (!zi || !luna || !an || !isValidBirthDate(zi, luna, an)) {
-                setError(t('admin.users.error_birthdate_invalid'))
-                return
-            }
+        const zi = Number(form.zi)
+        const luna = Number(form.luna)
+        const an = Number(form.an)
+        const hasBirthDate = Boolean(form.zi || form.luna || form.an)
+        if (hasBirthDate && (!zi || !luna || !an || !isValidBirthDate(zi, luna, an))) {
+            setError(t('admin.users.error_birthdate_invalid'))
+            return
+        }
+        if (!editingId && !hasBirthDate) {
+            setError(t('admin.users.error_birthdate_invalid'))
+            return
+        }
+        if (!editingId && form.parola.trim().length < 8) {
+            setError(t('admin.users.error_password_length'))
+            return
         }
 
         const payload = {
@@ -143,22 +151,26 @@ function UsersSection() {
             status: form.status,
             scenariiFinalizate: Math.max(0, Number(form.scenariiFinalizate) || 0),
             scorTotal: Math.max(0, Number(form.scorTotal) || 0),
-            zi: form.zi ? Number(form.zi) : undefined,
-            luna: form.luna ? Number(form.luna) : undefined,
-            an: form.an ? Number(form.an) : undefined,
+            zi: form.zi ? zi : undefined,
+            luna: form.luna ? luna : undefined,
+            an: form.an ? an : undefined,
         }
 
-        if (editingId) {
-            updateUser(editingId, payload)
-        } else {
-            addUser({ ...payload, dataInregistrare: new Date().toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO') })
+        try {
+            if (editingId) {
+                await updateUser(editingId, payload)
+            } else {
+                await addUser({ ...payload, parola: form.parola.trim() })
+            }
+            setShowForm(false)
+        } catch {
+            setError(t('admin.users.error_required'))
         }
-        setShowForm(false)
     }
 
-    const handleDelete = (u: AppUser) => {
+    const handleDelete = async (u: AppUser) => {
         if (confirm(t('admin.users.confirm_delete', { name: `${u.prenume} ${u.nume}` }))) {
-            deleteUser(u.id)
+            await deleteUser(u.id)
         }
     }
 
@@ -264,6 +276,18 @@ function UsersSection() {
                                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                             />
                         </div>
+
+                        {!editingId && (
+                            <div className="admin-field">
+                                <label htmlFor="u-parola">{t('admin.users.label_password')}</label>
+                                <input
+                                    id="u-parola"
+                                    type="password"
+                                    value={form.parola}
+                                    onChange={(e) => setForm((f) => ({ ...f, parola: e.target.value }))}
+                                />
+                            </div>
+                        )}
 
                         <div className="admin-field">
                             <label>{t('admin.users.label_birthdate')}</label>

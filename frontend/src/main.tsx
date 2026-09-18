@@ -28,8 +28,8 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <UsersProvider>
-            <AuthProvider>
+        <AuthProvider>
+            <UsersProvider>
                 <NotificationsProvider>
                     <ReviewsProvider>
                         <LeaderboardProvider>
@@ -45,7 +45,7 @@ createRoot(document.getElementById('root')!).render(
                         </LeaderboardProvider>
                     </ReviewsProvider>
                 </NotificationsProvider>
-            </AuthProvider>
-        </UsersProvider>
+            </UsersProvider>
+        </AuthProvider>
     </StrictMode>,
 )
