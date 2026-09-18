@@ -1,0 +1,106 @@
+2026-09-18 10:12:22.720 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5070: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Обычно разрешается только одно использование адреса сокета (протокол/сетевой адрес/порт).
+ ---> System.Net.Sockets.SocketException (10048): Обычно разрешается только одно использование адреса сокета (протокол/сетевой адрес/порт).
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-09-18 10:12:47.531 +03:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5070: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Обычно разрешается только одно использование адреса сокета (протокол/сетевой адрес/порт).
+ ---> System.Net.Sockets.SocketException (10048): Обычно разрешается только одно использование адреса сокета (протокол/сетевой адрес/порт).
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-09-18 10:21:53.570 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-18 10:21:53.603 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-18 10:21:53.609 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-18 10:21:53.612 +03:00 [INF] Hosting environment: Development
+2026-09-18 10:21:53.614 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-18 10:21:54.230 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 75 ms (User: anonim, IP: ::1)
+2026-09-18 10:21:54.453 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 2 ms (User: anonim, IP: ::1)
+2026-09-18 10:21:54.723 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 152 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:19.879 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 4 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:21.988 +03:00 [INF] HTTP GET /api/leaderboard/list responded 200 in 2112 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:22.104 +03:00 [INF] Logout from ::1
+2026-09-18 10:22:22.109 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 2214 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:24.683 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:25.102 +03:00 [WRN] Failed login attempt for malairaudima2005@gmail.com from ::1
+2026-09-18 10:22:25.109 +03:00 [INF] HTTP POST /api/session/login responded 400 in 419 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:36.665 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.084 +03:00 [INF] Successful login for malairaudima2005@gmail.com from ::1
+2026-09-18 10:22:37.090 +03:00 [INF] HTTP POST /api/session/login responded 200 in 418 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.105 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.226 +03:00 [INF] HTTP GET /api/session/me responded 200 in 115 ms (User: 15, IP: ::1)
+2026-09-18 10:22:37.252 +03:00 [INF] HTTP OPTIONS /api/scenario-history/by-user/15 responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.261 +03:00 [INF] HTTP OPTIONS /api/leaderboard/list responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.276 +03:00 [INF] HTTP OPTIONS /api/notifications/by-user/15 responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:22:37.283 +03:00 [INF] HTTP GET /api/leaderboard/list responded 200 in 7 ms (User: 15, IP: ::1)
+2026-09-18 10:22:37.309 +03:00 [INF] HTTP GET /api/scenario-history/by-user/15 responded 200 in 51 ms (User: 15, IP: ::1)
+2026-09-18 10:22:37.348 +03:00 [INF] HTTP GET /api/notifications/by-user/15 responded 200 in 56 ms (User: 15, IP: ::1)
+2026-09-18 10:23:14.238 +03:00 [INF] HTTP OPTIONS /api/session/change-password/start responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-18 10:23:16.421 +03:00 [INF] Change-password requested by user 15 from ::1
+2026-09-18 10:23:16.425 +03:00 [INF] HTTP POST /api/session/change-password/start responded 200 in 2180 ms (User: 15, IP: ::1)
+2026-09-18 10:23:17.120 +03:00 [INF] Change-password requested by user 15 from ::1
+2026-09-18 10:23:17.123 +03:00 [INF] HTTP POST /api/session/change-password/start responded 200 in 1630 ms (User: 15, IP: ::1)
+2026-09-18 10:23:25.186 +03:00 [INF] HTTP OPTIONS /api/session/change-password/confirm responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:23:25.210 +03:00 [WRN] Invalid or expired change-password code for user 15 from ::1
+2026-09-18 10:23:25.214 +03:00 [INF] HTTP POST /api/session/change-password/confirm responded 400 in 20 ms (User: 15, IP: ::1)
+2026-09-18 10:23:31.845 +03:00 [INF] HTTP OPTIONS /api/session/change-password/confirm responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:23:31.857 +03:00 [WRN] Invalid or expired change-password code for user 15 from ::1
+2026-09-18 10:23:31.860 +03:00 [INF] HTTP POST /api/session/change-password/confirm responded 400 in 8 ms (User: 15, IP: ::1)
+2026-09-18 10:23:44.766 +03:00 [INF] HTTP OPTIONS /api/session/change-password/confirm responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:23:44.802 +03:00 [WRN] Password changed successfully for user 15 from ::1
+2026-09-18 10:23:44.807 +03:00 [INF] HTTP POST /api/session/change-password/confirm responded 200 in 33 ms (User: 15, IP: ::1)
+2026-09-18 10:24:25.331 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:25.340 +03:00 [INF] HTTP GET /api/leaderboard/list responded 200 in 3 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:25.344 +03:00 [INF] Logout from ::1
+2026-09-18 10:24:25.350 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 14 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:31.035 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:31.166 +03:00 [WRN] Failed login attempt for malairaudima2005@gmail.com from ::1
+2026-09-18 10:24:31.169 +03:00 [INF] HTTP POST /api/session/login responded 400 in 127 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:37.319 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:37.335 +03:00 [WRN] Password reset requested for malairaudima2005@gmail.com from ::1
+2026-09-18 10:24:38.442 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1116 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:45.966 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-18 10:24:45.987 +03:00 [WRN] Invalid or expired reset code entered for malairaudima2005@gmail.com from ::1
+2026-09-18 10:24:45.990 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 400 in 16 ms (User: anonim, IP: ::1)
+2026-09-18 10:39:02.147 +03:00 [INF] Application is shutting down...

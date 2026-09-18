@@ -1,0 +1,236 @@
+2026-09-17 08:12:31.964 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 08:12:32.020 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 08:12:32.031 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 08:12:32.037 +03:00 [INF] Hosting environment: Development
+2026-09-17 08:12:32.043 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 08:12:32.708 +03:00 [INF] HTTP GET /swagger responded 301 in 46 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:32.905 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 149 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.121 +03:00 [INF] HTTP GET /swagger/index.css responded 200 in 10 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.139 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.177 +03:00 [INF] HTTP GET /swagger/swagger-ui-standalone-preset.js responded 200 in 53 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.177 +03:00 [INF] HTTP GET /swagger/swagger-ui.css responded 200 in 68 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.206 +03:00 [INF] HTTP GET /swagger/swagger-ui-bundle.js responded 200 in 89 ms (User: anonim, IP: ::1)
+2026-09-17 08:12:33.746 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 267 ms (User: anonim, IP: ::1)
+2026-09-17 08:22:19.644 +03:00 [INF] Application is shutting down...
+2026-09-17 08:22:24.672 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 08:22:24.730 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 08:22:24.740 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 08:22:24.747 +03:00 [INF] Hosting environment: Development
+2026-09-17 08:22:24.756 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 08:22:25.532 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 169 ms (User: anonim, IP: ::1)
+2026-09-17 08:22:25.777 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 4 ms (User: anonim, IP: ::1)
+2026-09-17 08:22:26.227 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 226 ms (User: anonim, IP: ::1)
+2026-09-17 08:22:39.382 +03:00 [ERR] HTTP GET /api/health/check responded 500 in 637 ms (User: anonim, IP: ::1)
+System.InvalidOperationException: test
+   at FinSim.Api.Controllers.HealthController.Check() in D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api\Controllers\HealthController.cs:line 12
+   at lambda_method2(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+2026-09-17 08:22:39.424 +03:00 [ERR] Unhandled exception on GET /api/health/check (User: anonim, IP: ::1, ErrorId: "ef9aa162-4350-49de-bf64-23b6f9f2ad47")
+System.InvalidOperationException: test
+   at FinSim.Api.Controllers.HealthController.Check() in D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api\Controllers\HealthController.cs:line 12
+   at lambda_method2(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Serilog.AspNetCore.RequestLoggingMiddleware.Invoke(HttpContext httpContext)
+   at FinSim.Api.Middleware.ExceptionHandlingMiddleware.InvokeAsync(HttpContext context) in D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api\Middleware\ExceptionHandlingMiddleware.cs:line 21
+2026-09-17 08:24:06.825 +03:00 [INF] Application is shutting down...
+2026-09-17 08:40:42.692 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 08:40:42.716 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 08:40:42.716 +03:00 [INF] Hosting environment: Development
+2026-09-17 08:40:42.716 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 08:41:33.039 +03:00 [WRN] Failed to determine the https port for redirect.
+2026-09-17 08:41:33.130 +03:00 [INF] HTTP GET /api/health/check responded 200 in 109 ms (User: anonim, IP: ::1)
+2026-09-17 08:41:56.801 +03:00 [INF] HTTP GET /api/health/check responded 200 in 3 ms (User: anonim, IP: ::1)
+2026-09-17 08:41:56.847 +03:00 [INF] HTTP GET /api/health/check responded 200 in 4 ms (User: anonim, IP: ::1)
+2026-09-17 08:42:05.137 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 08:45:54.382 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 08:45:54.425 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 08:45:54.434 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 08:45:54.440 +03:00 [INF] Hosting environment: Development
+2026-09-17 08:45:54.445 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 08:45:55.132 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 121 ms (User: anonim, IP: ::1)
+2026-09-17 08:45:55.369 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 3 ms (User: anonim, IP: ::1)
+2026-09-17 08:45:55.656 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 194 ms (User: anonim, IP: ::1)
+2026-09-17 08:46:00.605 +03:00 [INF] Application is shutting down...
+2026-09-17 09:12:00.668 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 09:12:00.688 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 09:12:00.688 +03:00 [INF] Hosting environment: Development
+2026-09-17 09:12:00.688 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 09:12:07.115 +03:00 [WRN] Failed to determine the https port for redirect.
+2026-09-17 09:12:10.412 +03:00 [INF] HTTP POST /api/register/start responded 200 in 3305 ms (User: anonim, IP: ::1)
+2026-09-17 09:12:36.996 +03:00 [INF] HTTP POST /api/register/confirm responded 200 in 170 ms (User: anonim, IP: ::1)
+2026-09-17 09:12:50.777 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 3 ms (User: anonim, IP: ::1)
+2026-09-17 09:12:51.152 +03:00 [INF] HTTP POST /api/session/login responded 200 in 371 ms (User: anonim, IP: ::1)
+2026-09-17 09:12:51.156 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:12:51.242 +03:00 [INF] HTTP GET /api/session/me responded 200 in 84 ms (User: 16, IP: ::1)
+2026-09-17 09:13:39.257 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:13:39.401 +03:00 [INF] HTTP POST /api/session/login responded 400 in 141 ms (User: anonim, IP: ::1)
+2026-09-17 09:13:49.657 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:13:49.806 +03:00 [INF] HTTP POST /api/session/login responded 200 in 147 ms (User: anonim, IP: ::1)
+2026-09-17 09:13:49.810 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:13:49.816 +03:00 [INF] HTTP GET /api/session/me responded 200 in 4 ms (User: 16, IP: ::1)
+2026-09-17 09:14:00.101 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:14:00.124 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 20 ms (User: anonim, IP: ::1)
+2026-09-17 09:14:37.017 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 09:14:37.050 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 09:14:37.055 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 09:14:37.057 +03:00 [INF] Hosting environment: Development
+2026-09-17 09:14:37.059 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 09:14:37.717 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 81 ms (User: anonim, IP: ::1)
+2026-09-17 09:14:37.870 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 09:14:38.082 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 150 ms (User: anonim, IP: ::1)
+2026-09-17 09:23:57.380 +03:00 [INF] HTTP OPTIONS /api/session/login responded 307 in 4 ms (User: anonim, IP: ::1)
+2026-09-17 09:25:43.342 +03:00 [INF] HTTP GET /api/health/check responded 307 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:27:42.426 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 09:27:42.459 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 09:27:42.465 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 09:27:42.468 +03:00 [INF] Hosting environment: Development
+2026-09-17 09:27:42.470 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 09:27:42.998 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 77 ms (User: anonim, IP: ::1)
+2026-09-17 09:27:43.172 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 09:27:43.391 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 149 ms (User: anonim, IP: ::1)
+2026-09-17 09:28:16.178 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 4 ms (User: anonim, IP: ::1)
+2026-09-17 09:28:19.092 +03:00 [INF] HTTP POST /api/session/login responded 200 in 2902 ms (User: anonim, IP: ::1)
+2026-09-17 09:28:19.115 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:28:19.311 +03:00 [INF] HTTP GET /api/session/me responded 200 in 188 ms (User: 13, IP: ::1)
+2026-09-17 09:29:56.962 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:29:57.042 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 73 ms (User: anonim, IP: ::1)
+2026-09-17 09:44:19.297 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 09:44:19.317 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 09:44:19.317 +03:00 [INF] Hosting environment: Development
+2026-09-17 09:44:19.317 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 09:45:01.198 +03:00 [INF] HTTP OPTIONS /api/register/start responded 204 in 12 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:04.334 +03:00 [INF] HTTP POST /api/register/start responded 200 in 3122 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:28.638 +03:00 [INF] HTTP OPTIONS /api/register/confirm responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:28.816 +03:00 [INF] HTTP POST /api/register/confirm responded 200 in 176 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:28.821 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:29.165 +03:00 [INF] HTTP POST /api/session/login responded 200 in 342 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:29.168 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:29.249 +03:00 [INF] HTTP GET /api/session/me responded 200 in 78 ms (User: 17, IP: ::1)
+2026-09-17 09:45:45.551 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:45:45.570 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 17 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:04.651 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:05.859 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1206 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:30.729 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:30.754 +03:00 [INF] HTTP POST /api/session/reset-password responded 400 in 22 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:52.212 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:46:52.218 +03:00 [INF] HTTP POST /api/session/reset-password responded 400 in 5 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:07.714 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:07.838 +03:00 [INF] HTTP POST /api/session/reset-password responded 200 in 122 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:31.217 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:31.357 +03:00 [INF] HTTP POST /api/session/login responded 400 in 138 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:39.352 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:39.478 +03:00 [INF] HTTP POST /api/session/login responded 200 in 125 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:39.482 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:48:39.487 +03:00 [INF] HTTP GET /api/session/me responded 200 in 4 ms (User: 16, IP: ::1)
+2026-09-17 09:54:26.119 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 09:54:26.152 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 09:54:26.157 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 09:54:26.159 +03:00 [INF] Hosting environment: Development
+2026-09-17 09:54:26.160 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 09:54:26.808 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 79 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:26.987 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:27.223 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 165 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:30.888 +03:00 [INF] HTTP OPTIONS /api/register/start responded 204 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:34.025 +03:00 [INF] HTTP POST /api/register/start responded 200 in 3126 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:50.674 +03:00 [INF] HTTP OPTIONS /api/register/confirm responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:50.930 +03:00 [INF] HTTP POST /api/register/confirm responded 200 in 249 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:50.946 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:51.356 +03:00 [INF] HTTP POST /api/session/login responded 200 in 402 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:51.371 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:54:51.493 +03:00 [INF] HTTP GET /api/session/me responded 200 in 116 ms (User: 18, IP: ::1)
+2026-09-17 09:56:06.351 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:06.431 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 73 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:25.370 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:25.653 +03:00 [INF] HTTP POST /api/session/login responded 200 in 275 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:25.669 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:25.681 +03:00 [INF] HTTP GET /api/session/me responded 200 in 6 ms (User: 18, IP: ::1)
+2026-09-17 09:56:29.548 +03:00 [INF] HTTP OPTIONS /api/session/logout responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:29.565 +03:00 [INF] HTTP POST /api/session/logout responded 200 in 9 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:36.795 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:56:38.368 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1566 ms (User: anonim, IP: ::1)
+2026-09-17 09:57:05.148 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:57:05.181 +03:00 [INF] HTTP POST /api/session/reset-password responded 400 in 26 ms (User: anonim, IP: ::1)
+2026-09-17 09:59:27.074 +03:00 [INF] HTTP GET /api/health/check responded 200 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 09:59:48.247 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:59:49.583 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1329 ms (User: anonim, IP: ::1)
+2026-09-17 09:59:57.424 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 09:59:57.433 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 404 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:00:18.209 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 10:00:18.229 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 10:00:18.229 +03:00 [INF] Hosting environment: Development
+2026-09-17 10:00:18.229 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 10:00:52.931 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 7 ms (User: anonim, IP: ::1)
+2026-09-17 10:00:55.522 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 2582 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:00.690 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:00.742 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 400 in 49 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:15.795 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:15.813 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 200 in 16 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:26.102 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:01:26.292 +03:00 [INF] HTTP POST /api/session/reset-password responded 200 in 187 ms (User: anonim, IP: ::1)
+2026-09-17 10:05:18.937 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 10:05:18.956 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 10:05:18.957 +03:00 [INF] Hosting environment: Development
+2026-09-17 10:05:18.957 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 10:05:37.544 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 7 ms (User: anonim, IP: ::1)
+2026-09-17 10:05:40.008 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 2455 ms (User: anonim, IP: ::1)
+2026-09-17 10:08:12.235 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 10:08:14.228 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1990 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:09.494 +03:00 [INF] Now listening on: https://localhost:7015
+2026-09-17 10:11:09.526 +03:00 [INF] Now listening on: http://localhost:5070
+2026-09-17 10:11:09.531 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-09-17 10:11:09.533 +03:00 [INF] Hosting environment: Development
+2026-09-17 10:11:09.535 +03:00 [INF] Content root path: D:\Universitate\Proiect Practica\FinSim\backend\FinSim\FinSimWeb.Api
+2026-09-17 10:11:10.115 +03:00 [INF] HTTP GET /swagger/index.html responded 200 in 90 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:10.268 +03:00 [INF] HTTP GET /swagger/index.js responded 200 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:10.491 +03:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 159 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:18.186 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:21.097 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 2901 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:39.971 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 1 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:40.042 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 400 in 62 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:48.344 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:11:48.367 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 200 in 17 ms (User: anonim, IP: ::1)
+2026-09-17 10:12:05.116 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:12:05.345 +03:00 [INF] HTTP POST /api/session/reset-password responded 200 in 221 ms (User: anonim, IP: ::1)
+2026-09-17 10:13:43.905 +03:00 [INF] HTTP GET /api/health/check responded 200 in 2 ms (User: anonim, IP: ::1)
+2026-09-17 10:13:49.172 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 400 in 3 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:00.892 +03:00 [INF] HTTP OPTIONS /api/session/forgot-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:02.298 +03:00 [INF] HTTP POST /api/session/forgot-password responded 200 in 1399 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:12.887 +03:00 [INF] HTTP OPTIONS /api/session/verify-reset-code responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:12.898 +03:00 [INF] HTTP POST /api/session/verify-reset-code responded 200 in 4 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:18.226 +03:00 [INF] HTTP OPTIONS /api/session/reset-password responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:14:18.413 +03:00 [INF] HTTP POST /api/session/reset-password responded 200 in 182 ms (User: anonim, IP: ::1)
+2026-09-17 10:16:45.419 +03:00 [INF] HTTP OPTIONS /api/session/login responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:16:45.661 +03:00 [INF] HTTP POST /api/session/login responded 200 in 236 ms (User: anonim, IP: ::1)
+2026-09-17 10:16:45.674 +03:00 [INF] HTTP OPTIONS /api/session/me responded 204 in 0 ms (User: anonim, IP: ::1)
+2026-09-17 10:16:45.751 +03:00 [INF] HTTP GET /api/session/me responded 200 in 73 ms (User: 15, IP: ::1)
+2026-09-17 10:49:09.687 +03:00 [INF] HTTP GET /api/session/me responded 401 in 9 ms (User: anonim, IP: ::1)
+2026-09-17 14:10:07.202 +03:00 [INF] Application is shutting down...
