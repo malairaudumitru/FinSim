@@ -31,19 +31,19 @@ createRoot(document.getElementById('root')!).render(
         <UsersProvider>
             <AuthProvider>
                 <NotificationsProvider>
-                    <ScenarioHistoryProvider>
-                        <ReviewsProvider>
-                            <LeaderboardProvider>
-                                <ScenariosProvider>
+                    <ReviewsProvider>
+                        <LeaderboardProvider>
+                            <ScenariosProvider>
+                                <ScenarioHistoryProvider>
                                     <ResourcesProvider>
                                         <MessagesProvider>
                                             <RouterProvider router={router} />
                                         </MessagesProvider>
                                     </ResourcesProvider>
-                                </ScenariosProvider>
-                            </LeaderboardProvider>
-                        </ReviewsProvider>
-                    </ScenarioHistoryProvider>
+                                </ScenarioHistoryProvider>
+                            </ScenariosProvider>
+                        </LeaderboardProvider>
+                    </ReviewsProvider>
                 </NotificationsProvider>
             </AuthProvider>
         </UsersProvider>

@@ -283,6 +283,7 @@ function AuthPage() {
                 const me = await authApi.me()
                 const { zi, luna, an } = parseBirthDate(me.birthDate)
                 login({
+                    id: me.id,
                     email: me.email,
                     nume: me.lastName,
                     prenume: me.firstName,
@@ -352,6 +353,7 @@ function AuthPage() {
                     const me = await authApi.me()
                     const { zi, luna, an } = parseBirthDate(me.birthDate)
                     login({
+                        id: me.id,
                         email: me.email,
                         nume: me.lastName,
                         prenume: me.firstName,

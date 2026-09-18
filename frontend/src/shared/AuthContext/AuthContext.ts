@@ -1,6 +1,7 @@
 ﻿import { createContext, useContext } from 'react'
 
 export interface AuthUser {
+    id?: number
     email: string
     nume?: string
     prenume?: string

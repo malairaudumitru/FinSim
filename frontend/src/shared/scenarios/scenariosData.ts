@@ -87,6 +87,7 @@ export interface ScenarioStep {
 }
 
 export interface ScenarioDef {
+    id?: number
     slug: string
     nume: string
     descriere: string

@@ -55,10 +55,11 @@ function toForm(s: ScenarioDef): FormState {
 function ScenariosSection() {
     const { t, i18n } = useTranslation()
     const { scenarios, addScenario, updateScenario, deleteScenario } = useScenarios()
-    const [editingSlug, setEditingSlug] = useState<string | null>(null)
+    const [editingId, setEditingId] = useState<number | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)
     const [error, setError] = useState('')
+    const [submitting, setSubmitting] = useState(false)
 
     const dificultateOptions = [
         { value: 'Ușor', label: t('admin.scenarios.difficulty_easy') },
@@ -67,14 +68,14 @@ function ScenariosSection() {
     ]
 
     const openAdd = () => {
-        setEditingSlug(null)
+        setEditingId(null)
         setForm(emptyForm)
         setError('')
         setShowForm(true)
     }
 
     const openEdit = (s: ScenarioDef) => {
-        setEditingSlug(s.slug)
+        setEditingId(s.id ?? null)
         setForm(toForm(s))
         setError('')
         setShowForm(true)
@@ -82,7 +83,7 @@ function ScenariosSection() {
 
     const close = () => setShowForm(false)
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.descriere.trim()) {
             setError(t('admin.scenarios.error_required'))
@@ -99,8 +100,8 @@ function ScenariosSection() {
             return
         }
 
-        const slug = editingSlug ?? (form.slug.trim() ? slugify(form.slug) : slugify(form.nume))
-        if (!editingSlug && scenarios.some((s) => s.slug === slug)) {
+        const slug = editingId !== null ? form.slug : form.slug.trim() ? slugify(form.slug) : slugify(form.nume)
+        if (editingId === null && scenarios.some((s) => s.slug === slug)) {
             setError(t('admin.scenarios.error_duplicate_slug'))
             return
         }
@@ -116,17 +117,25 @@ function ScenariosSection() {
             pasi,
         }
 
-        if (editingSlug) {
-            updateScenario(editingSlug, payload)
-        } else {
-            addScenario(payload)
+        setSubmitting(true)
+        try {
+            if (editingId !== null) {
+                await updateScenario(editingId, payload)
+            } else {
+                await addScenario(payload)
+            }
+            setShowForm(false)
+        } catch {
+            setError(t('admin.scenarios.error_required'))
+        } finally {
+            setSubmitting(false)
         }
-        setShowForm(false)
     }
 
-    const handleDelete = (s: ScenarioDef) => {
+    const handleDelete = async (s: ScenarioDef) => {
+        if (s.id === undefined) return
         if (confirm(t('admin.scenarios.confirm_delete', { name: s.nume }))) {
-            deleteScenario(s.slug)
+            await deleteScenario(s.id)
         }
     }
 
@@ -188,7 +197,7 @@ function ScenariosSection() {
             </div>
 
             {showForm && (
-                <Modal title={editingSlug ? t('admin.scenarios.modal_edit_title') : t('admin.scenarios.modal_add_title')} onClose={close}>
+                <Modal title={editingId !== null ? t('admin.scenarios.modal_edit_title') : t('admin.scenarios.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
                         <div className="admin-form-row">
                             <div className="admin-field">
@@ -210,7 +219,7 @@ function ScenariosSection() {
                             </div>
                         </div>
 
-                        {!editingSlug && (
+                        {editingId === null && (
                             <div className="admin-field">
                                 <label htmlFor="sc-slug">{t('admin.scenarios.label_slug')}</label>
                                 <input
@@ -280,8 +289,8 @@ function ScenariosSection() {
                             <button type="button" className="btn btn-ghost" onClick={close}>
                                 {t('admin.scenarios.cancel')}
                             </button>
-                            <button type="submit" className="btn btn-primary">
-                                {editingSlug ? t('admin.scenarios.save') : t('admin.scenarios.add_button')}
+                            <button type="submit" className="btn btn-primary" disabled={submitting}>
+                                {editingId !== null ? t('admin.scenarios.save') : t('admin.scenarios.add_button')}
                             </button>
                         </div>
                     </form>

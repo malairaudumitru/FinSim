@@ -1,17 +1,16 @@
 ﻿import { createContext, useContext } from 'react'
-import { scenarios as seedScenarios, type ScenarioDef } from '../scenarios/scenariosData'
+import type { ScenarioDef } from '../scenarios/scenariosData'
 
 export type { ScenarioDef }
 
 export interface ScenariosContextValue {
     scenarios: ScenarioDef[]
+    loading: boolean
     getBySlug: (slug: string) => ScenarioDef | undefined
-    addScenario: (scenario: ScenarioDef) => void
-    updateScenario: (slug: string, patch: Partial<ScenarioDef>) => void
-    deleteScenario: (slug: string) => void
+    addScenario: (scenario: ScenarioDef) => Promise<void>
+    updateScenario: (id: number, patch: Partial<ScenarioDef>) => Promise<void>
+    deleteScenario: (id: number) => Promise<void>
 }
-
-export const initialScenarios: ScenarioDef[] = seedScenarios
 
 export const ScenariosContext = createContext<ScenariosContextValue | undefined>(undefined)
 

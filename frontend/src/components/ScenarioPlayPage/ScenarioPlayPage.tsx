@@ -18,11 +18,6 @@ import './ScenarioPlayPage.css'
 
 type Stage = 'intro' | 'playing' | 'result'
 
-function todayLabel() {
-    const d = new Date()
-    return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`
-}
-
 function shuffle<T>(items: T[]): T[] {
     const copy = [...items]
     for (let i = copy.length - 1; i > 0; i--) {
@@ -359,7 +354,7 @@ function ScenarioPlayPage() {
     const { t } = useTranslation()
 
     const { slug } = useParams({ from: '/_app/scenarios/$slug' })
-    const { getBySlug } = useScenarios()
+    const { getBySlug, loading: scenariosLoading } = useScenarios()
     const scenario = getBySlug(slug)
     const { addEntry } = useScenarioHistory()
     const { isLoggedIn } = useAuth()
@@ -408,13 +403,15 @@ function ScenarioPlayPage() {
     const scorFinal = Math.max(0, Math.min(100, Math.round((puncte / (maxScore || 1)) * 100) - stres))
 
     useEffect(() => {
-        if (stage === 'result' && scenario && !hasSaved.current) {
+        if (stage === 'result' && scenario?.id !== undefined && isLoggedIn && !hasSaved.current) {
             hasSaved.current = true
-            addEntry({ scenariu: scenario.nume, data: todayLabel(), scor: scorFinal })
+            addEntry({ scenarioId: scenario.id, score: scorFinal })
         }
-    }, [stage, scenario, scorFinal, addEntry])
+    }, [stage, scenario, scorFinal, isLoggedIn, addEntry])
 
     if (!scenario) {
+        if (scenariosLoading) return null
+
         return (
             <div className="scenario-missing">
                 <p>{t('scenarioPlay.scenarioNotFound')}</p>
