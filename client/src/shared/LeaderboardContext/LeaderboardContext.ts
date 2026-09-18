@@ -12,6 +12,7 @@ export interface LeaderboardContextValue {
     entries: LeaderboardEntry[]
     loading: boolean
     deleteEntry: (id: string) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const LeaderboardContext = createContext<LeaderboardContextValue | undefined>(undefined)

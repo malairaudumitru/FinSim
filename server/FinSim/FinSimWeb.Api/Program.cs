@@ -133,6 +133,10 @@ try
     app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0} ms (User: {UserId}, IP: {Ip})";
+        options.GetLevel = (httpContext, elapsed, ex) =>
+            ex != null || httpContext.Response.StatusCode >= 500
+                ? LogEventLevel.Error
+                : LogEventLevel.Debug;
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
         {
             diagnosticContext.Set("UserId", RequestContextHelpers.GetUserId(httpContext));

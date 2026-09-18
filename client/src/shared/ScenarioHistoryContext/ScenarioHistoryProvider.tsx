@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { ScenarioHistoryContext, type HistoryEntry } from './ScenarioHistoryContext.ts'
 import { useAuth } from '../AuthContext/AuthContext'
 import { useScenarios } from '../ScenariosContext/ScenariosContext'
+import { useLeaderboard } from '../LeaderboardContext/LeaderboardContext.ts'
 import { useErrorModal } from '../ErrorModalContext/ErrorModalContext'
 import { reportIfServerError, reportingCall } from '../reportServerError'
 import * as scenarioHistoryApi from '../../api/scenarioHistoryApi'
@@ -10,6 +11,7 @@ import { toHistoryEntry } from '../scenarios/scenarioHistoryMapper'
 export function ScenarioHistoryProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
     const { scenarios } = useScenarios()
+    const { refresh: refreshLeaderboard } = useLeaderboard()
     const { showError } = useErrorModal()
     const [history, setHistory] = useState<HistoryEntry[]>([])
     const [loading, setLoading] = useState(true)
@@ -35,6 +37,7 @@ export function ScenarioHistoryProvider({ children }: { children: ReactNode }) {
         if (user?.id === undefined) return
         const list = await scenarioHistoryApi.getScenarioHistoryByUserId(user.id)
         setHistory(list.map((dto) => toHistoryEntry(dto, scenarios)))
+        refreshLeaderboard().catch(() => {})
     }
 
     const updateEntry = async (id: string, patch: { scenarioId: number; score: number }) => {
@@ -45,11 +48,13 @@ export function ScenarioHistoryProvider({ children }: { children: ReactNode }) {
         )
         const list = await scenarioHistoryApi.getScenarioHistoryByUserId(user.id)
         setHistory(list.map((dto) => toHistoryEntry(dto, scenarios)))
+        refreshLeaderboard().catch(() => {})
     }
 
     const deleteEntry = async (id: string) => {
         await reportingCall(scenarioHistoryApi.deleteScenarioHistory(Number(id)), showError)
         setHistory((prev) => prev.filter((h) => h.id !== id))
+        refreshLeaderboard().catch(() => {})
     }
 
     return (

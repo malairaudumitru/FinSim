@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+﻿import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
@@ -43,12 +43,32 @@ const initialUser: UserInfo = {
     an: 2000,
 }
 
-const stats = [
-    { value: '742', labelKey: 'profile.stat_general_score' },
-    { value: '5', labelKey: 'profile.stat_completed_scenarios' },
-    { value: '87%', labelKey: 'profile.stat_average_progress' },
-    { value: '3', labelKey: 'profile.stat_streak_days' },
-]
+function parseDateRo(dataRo: string): Date {
+    const [zi, luna, an] = dataRo.split('.').map(Number)
+    return new Date(an, luna - 1, zi)
+}
+
+function computeStreakDays(history: { data: string }[]): number {
+    if (history.length === 0) return 0
+    const uniqueDays = Array.from(
+        new Set(history.map((h) => parseDateRo(h.data).toDateString())),
+    )
+        .map((d) => new Date(d))
+        .sort((a, b) => b.getTime() - a.getTime())
+
+    const oneDay = 24 * 60 * 60 * 1000
+    const today = new Date(new Date().toDateString())
+    const mostRecent = uniqueDays[0]
+    if (Math.round((today.getTime() - mostRecent.getTime()) / oneDay) > 1) return 0
+
+    let streak = 1
+    for (let i = 1; i < uniqueDays.length; i++) {
+        const diff = Math.round((uniqueDays[i - 1].getTime() - uniqueDays[i].getTime()) / oneDay)
+        if (diff === 1) streak++
+        else break
+    }
+    return streak
+}
 
 function scoreClass(scor: number) {
     if (scor >= 70) return 'positive'
@@ -132,6 +152,19 @@ function ProfilePage() {
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
         return Math.max(0, REVIEW_COOLDOWN_DAYS - diffDays)
     })()
+
+    const stats = useMemo(() => {
+        const scorGeneral = history.reduce((sum, h) => sum + h.scor, 0)
+        const progresMediu = history.length
+            ? Math.round(history.reduce((sum, h) => sum + h.scor, 0) / history.length)
+            : 0
+        return [
+            { value: String(scorGeneral), labelKey: 'profile.stat_general_score' },
+            { value: String(history.length), labelKey: 'profile.stat_completed_scenarios' },
+            { value: `${progresMediu}%`, labelKey: 'profile.stat_average_progress' },
+            { value: String(computeStreakDays(history)), labelKey: 'profile.stat_streak_days' },
+        ]
+    }, [history])
 
     const anCurent = new Date().getFullYear()
     const aniDisponibili = Array.from(
