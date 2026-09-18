@@ -33,7 +33,7 @@ function Footer() {
                     </div>
                     <div className="footer-col">
                         <h4>{t('footer.contact_title')}</h4>
-                        <a href="mailto:contact@finsim.md">contact@finsim.md</a>
+                        <a href="mailto:adminfinsim@gmail.com">adminfinsim@gmail.com</a>
                         <span className="footer-text">Chișinău, Moldova</span>
                     </div>
                     <div className="footer-col">

@@ -7,6 +7,7 @@ import { routeTree } from './routeTree.gen'
 import { initTheme } from './shared/theme/theme'
 import './shared/i18n/i18n'
 import { AuthProvider } from './shared/AuthContext/AuthProvider'
+import { ErrorModalProvider } from './shared/ErrorModalContext/ErrorModalProvider'
 import { NotificationsProvider } from './shared/NotificationsContext/NotificationsProvider'
 import { ScenarioHistoryProvider } from './shared/ScenarioHistoryContext/ScenarioHistoryProvider'
 import { ReviewsProvider } from './shared/ReviewsContext/ReviewsProvider'
@@ -29,23 +30,25 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AuthProvider>
-            <UsersProvider>
-                <NotificationsProvider>
-                    <ReviewsProvider>
-                        <LeaderboardProvider>
-                            <ScenariosProvider>
-                                <ScenarioHistoryProvider>
-                                    <ResourcesProvider>
-                                        <MessagesProvider>
-                                            <RouterProvider router={router} />
-                                        </MessagesProvider>
-                                    </ResourcesProvider>
-                                </ScenarioHistoryProvider>
-                            </ScenariosProvider>
-                        </LeaderboardProvider>
-                    </ReviewsProvider>
-                </NotificationsProvider>
-            </UsersProvider>
+            <ErrorModalProvider>
+                <UsersProvider>
+                    <NotificationsProvider>
+                        <ReviewsProvider>
+                            <LeaderboardProvider>
+                                <ScenariosProvider>
+                                    <ScenarioHistoryProvider>
+                                        <ResourcesProvider>
+                                            <MessagesProvider>
+                                                <RouterProvider router={router} />
+                                            </MessagesProvider>
+                                        </ResourcesProvider>
+                                    </ScenarioHistoryProvider>
+                                </ScenariosProvider>
+                            </LeaderboardProvider>
+                        </ReviewsProvider>
+                    </NotificationsProvider>
+                </UsersProvider>
+            </ErrorModalProvider>
         </AuthProvider>
     </StrictMode>,
 )

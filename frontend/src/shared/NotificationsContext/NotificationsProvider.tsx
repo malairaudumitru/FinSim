@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { NotificationsContext, type NotificationItem } from './NotificationsContext.ts'
 import { useAuth } from '../AuthContext/AuthContext'
+import { useErrorModal } from '../ErrorModalContext/ErrorModalContext'
+import { reportIfServerError, reportingCall } from '../reportServerError'
 import * as notificationsApi from '../../api/notificationsApi'
 import { toNotificationItem } from '../notifications/notificationMapper'
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
+    const { showError } = useErrorModal()
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -15,24 +18,28 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         const task =
             userId === undefined
                 ? Promise.resolve([])
-                : notificationsApi.getNotificationByUserId(userId).catch(() => [])
+                : notificationsApi.getNotificationByUserId(userId).catch((err) => {
+                      reportIfServerError(err, showError)
+                      return []
+                  })
 
         task
             .then((list) => setNotifications(list.map((dto) => toNotificationItem(dto, email))))
             .finally(() => setLoading(false))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id, user?.email])
 
     const unreadCount = useMemo(() => notifications.filter((n) => !n.citit).length, [notifications])
 
     const markAsRead = async (id: string) => {
         setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, citit: true } : n)))
-        await notificationsApi.updateReadStatus(Number(id))
+        await reportingCall(notificationsApi.updateReadStatus(Number(id)), showError)
     }
 
     const markAllAsRead = async () => {
         if (user?.id === undefined) return
         setNotifications((prev) => prev.map((n) => ({ ...n, citit: true })))
-        await notificationsApi.markAllAsRead(user.id)
+        await reportingCall(notificationsApi.markAllAsRead(user.id), showError)
     }
 
     return (

@@ -32,7 +32,7 @@ function MessagesSection() {
         setReplyText(m.raspuns ?? '')
         setError('')
         setSent(false)
-        if (!m.citit) markAsRead(m.id)
+        if (!m.citit) markAsRead(m.id).catch(() => {})
     }
 
     const close = () => setSelectedId(null)
@@ -57,7 +57,11 @@ function MessagesSection() {
     const handleDelete = async (m: ContactMessage) => {
         if (confirm(t('admin.messages.confirm_delete', { name: m.nume }))) {
             if (selectedId === m.id) setSelectedId(null)
-            await deleteMessage(m.id)
+            try {
+                await deleteMessage(m.id)
+            } catch {
+                // modal already shown for server errors
+            }
         }
     }
 

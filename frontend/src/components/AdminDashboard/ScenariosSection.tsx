@@ -135,7 +135,11 @@ function ScenariosSection() {
     const handleDelete = async (s: ScenarioDef) => {
         if (s.id === undefined) return
         if (confirm(t('admin.scenarios.confirm_delete', { name: s.nume }))) {
-            await deleteScenario(s.id)
+            try {
+                await deleteScenario(s.id)
+            } catch {
+                // modal already shown for server errors
+            }
         }
     }
 

@@ -43,7 +43,7 @@ function ContactPage() {
             setSubmitted(true)
             setMesaj('')
         } catch {
-            setError(t('contact.error_mesaj_required'))
+            setError(t('contact.error_submit_failed'))
         } finally {
             setSubmitting(false)
         }
@@ -65,7 +65,7 @@ function ContactPage() {
                     <div className="contact-info">
                         <div className="contact-info-item">
                             <span className="contact-info-label">{t('contact.label_email')}</span>
-                            <a href="mailto:contact@finsim.md">contact@finsim.md</a>
+                            <a href="mailto:adminfinsim@gmail.com">adminfinsim@gmail.com</a>
                         </div>
                         <div className="contact-info-item">
                             <span className="contact-info-label">{t('contact.label_location')}</span>

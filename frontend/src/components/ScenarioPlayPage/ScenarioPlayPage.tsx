@@ -405,7 +405,7 @@ function ScenarioPlayPage() {
     useEffect(() => {
         if (stage === 'result' && scenario?.id !== undefined && isLoggedIn && !hasSaved.current) {
             hasSaved.current = true
-            addEntry({ scenarioId: scenario.id, score: scorFinal })
+            addEntry({ scenarioId: scenario.id, score: scorFinal }).catch(() => {})
         }
     }, [stage, scenario, scorFinal, isLoggedIn, addEntry])
 

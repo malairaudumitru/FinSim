@@ -6,6 +6,8 @@ import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
 import { useMessages } from '../../shared/MessagesContext/MessagesContext'
+import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
+import { reportIfServerError } from '../../shared/reportServerError'
 import { getNotificationList } from '../../api/notificationsApi'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 
@@ -17,12 +19,17 @@ function OverviewSection() {
     const { scenarios } = useScenarios()
     const { videos, pdfs } = useResources()
     const { messages, unreadCount } = useMessages()
+    const { showError } = useErrorModal()
 
     const [notificationCount, setNotificationCount] = useState(0)
     useEffect(() => {
         getNotificationList()
             .then((list) => setNotificationCount(list.length))
-            .catch(() => setNotificationCount(0))
+            .catch((err) => {
+                reportIfServerError(err, showError)
+                setNotificationCount(0)
+            })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const mediaRating = reviews.length

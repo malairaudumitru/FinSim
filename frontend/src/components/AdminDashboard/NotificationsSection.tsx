@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUsers } from '../../shared/UsersContext/UsersContext'
+import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
+import { reportIfServerError, reportingCall } from '../../shared/reportServerError'
 import * as notificationsApi from '../../api/notificationsApi'
 import { toNotificationItem, toType } from '../../shared/notifications/notificationMapper'
 import type { NotificationItem, NotificationType } from '../../shared/NotificationsContext/NotificationsContext'
@@ -22,6 +24,7 @@ function toForm(n: NotificationItem): FormState {
 function NotificationsSection() {
     const { t } = useTranslation()
     const { users } = useUsers()
+    const { showError } = useErrorModal()
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
     const [loading, setLoading] = useState(true)
     const [editingId, setEditingId] = useState<string | null>(null)
@@ -48,14 +51,20 @@ function NotificationsSection() {
     }))
 
     const refresh = () => {
-        return notificationsApi.getNotificationList().then((list) =>
-            setNotifications(
-                list.map((dto) => {
-                    const owner = users.find((u) => u.id === String(dto.userId))
-                    return toNotificationItem(dto, owner?.email ?? '')
-                }),
-            ),
-        )
+        return notificationsApi
+            .getNotificationList()
+            .then((list) =>
+                setNotifications(
+                    list.map((dto) => {
+                        const owner = users.find((u) => u.id === String(dto.userId))
+                        return toNotificationItem(dto, owner?.email ?? '')
+                    }),
+                ),
+            )
+            .catch((err) => {
+                reportIfServerError(err, showError)
+                setNotifications([])
+            })
     }
 
     useEffect(() => {
@@ -93,19 +102,23 @@ function NotificationsSection() {
         const dto = { type: toType(form.tip), message: form.mesaj.trim(), email: form.email.trim() }
 
         try {
-            if (editingId) await notificationsApi.updateNotification(Number(editingId), dto)
-            else await notificationsApi.createNotification(dto)
+            if (editingId) await reportingCall(notificationsApi.updateNotification(Number(editingId), dto), showError)
+            else await reportingCall(notificationsApi.createNotification(dto), showError)
             await refresh()
             setShowForm(false)
         } catch {
-            setError(t('admin.notifications.error_message_required'))
+            setError(t('admin.notifications.error_submit_failed'))
         }
     }
 
     const handleDelete = async (n: NotificationItem) => {
         if (confirm(t('admin.notifications.confirm_delete'))) {
-            await notificationsApi.deleteNotification(Number(n.id))
-            setNotifications((prev) => prev.filter((x) => x.id !== n.id))
+            try {
+                await reportingCall(notificationsApi.deleteNotification(Number(n.id)), showError)
+                setNotifications((prev) => prev.filter((x) => x.id !== n.id))
+            } catch {
+                // modal already shown for server errors by reportingCall
+            }
         }
     }
 

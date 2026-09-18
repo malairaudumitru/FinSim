@@ -2,11 +2,15 @@ import { useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import Modal from '../Modal/Modal'
+import { useAuth } from '../AuthContext/AuthContext'
 import { ErrorModalContext, type ErrorModalState } from './ErrorModalContext.ts'
 import './ErrorModal.css'
 
+const SUPPORT_EMAIL = 'adminfinsim@gmail.com'
+
 export function ErrorModalProvider({ children }: { children: ReactNode }) {
     const { t } = useTranslation()
+    const { isLoggedIn } = useAuth()
     const [error, setError] = useState<ErrorModalState | null>(null)
 
     const showError = (key: string, errorId: string) => setError({ key, errorId })
@@ -24,11 +28,15 @@ export function ErrorModalProvider({ children }: { children: ReactNode }) {
                             {t('errorModal.copy')}
                         </button>
                     </p>
-                    {/* TODO: cand se conecteaza API-ul real, se poate adauga ?errorId= ca search param
-                        pe /contact (primul precedent de search params din router) ca sa se preia automat in mesaj */}
-                    <Link to="/contact" onClick={hideError}>
-                        {t('errorModal.go_to_contact')}
-                    </Link>
+                    {isLoggedIn ? (
+                        <Link to="/contact" onClick={hideError}>
+                            {t('errorModal.go_to_contact')}
+                        </Link>
+                    ) : (
+                        <a href={`mailto:${SUPPORT_EMAIL}`}>
+                            {t('errorModal.email_us', { email: SUPPORT_EMAIL })}
+                        </a>
+                    )}
                 </Modal>
             )}
         </ErrorModalContext.Provider>

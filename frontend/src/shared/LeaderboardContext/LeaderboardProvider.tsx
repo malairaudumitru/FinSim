@@ -1,11 +1,14 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { LeaderboardContext, type LeaderboardEntry } from './LeaderboardContext.ts'
 import { useAuth } from '../AuthContext/AuthContext'
+import { useErrorModal } from '../ErrorModalContext/ErrorModalContext'
+import { reportIfServerError, reportingCall } from '../reportServerError'
 import * as leaderboardApi from '../../api/leaderboardApi'
 import { toLeaderboardEntry } from '../leaderboard/leaderboardMapper'
 
 export function LeaderboardProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
+    const { showError } = useErrorModal()
     const [entries, setEntries] = useState<LeaderboardEntry[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -13,12 +16,16 @@ export function LeaderboardProvider({ children }: { children: ReactNode }) {
         leaderboardApi
             .getLeaderboardList()
             .then((list) => setEntries(list.map((dto) => toLeaderboardEntry(dto, user?.id))))
-            .catch(() => setEntries([]))
+            .catch((err) => {
+                reportIfServerError(err, showError)
+                setEntries([])
+            })
             .finally(() => setLoading(false))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id])
 
     const deleteEntry = async (id: string) => {
-        await leaderboardApi.deleteLeaderboardEntry(Number(id))
+        await reportingCall(leaderboardApi.deleteLeaderboardEntry(Number(id)), showError)
         setEntries((prev) => prev.filter((e) => e.id !== id))
     }
 

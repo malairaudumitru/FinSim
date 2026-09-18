@@ -9,7 +9,11 @@ function LeaderboardSection() {
 
     const handleDelete = async (entry: LeaderboardEntry) => {
         if (confirm(t('admin.leaderboard.confirm_hide', { name: `${entry.prenume} ${entry.nume}` }))) {
-            await deleteEntry(entry.id)
+            try {
+                await deleteEntry(entry.id)
+            } catch {
+                // modal already shown for server errors
+            }
         }
     }
 

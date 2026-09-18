@@ -345,8 +345,10 @@ function ProfilePage() {
                 const normalized = normalizeApiError(err)
                 if (normalized.kind === 'server' && normalized.errorKey && normalized.errorId) {
                     showError(normalized.errorKey, normalized.errorId)
-                } else if (normalized.status === 401 || normalized.status === 400) {
+                } else if (normalized.status === 400) {
                     setPasswordErrors({ parolaCurenta: t('profile.error_current_password_wrong') })
+                } else if (normalized.status === 401) {
+                    setPasswordErrors({ parolaCurenta: t('profile.error_session_expired') })
                 } else if (normalized.status === 429) {
                     setPasswordErrors({ parolaCurenta: t('auth.error_too_many_requests') })
                 } else if (normalized.kind === 'network') {

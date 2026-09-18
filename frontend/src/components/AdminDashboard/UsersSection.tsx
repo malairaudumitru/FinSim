@@ -170,7 +170,11 @@ function UsersSection() {
 
     const handleDelete = async (u: AppUser) => {
         if (confirm(t('admin.users.confirm_delete', { name: `${u.prenume} ${u.nume}` }))) {
-            await deleteUser(u.id)
+            try {
+                await deleteUser(u.id)
+            } catch {
+                // modal already shown for server errors
+            }
         }
     }
 

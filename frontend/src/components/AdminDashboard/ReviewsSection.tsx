@@ -81,7 +81,11 @@ function ReviewsSection() {
 
     const handleDelete = async (r: Review) => {
         if (confirm(t('admin.reviews.confirm_delete', { name: r.autor }))) {
-            await deleteReview(r.id)
+            try {
+                await deleteReview(r.id)
+            } catch {
+                // modal already shown for server errors
+            }
         }
     }
 

@@ -25,7 +25,7 @@ function NotificationsPage() {
                         </p>
                     </div>
                     {unreadCount > 0 && (
-                        <button type="button" className="btn btn-ghost" onClick={markAllAsRead}>
+                        <button type="button" className="btn btn-ghost" onClick={() => markAllAsRead().catch(() => {})}>
                             {t('notifications.mark_all_read')}
                         </button>
                     )}
@@ -43,7 +43,7 @@ function NotificationsPage() {
                                     type="button"
                                     key={n.id}
                                     className={`notification-row ${n.citit ? '' : 'unread'}`}
-                                    onClick={() => markAsRead(n.id)}
+                                    onClick={() => markAsRead(n.id).catch(() => {})}
                                 >
                                     <span className="notification-dot" aria-hidden="true" />
                                     <div className="notification-content">

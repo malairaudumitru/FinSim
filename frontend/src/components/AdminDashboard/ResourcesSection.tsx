@@ -1,6 +1,8 @@
 ﻿import { useState, useRef, type FormEvent, type DragEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
+import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
+import { reportingCall } from '../../shared/reportServerError'
 import { uploadPdf } from '../../api/resourcesApi'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
@@ -36,6 +38,7 @@ function extractYoutubeId(input: string): string {
 function ResourcesSection() {
     const { t } = useTranslation()
     const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf } = useResources()
+    const { showError } = useErrorModal()
 
     const temaOptions = [
         { value: 'General', label: t('admin.resources.theme_general') },
@@ -99,7 +102,13 @@ function ResourcesSection() {
     }
 
     const handleDeleteVideo = async (v: VideoResource) => {
-        if (confirm(t('admin.resources.confirm_delete_video', { title: v.titlu }))) await deleteVideo(v.id)
+        if (confirm(t('admin.resources.confirm_delete_video', { title: v.titlu }))) {
+            try {
+                await deleteVideo(v.id)
+            } catch {
+                // modal already shown for server errors
+            }
+        }
     }
 
     const openAddPdf = () => {
@@ -138,7 +147,13 @@ function ResourcesSection() {
     }
 
     const handleDeletePdf = async (p: PdfResource) => {
-        if (confirm(t('admin.resources.confirm_delete_pdf', { title: p.titlu }))) await deletePdf(p.id)
+        if (confirm(t('admin.resources.confirm_delete_pdf', { title: p.titlu }))) {
+            try {
+                await deletePdf(p.id)
+            } catch {
+                // modal already shown for server errors
+            }
+        }
     }
 
     const acceptPdfFile = async (file: File | undefined) => {
@@ -150,10 +165,10 @@ function ResourcesSection() {
         setPdfError('')
         setPdfUploading(true)
         try {
-            const { url } = await uploadPdf(file)
+            const { url } = await reportingCall(uploadPdf(file), showError)
             setPdfForm((f) => ({ ...f, fisier: url }))
         } catch {
-            setPdfError(t('admin.resources.error_pdf_type'))
+            setPdfError(t('admin.resources.error_upload_failed'))
         } finally {
             setPdfUploading(false)
         }

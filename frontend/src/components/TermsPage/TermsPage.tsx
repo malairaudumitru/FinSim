@@ -42,7 +42,7 @@ function TermsPage() {
                             {i === lastSectionIndex && (
                                 <p>
                                     {t('terms.contact_intro')}{' '}
-                                    <a href="mailto:contact@finsim.md">contact@finsim.md</a>.
+                                    <a href="mailto:adminfinsim@gmail.com">adminfinsim@gmail.com</a>.
                                 </p>
                             )}
                         </div>
