@@ -7,9 +7,9 @@ function LeaderboardSection() {
 
     const ranked = [...entries].sort((a, b) => b.scor - a.scor)
 
-    const handleDelete = (entry: LeaderboardEntry) => {
+    const handleDelete = async (entry: LeaderboardEntry) => {
         if (confirm(t('admin.leaderboard.confirm_hide', { name: `${entry.prenume} ${entry.nume}` }))) {
-            deleteEntry(entry.id)
+            await deleteEntry(entry.id)
         }
     }
 

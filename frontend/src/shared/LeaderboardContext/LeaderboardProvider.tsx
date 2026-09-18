@@ -1,23 +1,29 @@
-﻿import { useState, type ReactNode } from 'react'
-import { LeaderboardContext, initialLeaderboard, type LeaderboardEntry } from './LeaderboardContext.ts'
+import { useEffect, useState, type ReactNode } from 'react'
+import { LeaderboardContext, type LeaderboardEntry } from './LeaderboardContext.ts'
+import { useAuth } from '../AuthContext/AuthContext'
+import * as leaderboardApi from '../../api/leaderboardApi'
+import { toLeaderboardEntry } from '../leaderboard/leaderboardMapper'
 
 export function LeaderboardProvider({ children }: { children: ReactNode }) {
-    const [entries, setEntries] = useState<LeaderboardEntry[]>(initialLeaderboard)
+    const { user } = useAuth()
+    const [entries, setEntries] = useState<LeaderboardEntry[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const addEntry = (entry: Omit<LeaderboardEntry, 'id'>) => {
-        setEntries((prev) => [...prev, { ...entry, id: `l${Date.now()}` }])
-    }
+    useEffect(() => {
+        leaderboardApi
+            .getLeaderboardList()
+            .then((list) => setEntries(list.map((dto) => toLeaderboardEntry(dto, user?.id))))
+            .catch(() => setEntries([]))
+            .finally(() => setLoading(false))
+    }, [user?.id])
 
-    const updateEntry = (id: string, patch: Partial<Omit<LeaderboardEntry, 'id'>>) => {
-        setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)))
-    }
-
-    const deleteEntry = (id: string) => {
+    const deleteEntry = async (id: string) => {
+        await leaderboardApi.deleteLeaderboardEntry(Number(id))
         setEntries((prev) => prev.filter((e) => e.id !== id))
     }
 
     return (
-        <LeaderboardContext.Provider value={{ entries, addEntry, updateEntry, deleteEntry }}>
+        <LeaderboardContext.Provider value={{ entries, loading, deleteEntry }}>
             {children}
         </LeaderboardContext.Provider>
     )
