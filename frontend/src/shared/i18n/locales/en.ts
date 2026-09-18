@@ -391,6 +391,7 @@ export default {
         error_passwords_mismatch: 'Passwords do not match.',
         error_review_rating: 'Choose a rating from 1 to 5 stars.',
         error_review_length: 'The message must be at least 25 characters long.',
+        error_review_submit: 'Could not submit the review. Please try again.',
     },
     avatarMenu: {
         aria_menu: 'Account menu',

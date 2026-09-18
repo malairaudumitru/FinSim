@@ -333,7 +333,7 @@ function ProfilePage() {
         }
     }
 
-    const handleReviewSubmit = (e: FormEvent) => {
+    const handleReviewSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
         if (reviewForm.rating === 0) {
@@ -346,13 +346,18 @@ function ProfilePage() {
         }
 
         setReviewError('')
-        addReview({
-            autor: `${user.prenume}, ${calculateAge(user.zi, user.luna, user.an)} ani`,
-            email: user.email,
-            data: new Date().toISOString(),
-            rating: reviewForm.rating,
-            mesaj: reviewForm.mesaj.trim(),
-        })
+        try {
+            await addReview({
+                nume: user.prenume,
+                varsta: calculateAge(user.zi, user.luna, user.an),
+                email: user.email,
+                rating: reviewForm.rating,
+                mesaj: reviewForm.mesaj.trim(),
+            })
+        } catch {
+            setReviewError(t('profile.error_review_submit'))
+            return
+        }
         setReviewForm(initialReviewForm)
         setReviewSubmitted(true)
     }

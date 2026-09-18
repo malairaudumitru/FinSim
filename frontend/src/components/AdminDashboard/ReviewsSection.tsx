@@ -27,12 +27,6 @@ function toForm(r: Review): FormState {
     return { nume, varsta, email: r.email, rating: r.rating, mesaj: r.mesaj }
 }
 
-function buildAutor(nume: string, varsta: string): string {
-    const numeTrim = nume.trim()
-    const varstaTrim = varsta.trim()
-    return varstaTrim ? `${numeTrim}, ${varstaTrim} ani` : numeTrim
-}
-
 function ReviewsSection() {
     const { t, i18n } = useTranslation()
     const { reviews, addReview, updateReview, deleteReview } = useReviews()
@@ -63,35 +57,31 @@ function ReviewsSection() {
 
     const close = () => setShowForm(false)
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!form.nume.trim() || !form.mesaj.trim()) {
             setError(t('admin.reviews.error_required'))
             return
         }
-        const autor = buildAutor(form.nume, form.varsta)
-        if (editingId) {
-            updateReview(editingId, {
-                autor,
-                email: form.email.trim(),
-                rating: form.rating,
-                mesaj: form.mesaj.trim(),
-            })
-        } else {
-            addReview({
-                autor,
-                email: form.email.trim() || 'admin@finsim.md',
-                data: new Date().toISOString(),
-                rating: form.rating,
-                mesaj: form.mesaj.trim(),
-            })
+        const input = {
+            nume: form.nume.trim(),
+            varsta: Number(form.varsta) || 0,
+            email: form.email.trim() || 'admin@finsim.md',
+            rating: form.rating,
+            mesaj: form.mesaj.trim(),
         }
-        setShowForm(false)
+        try {
+            if (editingId) await updateReview(editingId, input)
+            else await addReview(input)
+            setShowForm(false)
+        } catch {
+            setError(t('admin.reviews.error_required'))
+        }
     }
 
-    const handleDelete = (r: Review) => {
+    const handleDelete = async (r: Review) => {
         if (confirm(t('admin.reviews.confirm_delete', { name: r.autor }))) {
-            deleteReview(r.id)
+            await deleteReview(r.id)
         }
     }
 

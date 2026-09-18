@@ -1,23 +1,39 @@
-﻿import { useState, type ReactNode } from 'react'
-import { ReviewsContext, initialReviews, type Review } from './ReviewsContext'
+import { useEffect, useState, type ReactNode } from 'react'
+import { ReviewsContext, type Review, type ReviewInput } from './ReviewsContext.ts'
+import * as reviewsApi from '../../api/reviewsApi'
+import { toReview, toReviewCreateDto } from '../reviews/reviewMapper'
 
 export function ReviewsProvider({ children }: { children: ReactNode }) {
-    const [reviews, setReviews] = useState<Review[]>(initialReviews)
+    const [reviews, setReviews] = useState<Review[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const addReview = (review: Omit<Review, 'id'>) => {
-        setReviews((prev) => [{ ...review, id: `r${Date.now()}` }, ...prev])
+    useEffect(() => {
+        reviewsApi
+            .getReviewList()
+            .then((list) => setReviews(list.map(toReview)))
+            .catch(() => setReviews([]))
+            .finally(() => setLoading(false))
+    }, [])
+
+    const addReview = async (input: ReviewInput) => {
+        await reviewsApi.createReview(toReviewCreateDto(input))
+        const list = await reviewsApi.getReviewList()
+        setReviews(list.map(toReview))
     }
 
-    const updateReview = (id: string, patch: Partial<Omit<Review, 'id'>>) => {
-        setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)))
+    const updateReview = async (id: string, input: ReviewInput) => {
+        await reviewsApi.updateReview(Number(id), toReviewCreateDto(input))
+        const list = await reviewsApi.getReviewList()
+        setReviews(list.map(toReview))
     }
 
-    const deleteReview = (id: string) => {
+    const deleteReview = async (id: string) => {
+        await reviewsApi.deleteReview(Number(id))
         setReviews((prev) => prev.filter((r) => r.id !== id))
     }
 
     return (
-        <ReviewsContext.Provider value={{ reviews, addReview, updateReview, deleteReview }}>
+        <ReviewsContext.Provider value={{ reviews, loading, addReview, updateReview, deleteReview }}>
             {children}
         </ReviewsContext.Provider>
     )

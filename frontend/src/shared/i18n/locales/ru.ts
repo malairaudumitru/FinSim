@@ -395,6 +395,7 @@ export default {
         error_passwords_mismatch: 'Пароли не совпадают.',
         error_review_rating: 'Выбери рейтинг от 1 до 5 звёзд.',
         error_review_length: 'Сообщение должно содержать не менее 25 символов.',
+        error_review_submit: 'Не удалось отправить отзыв. Попробуй ещё раз.',
     },
     avatarMenu: {
         aria_menu: 'Меню аккаунта',

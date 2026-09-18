@@ -391,6 +391,7 @@ export default {
         error_passwords_mismatch: 'Parolele nu coincid.',
         error_review_rating: 'Alege un rating de la 1 la 5 stele.',
         error_review_length: 'Mesajul trebuie să aibă cel puțin 25 de caractere.',
+        error_review_submit: 'Recenzia nu a putut fi trimisă. Încearcă din nou.',
     },
     avatarMenu: {
         aria_menu: 'Meniul contului',
