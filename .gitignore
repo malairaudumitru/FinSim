@@ -21,6 +21,7 @@ backend/FinSim/FinSimWeb.Api/Logs/
 # graphify (knowledge graph tooling)
 graphify-out/
 skills-lock.json
+.graphifyignore
 
 # OS
 .DS_Store
