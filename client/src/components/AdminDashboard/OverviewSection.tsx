@@ -13,12 +13,12 @@ import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 
 function OverviewSection() {
     const { t } = useTranslation()
-    const { users } = useUsers()
-    const { entries } = useLeaderboard()
-    const { reviews } = useReviews()
-    const { scenarios } = useScenarios()
-    const { videos, pdfs } = useResources()
-    const { messages, unreadCount } = useMessages()
+    const { users, refresh: refreshUsers } = useUsers()
+    const { entries, refresh: refreshLeaderboard } = useLeaderboard()
+    const { reviews, refresh: refreshReviews } = useReviews()
+    const { scenarios, refresh: refreshScenarios } = useScenarios()
+    const { videos, pdfs, refresh: refreshResources } = useResources()
+    const { messages, unreadCount, refresh: refreshMessages } = useMessages()
     const { showError } = useErrorModal()
 
     const [notificationCount, setNotificationCount] = useState(0)
@@ -29,6 +29,12 @@ function OverviewSection() {
                 reportIfServerError(err, showError)
                 setNotificationCount(0)
             })
+        refreshUsers().catch(() => {})
+        refreshLeaderboard().catch(() => {})
+        refreshReviews().catch(() => {})
+        refreshScenarios().catch(() => {})
+        refreshResources().catch(() => {})
+        refreshMessages().catch(() => {})
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 

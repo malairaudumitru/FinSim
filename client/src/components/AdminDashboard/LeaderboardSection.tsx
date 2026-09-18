@@ -1,9 +1,15 @@
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLeaderboard, type LeaderboardEntry } from '../../shared/LeaderboardContext/LeaderboardContext'
 
 function LeaderboardSection() {
     const { t } = useTranslation()
-    const { entries, deleteEntry } = useLeaderboard()
+    const { entries, deleteEntry, refresh } = useLeaderboard()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const ranked = [...entries].sort((a, b) => b.scor - a.scor)
 

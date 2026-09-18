@@ -19,6 +19,7 @@ export interface MessagesContextValue {
     markAsRead: (id: string) => Promise<void>
     replyToMessage: (id: string, raspuns: string) => Promise<void>
     deleteMessage: (id: string) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const MessagesContext = createContext<MessagesContextValue | undefined>(undefined)

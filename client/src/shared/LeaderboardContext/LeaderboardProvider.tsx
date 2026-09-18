@@ -23,7 +23,14 @@ export function LeaderboardProvider({ children }: { children: ReactNode }) {
     }
 
     useEffect(() => {
-        refresh().finally(() => setLoading(false))
+        leaderboardApi
+            .getLeaderboardList()
+            .then((list) => setEntries(list.map((dto) => toLeaderboardEntry(dto, user?.id))))
+            .catch((err) => {
+                reportIfServerError(err, showError)
+                setEntries([])
+            })
+            .finally(() => setLoading(false))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id])
 

@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from 'react'
+﻿import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useReviews, type Review } from '../../shared/ReviewsContext/ReviewsContext'
 import StarRating from '../../shared/StarRating/StarRating'
@@ -29,7 +29,12 @@ function toForm(r: Review): FormState {
 
 function ReviewsSection() {
     const { t, i18n } = useTranslation()
-    const { reviews, addReview, updateReview, deleteReview } = useReviews()
+    const { reviews, addReview, updateReview, deleteReview, refresh } = useReviews()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)

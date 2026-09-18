@@ -10,6 +10,16 @@ export function ScenariosProvider({ children }: { children: ReactNode }) {
     const [scenarios, setScenarios] = useState<ScenarioDef[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        try {
+            const list = await scenariosApi.getScenarioList()
+            setScenarios(list.map(toScenarioDef))
+        } catch (err) {
+            reportIfServerError(err, showError)
+            setScenarios([])
+        }
+    }
+
     useEffect(() => {
         scenariosApi
             .getScenarioList()
@@ -45,7 +55,7 @@ export function ScenariosProvider({ children }: { children: ReactNode }) {
 
     return (
         <ScenariosContext.Provider
-            value={{ scenarios, loading, getBySlug, addScenario, updateScenario, deleteScenario }}
+            value={{ scenarios, loading, getBySlug, addScenario, updateScenario, deleteScenario, refresh }}
         >
             {children}
         </ScenariosContext.Provider>

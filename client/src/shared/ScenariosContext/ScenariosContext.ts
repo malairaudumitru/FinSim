@@ -10,6 +10,7 @@ export interface ScenariosContextValue {
     addScenario: (scenario: ScenarioDef) => Promise<void>
     updateScenario: (id: number, patch: Partial<ScenarioDef>) => Promise<void>
     deleteScenario: (id: number) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const ScenariosContext = createContext<ScenariosContextValue | undefined>(undefined)

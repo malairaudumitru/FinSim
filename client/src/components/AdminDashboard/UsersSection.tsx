@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from 'react'
+﻿import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUsers, type AppUser, type UserRole, type UserStatus } from '../../shared/UsersContext/UsersContext'
 import Modal from '../../shared/Modal/Modal'
@@ -57,7 +57,12 @@ function toForm(u: AppUser): FormState {
 
 function UsersSection() {
     const { t } = useTranslation()
-    const { users, addUser, updateUser, deleteUser } = useUsers()
+    const { users, addUser, updateUser, deleteUser, refresh } = useUsers()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)

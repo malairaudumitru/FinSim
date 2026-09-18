@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from 'react'
+﻿import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMessages, type ContactMessage } from '../../shared/MessagesContext/MessagesContext'
 import Modal from '../../shared/Modal/Modal'
@@ -7,7 +7,12 @@ const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-U
 
 function MessagesSection() {
     const { t, i18n } = useTranslation()
-    const { messages, markAsRead, replyToMessage, deleteMessage } = useMessages()
+    const { messages, markAsRead, replyToMessage, deleteMessage, refresh } = useMessages()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
     const [selectedId, setSelectedId] = useState<string | null>(null)
     const [replyText, setReplyText] = useState('')
     const [error, setError] = useState('')

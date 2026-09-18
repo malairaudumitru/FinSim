@@ -26,6 +26,7 @@ export interface ResourcesContextValue {
     addPdf: (pdf: Omit<PdfResource, 'id'>) => Promise<void>
     updatePdf: (id: string, patch: Omit<PdfResource, 'id'>) => Promise<void>
     deletePdf: (id: string) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const ResourcesContext = createContext<ResourcesContextValue | undefined>(undefined)

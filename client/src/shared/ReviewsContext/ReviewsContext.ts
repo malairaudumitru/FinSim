@@ -23,6 +23,7 @@ export interface ReviewsContextValue {
     addReview: (input: ReviewInput) => Promise<void>
     updateReview: (id: string, input: ReviewInput) => Promise<void>
     deleteReview: (id: string) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const ReviewsContext = createContext<ReviewsContextValue | undefined>(undefined)

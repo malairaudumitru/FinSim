@@ -1,4 +1,4 @@
-﻿import { useState, type FormEvent } from 'react'
+﻿import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import type { ScenarioDef, ScenarioStep } from '../../shared/scenarios/scenariosData'
@@ -54,7 +54,12 @@ function toForm(s: ScenarioDef): FormState {
 
 function ScenariosSection() {
     const { t, i18n } = useTranslation()
-    const { scenarios, addScenario, updateScenario, deleteScenario } = useScenarios()
+    const { scenarios, addScenario, updateScenario, deleteScenario, refresh } = useScenarios()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
     const [editingId, setEditingId] = useState<number | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [form, setForm] = useState<FormState>(emptyForm)

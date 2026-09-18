@@ -1,4 +1,4 @@
-﻿import { useState, useRef, type FormEvent, type DragEvent } from 'react'
+﻿import { useEffect, useState, useRef, type FormEvent, type DragEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useResources, type VideoResource, type PdfResource } from '../../shared/ResourcesContext/ResourcesContext'
 import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
@@ -37,7 +37,12 @@ function extractYoutubeId(input: string): string {
 
 function ResourcesSection() {
     const { t } = useTranslation()
-    const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf } = useResources()
+    const { videos, pdfs, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf, refresh } = useResources()
+
+    useEffect(() => {
+        refresh().catch(() => {})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
     const { showError } = useErrorModal()
 
     const temaOptions = [

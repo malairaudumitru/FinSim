@@ -15,6 +15,18 @@ export function ResourcesProvider({ children }: { children: ReactNode }) {
     const [pdfs, setPdfs] = useState<PdfResource[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        try {
+            const [videoList, pdfList] = await Promise.all([resourcesApi.getVideoList(), resourcesApi.getPdfList()])
+            setVideos(videoList.map(toVideoResource))
+            setPdfs(pdfList.map(toPdfResource))
+        } catch (err) {
+            reportIfServerError(err, showError)
+            setVideos([])
+            setPdfs([])
+        }
+    }
+
     useEffect(() => {
         Promise.all([resourcesApi.getVideoList(), resourcesApi.getPdfList()])
             .then(([videoList, pdfList]) => {
@@ -66,7 +78,7 @@ export function ResourcesProvider({ children }: { children: ReactNode }) {
 
     return (
         <ResourcesContext.Provider
-            value={{ videos, pdfs, loading, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf }}
+            value={{ videos, pdfs, loading, addVideo, updateVideo, deleteVideo, addPdf, updatePdf, deletePdf, refresh }}
         >
             {children}
         </ResourcesContext.Provider>

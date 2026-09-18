@@ -10,6 +10,15 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
     const [reviews, setReviews] = useState<Review[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        try {
+            const list = await reviewsApi.getReviewList()
+            setReviews(list.map(toReview))
+        } catch {
+            setReviews([])
+        }
+    }
+
     // Background load only feeds the public HomePage showcase — degrades silently,
     // no global modal (landing/informational content, per product decision).
     useEffect(() => {
@@ -38,7 +47,7 @@ export function ReviewsProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <ReviewsContext.Provider value={{ reviews, loading, addReview, updateReview, deleteReview }}>
+        <ReviewsContext.Provider value={{ reviews, loading, addReview, updateReview, deleteReview, refresh }}>
             {children}
         </ReviewsContext.Provider>
     )

@@ -30,6 +30,7 @@ export interface UsersContextValue {
     addUser: (user: NewUserInput) => Promise<void>
     updateUser: (id: string, patch: Omit<AppUser, 'id' | 'dataInregistrare'>) => Promise<void>
     deleteUser: (id: string) => Promise<void>
+    refresh: () => Promise<void>
 }
 
 export const UsersContext = createContext<UsersContextValue | undefined>(undefined)

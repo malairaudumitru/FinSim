@@ -13,6 +13,17 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     const [users, setUsers] = useState<AppUser[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        if (!isAdmin) return
+        try {
+            const list = await usersApi.getUserList()
+            setUsers(list.map(toAppUser))
+        } catch (err) {
+            reportIfServerError(err, showError)
+            setUsers([])
+        }
+    }
+
     useEffect(() => {
         const task = isAdmin
             ? usersApi.getUserList().catch((err) => {
@@ -42,7 +53,7 @@ export function UsersProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <UsersContext.Provider value={{ users, loading, addUser, updateUser, deleteUser }}>
+        <UsersContext.Provider value={{ users, loading, addUser, updateUser, deleteUser, refresh }}>
             {children}
         </UsersContext.Provider>
     )

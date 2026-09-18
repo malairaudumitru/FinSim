@@ -13,6 +13,17 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
     const [messages, setMessages] = useState<ContactMessage[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        if (!isAdmin) return
+        try {
+            const list = await messagesApi.getMessageList()
+            setMessages(list.map(toContactMessage))
+        } catch (err) {
+            reportIfServerError(err, showError)
+            setMessages([])
+        }
+    }
+
     useEffect(() => {
         const task = isAdmin
             ? messagesApi.getMessageList().catch((err) => {
@@ -48,7 +59,7 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
 
     return (
         <MessagesContext.Provider
-            value={{ messages, unreadCount, loading, addMessage, markAsRead, replyToMessage, deleteMessage }}
+            value={{ messages, unreadCount, loading, addMessage, markAsRead, replyToMessage, deleteMessage, refresh }}
         >
             {children}
         </MessagesContext.Provider>

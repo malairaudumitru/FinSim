@@ -12,6 +12,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
     const [loading, setLoading] = useState(true)
 
+    const refresh = async () => {
+        const userId = user?.id
+        if (userId === undefined) return
+        const email = user?.email ?? ''
+        try {
+            const list = await notificationsApi.getNotificationByUserId(userId)
+            setNotifications(list.map((dto) => toNotificationItem(dto, email)))
+        } catch (err) {
+            reportIfServerError(err, showError)
+            setNotifications([])
+        }
+    }
+
     useEffect(() => {
         const userId = user?.id
         const email = user?.email ?? ''
@@ -43,7 +56,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <NotificationsContext.Provider value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead }}>
+        <NotificationsContext.Provider value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead, refresh }}>
             {children}
         </NotificationsContext.Provider>
     )
