@@ -1,11 +1,12 @@
-﻿import { useTranslation } from 'react-i18next'
+﻿import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useUsers } from '../../shared/UsersContext/UsersContext'
 import { useLeaderboard } from '../../shared/LeaderboardContext/LeaderboardContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
-import { useNotifications } from '../../shared/NotificationsContext/NotificationsContext'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
 import { useMessages } from '../../shared/MessagesContext/MessagesContext'
+import { getNotificationList } from '../../api/notificationsApi'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
 
 function OverviewSection() {
@@ -13,10 +14,16 @@ function OverviewSection() {
     const { users } = useUsers()
     const { entries } = useLeaderboard()
     const { reviews } = useReviews()
-    const { notifications } = useNotifications()
     const { scenarios } = useScenarios()
     const { videos, pdfs } = useResources()
     const { messages, unreadCount } = useMessages()
+
+    const [notificationCount, setNotificationCount] = useState(0)
+    useEffect(() => {
+        getNotificationList()
+            .then((list) => setNotificationCount(list.length))
+            .catch(() => setNotificationCount(0))
+    }, [])
 
     const mediaRating = reviews.length
         ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
@@ -31,7 +38,7 @@ function OverviewSection() {
         { label: statLabels[3], value: entries.length },
         { label: statLabels[4], value: reviews.length },
         { label: statLabels[5], value: mediaRating },
-        { label: statLabels[6], value: notifications.length },
+        { label: statLabels[6], value: notificationCount },
         { label: statLabels[7], value: videos.length + pdfs.length },
         { label: statLabels[8], value: messages.length },
         { label: statLabels[9], value: unreadCount },

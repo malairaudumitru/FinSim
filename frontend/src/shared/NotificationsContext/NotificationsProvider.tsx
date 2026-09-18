@@ -1,43 +1,42 @@
-﻿import { useState, type ReactNode } from 'react'
-import { NotificationsContext, initialNotifications, type NotificationItem } from './NotificationsContext.ts'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { NotificationsContext, type NotificationItem } from './NotificationsContext.ts'
+import { useAuth } from '../AuthContext/AuthContext'
+import * as notificationsApi from '../../api/notificationsApi'
+import { toNotificationItem } from '../notifications/notificationMapper'
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
-    const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications)
+    const { user } = useAuth()
+    const [notifications, setNotifications] = useState<NotificationItem[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const markAsRead = (id: string) => {
+    useEffect(() => {
+        const userId = user?.id
+        const email = user?.email ?? ''
+        const task =
+            userId === undefined
+                ? Promise.resolve([])
+                : notificationsApi.getNotificationByUserId(userId).catch(() => [])
+
+        task
+            .then((list) => setNotifications(list.map((dto) => toNotificationItem(dto, email))))
+            .finally(() => setLoading(false))
+    }, [user?.id, user?.email])
+
+    const unreadCount = useMemo(() => notifications.filter((n) => !n.citit).length, [notifications])
+
+    const markAsRead = async (id: string) => {
         setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, citit: true } : n)))
+        await notificationsApi.updateReadStatus(Number(id))
     }
 
-    const markAllAsRead = () => {
+    const markAllAsRead = async () => {
+        if (user?.id === undefined) return
         setNotifications((prev) => prev.map((n) => ({ ...n, citit: true })))
+        await notificationsApi.markAllAsRead(user.id)
     }
-
-    const addNotification = (notification: Omit<NotificationItem, 'id'>) => {
-        setNotifications((prev) => [{ ...notification, id: `n${Date.now()}` }, ...prev])
-    }
-
-    const updateNotification = (id: string, patch: Partial<Omit<NotificationItem, 'id'>>) => {
-        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, ...patch } : n)))
-    }
-
-    const deleteNotification = (id: string) => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id))
-    }
-
-    const unreadCount = notifications.filter((n) => !n.citit).length
 
     return (
-        <NotificationsContext.Provider
-            value={{
-                notifications,
-                unreadCount,
-                markAsRead,
-                markAllAsRead,
-                addNotification,
-                updateNotification,
-                deleteNotification,
-            }}
-        >
+        <NotificationsContext.Provider value={{ notifications, unreadCount, loading, markAsRead, markAllAsRead }}>
             {children}
         </NotificationsContext.Provider>
     )

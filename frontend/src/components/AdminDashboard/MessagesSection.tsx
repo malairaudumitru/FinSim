@@ -37,23 +37,27 @@ function MessagesSection() {
 
     const close = () => setSelectedId(null)
 
-    const handleReplySubmit = (e: FormEvent) => {
+    const handleReplySubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!replyText.trim()) {
             setError(t('admin.messages.error_reply_required'))
             return
         }
         if (selected) {
-            replyToMessage(selected.id, replyText.trim())
-            setError('')
-            setSent(true)
+            try {
+                await replyToMessage(selected.id, replyText.trim())
+                setError('')
+                setSent(true)
+            } catch {
+                setError(t('admin.messages.error_reply_required'))
+            }
         }
     }
 
-    const handleDelete = (m: ContactMessage) => {
+    const handleDelete = async (m: ContactMessage) => {
         if (confirm(t('admin.messages.confirm_delete', { name: m.nume }))) {
             if (selectedId === m.id) setSelectedId(null)
-            deleteMessage(m.id)
+            await deleteMessage(m.id)
         }
     }
 

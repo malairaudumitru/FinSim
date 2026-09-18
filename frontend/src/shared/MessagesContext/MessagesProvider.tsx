@@ -1,39 +1,45 @@
-﻿import { useState, type ReactNode } from 'react'
-import { MessagesContext, initialMessages, type ContactMessage } from './MessagesContext.ts'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { MessagesContext, type ContactMessage } from './MessagesContext.ts'
+import { useAuth } from '../AuthContext/AuthContext'
+import * as messagesApi from '../../api/messagesApi'
+import { toContactMessage } from '../messages/messageMapper'
 
 export function MessagesProvider({ children }: { children: ReactNode }) {
-    const [messages, setMessages] = useState<ContactMessage[]>(initialMessages)
+    const { user } = useAuth()
+    const isAdmin = user?.rol === 'admin'
+    const [messages, setMessages] = useState<ContactMessage[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const addMessage = (message: Omit<ContactMessage, 'id' | 'citit' | 'data'>) => {
-        setMessages((prev) => [
-            { ...message, id: `m${Date.now()}`, citit: false, data: new Date().toISOString() },
-            ...prev,
-        ])
+    useEffect(() => {
+        const task = isAdmin ? messagesApi.getMessageList().catch(() => []) : Promise.resolve([])
+        task.then((list) => setMessages(list.map(toContactMessage))).finally(() => setLoading(false))
+    }, [isAdmin])
+
+    const unreadCount = useMemo(() => messages.filter((m) => !m.citit).length, [messages])
+
+    const addMessage = async (mesaj: string) => {
+        await messagesApi.createMessage({ message: mesaj })
     }
 
-    const markAsRead = (id: string) => {
-        setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, citit: true } : m)))
+    const markAsRead = async (id: string) => {
+        const dto = await messagesApi.getMessageById(Number(id))
+        setMessages((prev) => prev.map((m) => (m.id === id ? toContactMessage(dto) : m)))
     }
 
-    const replyToMessage = (id: string, raspuns: string) => {
-        setMessages((prev) =>
-            prev.map((m) =>
-                m.id === id
-                    ? { ...m, raspuns, raspunsData: new Date().toISOString(), citit: true }
-                    : m
-            )
-        )
+    const replyToMessage = async (id: string, raspuns: string) => {
+        await messagesApi.replyToMessage(Number(id), { reply: raspuns })
+        const dto = await messagesApi.getMessageById(Number(id))
+        setMessages((prev) => prev.map((m) => (m.id === id ? toContactMessage(dto) : m)))
     }
 
-    const deleteMessage = (id: string) => {
+    const deleteMessage = async (id: string) => {
+        await messagesApi.deleteMessage(Number(id))
         setMessages((prev) => prev.filter((m) => m.id !== id))
     }
 
-    const unreadCount = messages.filter((m) => !m.citit).length
-
     return (
         <MessagesContext.Provider
-            value={{ messages, unreadCount, addMessage, markAsRead, replyToMessage, deleteMessage }}
+            value={{ messages, unreadCount, loading, addMessage, markAsRead, replyToMessage, deleteMessage }}
         >
             {children}
         </MessagesContext.Provider>

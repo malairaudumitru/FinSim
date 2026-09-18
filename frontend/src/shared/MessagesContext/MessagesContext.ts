@@ -1,4 +1,4 @@
-﻿import { createContext, useContext } from 'react'
+import { createContext, useContext } from 'react'
 
 export interface ContactMessage {
     id: string
@@ -11,36 +11,14 @@ export interface ContactMessage {
     raspunsData?: string
 }
 
-export const initialMessages: ContactMessage[] = [
-    {
-        id: 'm1',
-        nume: 'Elena Munteanu',
-        email: 'elena.munteanu@exemplu.com',
-        mesaj:
-            'Bună! Am observat că scenariul „Primul credit" nu îmi salvează scorul de credit între pași. E un bug sau lucrez eu ceva greșit?',
-        data: '2026-09-05T10:12:00.000Z',
-        citit: true,
-        raspuns: 'Bună, Elena! Am verificat — a fost un bug, l-am corectat. Mulțumim de semnalare!',
-        raspunsData: '2026-09-05T14:30:00.000Z',
-    },
-    {
-        id: 'm2',
-        nume: 'Radu Fusu',
-        email: 'radu.fusu@exemplu.com',
-        mesaj:
-            'Salut, ați putea adăuga un scenariu despre economisirea pentru studii? Cred că ar fi util pentru mulți liceeni.',
-        data: '2026-09-08T09:45:00.000Z',
-        citit: false,
-    },
-]
-
 export interface MessagesContextValue {
     messages: ContactMessage[]
     unreadCount: number
-    addMessage: (message: Omit<ContactMessage, 'id' | 'citit' | 'data'>) => void
-    markAsRead: (id: string) => void
-    replyToMessage: (id: string, raspuns: string) => void
-    deleteMessage: (id: string) => void
+    loading: boolean
+    addMessage: (mesaj: string) => Promise<void>
+    markAsRead: (id: string) => Promise<void>
+    replyToMessage: (id: string, raspuns: string) => Promise<void>
+    deleteMessage: (id: string) => Promise<void>
 }
 
 export const MessagesContext = createContext<MessagesContextValue | undefined>(undefined)

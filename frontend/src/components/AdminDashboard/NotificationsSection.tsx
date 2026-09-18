@@ -1,50 +1,33 @@
-﻿import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-    useNotifications,
-    type NotificationItem,
-    type NotificationType,
-} from '../../shared/NotificationsContext/NotificationsContext'
 import { useUsers } from '../../shared/UsersContext/UsersContext'
+import * as notificationsApi from '../../api/notificationsApi'
+import { toNotificationItem, toType } from '../../shared/notifications/notificationMapper'
+import type { NotificationItem, NotificationType } from '../../shared/NotificationsContext/NotificationsContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
-
-const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 type FormState = {
     email: string
     tip: NotificationType
     mesaj: string
-    data: string
 }
 
-function toDateInputValue(roDate: string): string {
-    const [zi, luna, an] = roDate.split('.')
-    if (!zi || !luna || !an) return ''
-    return `${an}-${luna.padStart(2, '0')}-${zi.padStart(2, '0')}`
-}
+const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: '' }
 
 function toForm(n: NotificationItem): FormState {
-    return { email: n.email, tip: n.tip, mesaj: n.mesaj, data: n.data }
+    return { email: n.email, tip: n.tip, mesaj: n.mesaj }
 }
 
 function NotificationsSection() {
-    const { t, i18n } = useTranslation()
-    const { notifications, addNotification, updateNotification, deleteNotification } = useNotifications()
+    const { t } = useTranslation()
     const { users } = useUsers()
+    const [notifications, setNotifications] = useState<NotificationItem[]>([])
+    const [loading, setLoading] = useState(true)
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showForm, setShowForm] = useState(false)
     const [error, setError] = useState('')
 
-    const todayLabel = () => new Date().toLocaleDateString(LOCALE_MAP[i18n.language] ?? 'ro-RO')
-
-    const fromDateInputValue = (isoDate: string): string => {
-        const [an, luna, zi] = isoDate.split('-')
-        if (!an || !luna || !zi) return todayLabel()
-        return `${zi}.${luna}.${an}`
-    }
-
-    const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: '', data: todayLabel() }
     const [form, setForm] = useState<FormState>(emptyForm)
 
     const tipLabel: Record<NotificationType, string> = {
@@ -64,9 +47,25 @@ function NotificationsSection() {
         label: `${u.prenume} ${u.nume} (${u.email})`,
     }))
 
+    const refresh = () => {
+        return notificationsApi.getNotificationList().then((list) =>
+            setNotifications(
+                list.map((dto) => {
+                    const owner = users.find((u) => u.id === String(dto.userId))
+                    return toNotificationItem(dto, owner?.email ?? '')
+                }),
+            ),
+        )
+    }
+
+    useEffect(() => {
+        refresh().finally(() => setLoading(false))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [users])
+
     const openAdd = () => {
         setEditingId(null)
-        setForm({ ...emptyForm, data: todayLabel() })
+        setForm(emptyForm)
         setError('')
         setShowForm(true)
     }
@@ -80,7 +79,7 @@ function NotificationsSection() {
 
     const close = () => setShowForm(false)
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if (!form.mesaj.trim()) {
             setError(t('admin.notifications.error_message_required'))
@@ -91,28 +90,22 @@ function NotificationsSection() {
             return
         }
 
-        if (editingId) {
-            updateNotification(editingId, {
-                tip: form.tip,
-                mesaj: form.mesaj.trim(),
-                data: form.data.trim() || todayLabel(),
-                email: form.email.trim(),
-            })
-        } else {
-            addNotification({
-                tip: form.tip,
-                mesaj: form.mesaj.trim(),
-                data: form.data.trim() || todayLabel(),
-                email: form.email.trim(),
-                citit: false,
-            })
+        const dto = { type: toType(form.tip), message: form.mesaj.trim(), email: form.email.trim() }
+
+        try {
+            if (editingId) await notificationsApi.updateNotification(Number(editingId), dto)
+            else await notificationsApi.createNotification(dto)
+            await refresh()
+            setShowForm(false)
+        } catch {
+            setError(t('admin.notifications.error_message_required'))
         }
-        setShowForm(false)
     }
 
-    const handleDelete = (n: NotificationItem) => {
+    const handleDelete = async (n: NotificationItem) => {
         if (confirm(t('admin.notifications.confirm_delete'))) {
-            deleteNotification(n.id)
+            await notificationsApi.deleteNotification(Number(n.id))
+            setNotifications((prev) => prev.filter((x) => x.id !== n.id))
         }
     }
 
@@ -141,7 +134,7 @@ function NotificationsSection() {
                         </tr>
                     </thead>
                     <tbody>
-                        {notifications.length === 0 && (
+                        {!loading && notifications.length === 0 && (
                             <tr className="admin-empty-row">
                                 <td colSpan={6}>{t('admin.notifications.empty')}</td>
                             </tr>
@@ -192,25 +185,14 @@ function NotificationsSection() {
                             />
                         </div>
 
-                        <div className="admin-form-row">
-                            <div className="admin-field">
-                                <label htmlFor="nt-tip">{t('admin.notifications.label_type')}</label>
-                                <Dropdown
-                                    value={form.tip}
-                                    onChange={(v) => setForm((f) => ({ ...f, tip: v as NotificationType }))}
-                                    options={tipOptions}
-                                    placeholder={t('admin.notifications.label_type')}
-                                />
-                            </div>
-                            <div className="admin-field">
-                                <label htmlFor="nt-data">{t('admin.notifications.label_date')}</label>
-                                <input
-                                    id="nt-data"
-                                    type="date"
-                                    value={toDateInputValue(form.data)}
-                                    onChange={(e) => setForm((f) => ({ ...f, data: fromDateInputValue(e.target.value) }))}
-                                />
-                            </div>
+                        <div className="admin-field">
+                            <label htmlFor="nt-tip">{t('admin.notifications.label_type')}</label>
+                            <Dropdown
+                                value={form.tip}
+                                onChange={(v) => setForm((f) => ({ ...f, tip: v as NotificationType }))}
+                                options={tipOptions}
+                                placeholder={t('admin.notifications.label_type')}
+                            />
                         </div>
 
                         <div className="admin-field">

@@ -1,69 +1,52 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from '@tanstack/react-router'
 import { useMessages } from '../../shared/MessagesContext/MessagesContext'
+import { useAuth } from '../../shared/AuthContext/AuthContext'
 import '../../shared/ContentPage/ContentPage.css'
 import './ContactPage.css'
-
-interface ContactForm {
-    nume: string
-    email: string
-    mesaj: string
-}
-
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-const initialState: ContactForm = {
-    nume: '',
-    email: '',
-    mesaj: '',
-}
 
 function ContactPage() {
     const { t } = useTranslation()
     const { addMessage } = useMessages()
-    const [form, setForm] = useState<ContactForm>(initialState)
-    const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({})
+    const { isLoggedIn } = useAuth()
+    const [mesaj, setMesaj] = useState('')
+    const [error, setError] = useState('')
+    const [submitting, setSubmitting] = useState(false)
     const [submitted, setSubmitted] = useState(false)
 
-    const handleChange =
-        (field: keyof ContactForm) =>
-            (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                setForm((prev) => ({ ...prev, [field]: e.target.value }))
-            }
-
-    const validate = (): boolean => {
-        const newErrors: Partial<Record<keyof ContactForm, string>> = {}
-
-        if (!form.nume.trim()) newErrors.nume = t('contact.error_nume_required')
-
-        if (!form.email.trim()) {
-            newErrors.email = t('contact.error_email_required')
-        } else if (!EMAIL_REGEX.test(form.email.trim())) {
-            newErrors.email = t('contact.error_email_invalid')
-        }
-
-        if (!form.mesaj.trim()) {
-            newErrors.mesaj = t('contact.error_mesaj_required')
-        } else if (form.mesaj.trim().length < 25) {
-            newErrors.mesaj = t('contact.error_mesaj_length')
-        }
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setMesaj(e.target.value)
     }
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault()
+    const validate = (): boolean => {
+        const trimmed = mesaj.trim()
+        if (!trimmed) {
+            setError(t('contact.error_mesaj_required'))
+            return false
+        }
+        if (trimmed.length < 25) {
+            setError(t('contact.error_mesaj_length'))
+            return false
+        }
+        setError('')
+        return true
+    }
 
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
         if (!validate()) return
 
-        addMessage({
-            nume: form.nume.trim(),
-            email: form.email.trim(),
-            mesaj: form.mesaj.trim(),
-        })
-        setSubmitted(true)
-        setForm(initialState)
+        setSubmitting(true)
+        try {
+            await addMessage(mesaj.trim())
+            setSubmitted(true)
+            setMesaj('')
+        } catch {
+            setError(t('contact.error_mesaj_required'))
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
@@ -95,49 +78,34 @@ function ContactPage() {
                     </div>
 
                     <div className="contact-form-wrap">
-                        {submitted ? (
+                        {!isLoggedIn ? (
+                            <div className="contact-success">
+                                {t('contact.login_required')}
+                                <div style={{ marginTop: 16 }}>
+                                    <Link to="/login" className="btn btn-primary">
+                                        {t('contact.login_button')}
+                                    </Link>
+                                </div>
+                            </div>
+                        ) : submitted ? (
                             <div className="contact-success">
                                 {t('contact.success')}
                             </div>
                         ) : (
                             <form className="contact-form" onSubmit={handleSubmit} noValidate>
                                 <div className="form-field">
-                                    <label htmlFor="nume">{t('contact.label_nume')}</label>
-                                    <input
-                                        id="nume"
-                                        type="text"
-                                        value={form.nume}
-                                        onChange={handleChange('nume')}
-                                        placeholder={t('contact.placeholder_nume')}
-                                    />
-                                    {errors.nume && <span className="field-error">{errors.nume}</span>}
-                                </div>
-
-                                <div className="form-field">
-                                    <label htmlFor="email">{t('contact.label_email')}</label>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        value={form.email}
-                                        onChange={handleChange('email')}
-                                        placeholder={t('contact.placeholder_email')}
-                                    />
-                                    {errors.email && <span className="field-error">{errors.email}</span>}
-                                </div>
-
-                                <div className="form-field">
                                     <label htmlFor="mesaj">{t('contact.label_mesaj')}</label>
                                     <textarea
                                         id="mesaj"
                                         rows={5}
-                                        value={form.mesaj}
-                                        onChange={handleChange('mesaj')}
+                                        value={mesaj}
+                                        onChange={handleChange}
                                         placeholder={t('contact.placeholder_mesaj')}
                                     />
-                                    {errors.mesaj && <span className="field-error">{errors.mesaj}</span>}
+                                    {error && <span className="field-error">{error}</span>}
                                 </div>
 
-                                <button type="submit" className="btn btn-primary btn-lg">
+                                <button type="submit" className="btn btn-primary btn-lg" disabled={submitting}>
                                     {t('contact.submit')}
                                 </button>
                             </form>
