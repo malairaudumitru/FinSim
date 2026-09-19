@@ -14,6 +14,7 @@ import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
+import { difficultyLabel } from '../../shared/labels/labels'
 import './ScenarioPlayPage.css'
 
 type Stage = 'intro' | 'playing' | 'result'
@@ -80,7 +81,7 @@ function AllocationStep({
                 <div className="allocation-row" key={cat.id}>
                     <div className="allocation-row-header">
                         <span>{cat.eticheta}</span>
-                        <span className="figure">{values[cat.id]} lei</span>
+                        <span className="figure">{values[cat.id]} {t('common.currency')}</span>
                     </div>
                     <input
                         type="range"
@@ -95,7 +96,7 @@ function AllocationStep({
             ))}
             <div className={`allocation-remaining ${remaining < 0 ? 'negative' : ''}`}>
                 <span>{t('scenarioPlay.remainingForVariable')}</span>
-                <span className="figure">{remaining} lei</span>
+                <span className="figure">{remaining} {t('common.currency')}</span>
             </div>
             <button type="button" className="btn btn-primary btn-lg" onClick={confirm} disabled={!isValid}>
                 {t('scenarioPlay.buttons.confirmAllocation')}
@@ -154,7 +155,7 @@ function MultiSelectStep({
                         onChange={() => toggle(item.id)}
                     />
                     <span className="multiselect-label">{item.eticheta}</span>
-                    <span className="figure positive">+{item.bani} lei</span>
+                    <span className="figure positive">+{item.bani} {t('common.currency')}</span>
                 </label>
             ))}
             <button type="button" className="btn btn-primary btn-lg" onClick={confirm}>
@@ -211,7 +212,7 @@ function TimePressureStep({
                     >
                         <span>{opt.eticheta}</span>
                         <span className={`figure ${opt.bani < 0 ? 'negative' : opt.bani > 0 ? 'positive' : ''}`}>
-                            {opt.bani === 0 ? '0 lei' : `${opt.bani > 0 ? '+' : ''}${opt.bani} lei`}
+                            {opt.bani === 0 ? `0 ${t('common.currency')}` : `${opt.bani > 0 ? '+' : ''}${opt.bani} ${t('common.currency')}`}
                         </span>
                     </button>
                 ))}
@@ -255,11 +256,11 @@ function OfferComparisonStep({
                     </div>
                     <div className="offer-row">
                         <span>{t('scenarioPlay.offer.monthlyRate')}</span>
-                        <span className="figure">{oferta.rataLunara} lei</span>
+                        <span className="figure">{oferta.rataLunara} {t('common.currency')}</span>
                     </div>
                     <div className="offer-row offer-total">
                         <span>{t('scenarioPlay.offer.totalCost')}</span>
-                        <span className="figure">{oferta.costTotal} lei</span>
+                        <span className="figure">{oferta.costTotal} {t('common.currency')}</span>
                     </div>
                 </button>
             ))}
@@ -425,7 +426,7 @@ function ScenarioPlayPage() {
     if (scenario.necesitaCont && !isLoggedIn) {
         return (
             <div className="scenario-missing">
-                <span className="scenario-difficulty">{scenario.dificultate}</span>
+                <span className="scenario-difficulty">{difficultyLabel(t, scenario.dificultate)}</span>
                 <h1>{scenario.nume}</h1>
                 <p>{t('scenarioPlay.accountRequired')}</p>
                 <div className="scenario-locked-actions">
@@ -481,12 +482,12 @@ function ScenarioPlayPage() {
             <div className="scenario-play">
                 <section className="scenario-intro">
                     <div className="container">
-                        <span className="scenario-difficulty">{scenario.dificultate}</span>
+                        <span className="scenario-difficulty">{difficultyLabel(t, scenario.dificultate)}</span>
                         <h1>{scenario.nume}</h1>
                         <p className="scenario-intro-desc">{scenario.descriere}</p>
                         <div className="scenario-intro-balance">
                             <span>{t('scenarioPlay.startingBalance')}</span>
-                            <span className="figure">{scenario.soldInitial} lei</span>
+                            <span className="figure">{scenario.soldInitial} {t('common.currency')}</span>
                         </div>
                         <button type="button" className="btn btn-primary btn-lg" onClick={startScenario}>
                             {t('scenarioPlay.buttons.start')}
@@ -532,7 +533,7 @@ function ScenarioPlayPage() {
                                         }`}
                                     >
                                         {lastChoice.bani > 0 ? '+' : ''}
-                                        {lastChoice.bani} lei
+                                        {lastChoice.bani} {t('common.currency')}
                                     </span>
                                 )}
                             </span>
@@ -615,7 +616,7 @@ function ScenarioPlayPage() {
                                                             <span
                                                                 className={`figure ${opt.bani < 0 ? 'negative' : opt.bani > 0 ? 'positive' : ''}`}
                                                             >
-                                                                {opt.bani === 0 ? '0 lei' : `${opt.bani > 0 ? '+' : ''}${opt.bani} lei`}
+                                                                {opt.bani === 0 ? `0 ${t('common.currency')}` : `${opt.bani > 0 ? '+' : ''}${opt.bani} ${t('common.currency')}`}
                                                             </span>
                                                         )}
                                                     </button>
@@ -659,9 +660,15 @@ function ScenarioPlayPage() {
                         <p className="scenario-result-scor-credit figure">{t('scenarioPlay.finalCreditScore', { value: scorCredit })}</p>
                     )}
                     <div className="scenario-result-actions">
-                        <Link to="/profile" className="btn btn-primary">
-                            {t('scenarioPlay.buttons.viewProfile')}
-                        </Link>
+                        {isLoggedIn ? (
+                            <Link to="/profile" className="btn btn-primary">
+                                {t('scenarioPlay.buttons.viewProfile')}
+                            </Link>
+                        ) : (
+                            <Link to="/login" className="btn btn-primary">
+                                {t('scenarioPlay.buttons.loginToSave')}
+                            </Link>
+                        )}
                         <Link to="/scenarios" className="btn btn-ghost">
                             {t('scenarioPlay.buttons.otherScenarios')}
                         </Link>

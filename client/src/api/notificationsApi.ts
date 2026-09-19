@@ -14,6 +14,7 @@ export interface NotificationInfoDto {
     createdAt: string
     isRead: boolean
     userId: number
+    contactMessageId: number | null
     isDeleted: boolean
 }
 

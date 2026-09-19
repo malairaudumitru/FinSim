@@ -32,6 +32,14 @@ public class ContactMessageLogic : ContactMessageAction, IContactMessageLogic
         return ActionResponse.Ok(data: result);
     }
 
+    public async Task<ActionResponse> GetOwnContactMessageAsync(int id, int userId)
+    {
+        var result = await GetOwnContactMessageActionAsync(id, userId);
+        if (result == null)
+            return ActionResponse.NotFound("Contact message not found");
+        return ActionResponse.Ok(data: result);
+    }
+
     public async Task<ActionResponse> ReplyToContactMessageAsync(int id, ContactMessageReplyDto data)
     {
         var result = await ReplyToContactMessageActionAsync(id, data);

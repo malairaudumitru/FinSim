@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useResources } from '../../shared/ResourcesContext/ResourcesContext'
 import { resolveFileUrl } from '../../shared/resolveFileUrl'
+import { themeLabel } from '../../shared/labels/labels'
 import '../../shared/ContentPage/ContentPage.css'
 import './ResourcesPage.css'
 
@@ -37,7 +38,7 @@ function ResourcesPage() {
                                         allowFullScreen
                                     />
                                 </div>
-                                <span className="resource-tag">{v.tema}</span>
+                                <span className="resource-tag">{themeLabel(t, v.tema)}</span>
                                 <h3>{v.titlu}</h3>
                                 <p className="resource-source">{v.sursa}</p>
                             </div>
@@ -56,7 +57,7 @@ function ResourcesPage() {
                         {pdfs.map((p) => (
                             <div className="resource-pdf-row" key={p.id}>
                                 <div className="resource-pdf-info">
-                                    <span className="resource-tag">{p.tema}</span>
+                                    <span className="resource-tag">{themeLabel(t, p.tema)}</span>
                                     <h3>{p.titlu}</h3>
                                     <p>{p.descriere}</p>
                                 </div>

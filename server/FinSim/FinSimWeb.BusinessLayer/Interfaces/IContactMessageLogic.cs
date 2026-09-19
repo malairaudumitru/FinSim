@@ -8,6 +8,7 @@ public interface IContactMessageLogic
     Task<ActionResponse> CreateContactMessageAsync(int userId, ContactMessageCreateDto data);
     Task<ActionResponse> GetContactMessageListAsync();
     Task<ActionResponse> GetContactMessageByIdAsync(int id);
+    Task<ActionResponse> GetOwnContactMessageAsync(int id, int userId);
     Task<ActionResponse> ReplyToContactMessageAsync(int id, ContactMessageReplyDto data);
     Task<ActionResponse> DeleteContactMessageAsync(int id);
 }

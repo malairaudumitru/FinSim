@@ -6,6 +6,8 @@ import { reportIfServerError, reportingCall } from '../reportServerError'
 import * as notificationsApi from '../../api/notificationsApi'
 import { toNotificationItem } from '../notifications/notificationMapper'
 
+const NOTIFICATIONS_POLL_MS = 15000
+
 export function NotificationsProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
     const { showError } = useErrorModal()
@@ -40,6 +42,30 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
             .then((list) => setNotifications(list.map((dto) => toNotificationItem(dto, email))))
             .finally(() => setLoading(false))
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id, user?.email])
+
+    useEffect(() => {
+        const userId = user?.id
+        if (userId === undefined) return
+        const email = user?.email ?? ''
+
+        // Silent poll: a transient failure keeps the current list instead of wiping it.
+        const poll = () => {
+            if (document.visibilityState !== 'visible') return
+            notificationsApi
+                .getNotificationByUserId(userId)
+                .then((list) => setNotifications(list.map((dto) => toNotificationItem(dto, email))))
+                .catch(() => {})
+        }
+
+        const interval = window.setInterval(poll, NOTIFICATIONS_POLL_MS)
+        document.addEventListener('visibilitychange', poll)
+        window.addEventListener('focus', poll)
+        return () => {
+            window.clearInterval(interval)
+            document.removeEventListener('visibilitychange', poll)
+            window.removeEventListener('focus', poll)
+        }
     }, [user?.id, user?.email])
 
     const unreadCount = useMemo(() => notifications.filter((n) => !n.citit).length, [notifications])

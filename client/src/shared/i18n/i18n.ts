@@ -26,4 +26,12 @@ i18n
         interpolation: { escapeValue: false },
     })
 
+function applyDocumentLanguage() {
+    document.documentElement.lang = i18n.resolvedLanguage ?? 'ro'
+    document.title = i18n.t('common.page_title')
+}
+
+applyDocumentLanguage()
+i18n.on('languageChanged', applyDocumentLanguage)
+
 export default i18n

@@ -182,7 +182,7 @@ function ScenariosSection() {
                             <tr key={s.slug}>
                                 <td>{s.nume}</td>
                                 <td><span className="admin-badge admin-badge-gray admin-badge-wide">{s.dificultate}</span></td>
-                                <td>{s.soldInitial.toLocaleString(LOCALE_MAP[i18n.language] ?? 'ro-RO')} lei</td>
+                                <td>{s.soldInitial.toLocaleString(LOCALE_MAP[i18n.language] ?? 'ro-RO')} {t('common.currency')}</td>
                                 <td className="admin-cell-muted">{s.necesitaCont ? t('admin.scenarios.yes') : t('admin.scenarios.no')}</td>
                                 <td className="admin-cell-muted">{s.pasi.length}</td>
                                 <td>

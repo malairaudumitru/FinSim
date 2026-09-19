@@ -21,6 +21,8 @@ public class NotificationEntity
     [Required]
     public int UserId { get; set; }
 
+    public int? ContactMessageId { get; set; }
+
     public bool IsDeleted { get; set; } = false;
 
     public UserEntity? User { get; set; }

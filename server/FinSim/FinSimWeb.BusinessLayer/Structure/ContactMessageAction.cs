@@ -67,6 +67,13 @@ public class ContactMessageAction
         return MapToInfoDto(contactMessageEntity);
     }
 
+    protected async Task<ContactMessageInfoDto?> GetOwnContactMessageActionAsync(int id, int userId)
+    {
+        var contactMessageEntity = await _context.ContactMessages
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId && x.IsDeleted == false);
+        return contactMessageEntity == null ? null : MapToInfoDto(contactMessageEntity);
+    }
+
     protected async Task<bool> ReplyToContactMessageActionAsync(int id, ContactMessageReplyDto data)
     {
         var contactMessageEntity = await _context.ContactMessages.FirstOrDefaultAsync(x => x.Id == id);
@@ -82,7 +89,7 @@ public class ContactMessageAction
             _context.ContactMessages.Update(contactMessageEntity);
             await _context.SaveChangesAsync();
 
-            await NotifyUserOfReplyAsync(contactMessageEntity.UserId);
+            await NotifyUserOfReplyAsync(contactMessageEntity.UserId, contactMessageEntity.Id);
 
             return true;
         }
@@ -92,13 +99,14 @@ public class ContactMessageAction
         }
     }
 
-    private async Task NotifyUserOfReplyAsync(int userId)
+    private async Task NotifyUserOfReplyAsync(int userId, int contactMessageId)
     {
         _context.Add(new NotificationEntity
         {
             Type = NotificationType.Account,
             Message = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
-            UserId = userId
+            UserId = userId,
+            ContactMessageId = contactMessageId
         });
         await _context.SaveChangesAsync();
     }

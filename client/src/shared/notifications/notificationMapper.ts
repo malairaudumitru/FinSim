@@ -30,5 +30,6 @@ export function toNotificationItem(dto: NotificationInfoDto, email: string): Not
         data: formatDate(dto.createdAt),
         citit: dto.isRead,
         email,
+        contactMessageId: dto.contactMessageId ?? undefined,
     }
 }

@@ -69,7 +69,7 @@ function ContactPage() {
                         </div>
                         <div className="contact-info-item">
                             <span className="contact-info-label">{t('contact.label_location')}</span>
-                            <span>Chișinău, Moldova</span>
+                            <span>{t('common.address')}</span>
                         </div>
                         <div className="contact-info-item">
                             <span className="contact-info-label">{t('contact.label_response_time')}</span>

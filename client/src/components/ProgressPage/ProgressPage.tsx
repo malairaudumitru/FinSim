@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import AnimatedNumber from '../../shared/AnimatedNumber/AnimatedNumber'
+import { difficultyLabel } from '../../shared/labels/labels'
 import '../../shared/ContentPage/ContentPage.css'
 import './ProgressPage.css'
 
@@ -195,7 +196,7 @@ function ProgressPage() {
                                 <div className="progress-breakdown-info">
                                     <h3>{s.nume}</h3>
                                     <span className="progress-breakdown-meta">
-                                        {s.dificultate} · {t('progress.games_count', { count: s.jucat })}
+                                        {difficultyLabel(t, s.dificultate)} · {t('progress.games_count', { count: s.jucat })}
                                     </span>
                                 </div>
                                 <div className="progress-breakdown-bar-wrap">

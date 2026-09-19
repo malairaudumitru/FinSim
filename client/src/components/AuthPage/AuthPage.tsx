@@ -12,6 +12,7 @@ import { isValidBirthDate, daysInMonth, VARSTA_MINIMA, VARSTA_MAXIMA } from '../
 import * as authApi from '../../api/authApi'
 import { setTokens } from '../../api/tokenStorage'
 import { normalizeApiError } from '../../api/apiClient'
+import { apiErrorMessage } from '../../shared/apiErrorMessage'
 import './AuthPage.css'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -146,7 +147,7 @@ function AuthPage() {
             } else if (normalized.kind === 'network') {
                 setResendError(t('auth.error_network'))
             } else {
-                setResendError(normalized.message ?? t('auth.error_resend_generic'))
+                setResendError(apiErrorMessage(normalized, t) ?? t('auth.error_resend_generic'))
             }
         }
     }
@@ -302,7 +303,7 @@ function AuthPage() {
                 } else if (normalized.kind === 'network') {
                     setFormError(t('auth.error_network'))
                 } else {
-                    setFormError(normalized.message ?? t('auth.error_login_generic'))
+                    setFormError(apiErrorMessage(normalized, t) ?? t('auth.error_login_generic'))
                 }
             } finally {
                 setIsSubmitting(false)
@@ -333,7 +334,7 @@ function AuthPage() {
                     } else if (normalized.kind === 'network') {
                         setFormError(t('auth.error_network'))
                     } else {
-                        setFormError(normalized.message ?? t('auth.error_register_generic'))
+                        setFormError(apiErrorMessage(normalized, t) ?? t('auth.error_register_generic'))
                     }
                 } finally {
                     setIsSubmitting(false)
@@ -372,7 +373,7 @@ function AuthPage() {
                     } else if (normalized.kind === 'network') {
                         setFormError(t('auth.error_network'))
                     } else {
-                        setCodeError(normalized.message ?? t('auth.error_code_generic'))
+                        setCodeError(apiErrorMessage(normalized, t) ?? t('auth.error_code_generic'))
                     }
                 } finally {
                     setIsSubmitting(false)
@@ -398,7 +399,7 @@ function AuthPage() {
                     } else if (normalized.kind === 'network') {
                         setFormError(t('auth.error_network'))
                     } else {
-                        setFormError(normalized.message ?? t('auth.error_forgot_generic'))
+                        setFormError(apiErrorMessage(normalized, t) ?? t('auth.error_forgot_generic'))
                     }
                 } finally {
                     setIsSubmitting(false)
@@ -421,7 +422,7 @@ function AuthPage() {
                     } else if (normalized.kind === 'network') {
                         setFormError(t('auth.error_network'))
                     } else {
-                        setCodeError(normalized.message ?? t('auth.error_code_invalid_or_expired'))
+                        setCodeError(apiErrorMessage(normalized, t) ?? t('auth.error_code_invalid_or_expired'))
                     }
                 } finally {
                     setIsSubmitting(false)
@@ -445,9 +446,9 @@ function AuthPage() {
                         setFormError(t('auth.error_network'))
                     } else if (normalized.kind === 'validation') {
                         setStep('code')
-                        setCodeError(normalized.message ?? t('auth.error_code_invalid_or_expired'))
+                        setCodeError(apiErrorMessage(normalized, t) ?? t('auth.error_code_invalid_or_expired'))
                     } else {
-                        setFormError(normalized.message ?? t('auth.error_reset_generic'))
+                        setFormError(apiErrorMessage(normalized, t) ?? t('auth.error_reset_generic'))
                     }
                 } finally {
                     setIsSubmitting(false)

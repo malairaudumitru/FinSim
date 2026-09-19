@@ -167,6 +167,7 @@ public class NotificationAction
         CreatedAt = notificationEntity.CreatedAt,
         IsRead = notificationEntity.IsRead,
         UserId = notificationEntity.UserId,
+        ContactMessageId = notificationEntity.ContactMessageId,
         IsDeleted = notificationEntity.IsDeleted
     };
 }

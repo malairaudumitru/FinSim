@@ -9,6 +9,7 @@ export interface NotificationItem {
     data: string
     citit: boolean
     email: string
+    contactMessageId?: number
 }
 
 export interface NotificationsContextValue {

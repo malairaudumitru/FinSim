@@ -41,6 +41,19 @@ public class ContactMessageController : ControllerBase
         return Ok(result.Data);
     }
 
+    [HttpGet("mine/{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetOwnContactMessage([FromRoute] int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var result = await _contactMessageLogic.GetOwnContactMessageAsync(id, userId);
+        if (result.IsSuccess == false)
+            return StatusCode((int)result.StatusCode, result.Message);
+
+        return Ok(result.Data);
+    }
+
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetContactMessageById([FromRoute] int id)

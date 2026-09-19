@@ -29,6 +29,10 @@ export function getMessageById(id: number): Promise<ContactMessageInfoDto> {
     return api.get<ContactMessageInfoDto>(`/messages/${id}`)
 }
 
+export function getOwnMessage(id: number): Promise<ContactMessageInfoDto> {
+    return api.get<ContactMessageInfoDto>(`/messages/mine/${id}`)
+}
+
 export function createMessage(data: ContactMessageCreateDto): Promise<string> {
     return api.post<string>('/messages/create', data)
 }

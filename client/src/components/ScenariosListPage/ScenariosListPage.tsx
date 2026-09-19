@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next'
 import { useScenarios } from '../../shared/ScenariosContext/ScenariosContext'
 import { useAuth } from '../../shared/AuthContext/AuthContext'
+import { difficultyLabel } from '../../shared/labels/labels'
 import '../../shared/ContentPage/ContentPage.css'
 import './ScenariosListPage.css'
 
@@ -31,7 +32,7 @@ function ScenariosListPage() {
                                     <p>{s.descriere}</p>
                                 </div>
                                 <span className="scenario-tag">
-                                    {s.dificultate}
+                                    {difficultyLabel(t, s.dificultate)}
                                     {s.necesitaCont && !isLoggedIn && (
                                         <span className="scenario-lock" title={t('scenariosList.requiresAccount')}>
                                             🔒

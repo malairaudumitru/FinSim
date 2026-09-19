@@ -21,6 +21,7 @@ import StarRating from '../../shared/StarRating/StarRating'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import { useRateLimit } from '../../shared/useRateLimit/useRateLimit'
 import { useResendCountdown } from '../../shared/useResendCountdown/useResendCountdown'
+import { apiErrorMessage } from '../../shared/apiErrorMessage'
 import './ProfilePage.css'
 
 interface UserInfo {
@@ -309,7 +310,7 @@ function ProfilePage() {
             } else if (normalized.kind === 'network') {
                 setConfirmCodeError(t('auth.error_network'))
             } else {
-                setConfirmCodeError(normalized.message ?? t('auth.error_resend_generic'))
+                setConfirmCodeError(apiErrorMessage(normalized, t) ?? t('auth.error_resend_generic'))
             }
         }
     }
@@ -387,7 +388,7 @@ function ProfilePage() {
                 } else if (normalized.kind === 'network') {
                     setPasswordErrors({ parolaCurenta: t('auth.error_network') })
                 } else {
-                    setPasswordErrors({ parolaCurenta: normalized.message ?? t('profile.error_current_password_wrong') })
+                    setPasswordErrors({ parolaCurenta: apiErrorMessage(normalized, t) ?? t('profile.error_current_password_wrong') })
                 }
             }
             return
@@ -410,7 +411,7 @@ function ProfilePage() {
                 } else if (normalized.kind === 'network') {
                     setConfirmCodeError(t('auth.error_network'))
                 } else {
-                    setConfirmCodeError(normalized.message ?? t('profile.error_confirm_code_invalid'))
+                    setConfirmCodeError(apiErrorMessage(normalized, t) ?? t('profile.error_confirm_code_invalid'))
                 }
             }
         }
