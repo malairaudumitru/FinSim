@@ -30,6 +30,10 @@ public class TokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    /// <summary>Refresh tokens are stored hashed, so a leaked database cannot be used to hijack sessions.</summary>
+    public static string HashRefreshToken(string token) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+
     public string GenerateRefreshToken()
     {
         var randomBytes = RandomNumberGenerator.GetBytes(64);

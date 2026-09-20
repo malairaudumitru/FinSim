@@ -110,6 +110,7 @@ export default {
         error_account_blocked: 'Acest cont a fost blocat de un administrator.',
         error_too_many_requests: 'Prea multe încercări. Te rugăm să încerci din nou peste puțin timp.',
         error_network: 'Nu am putut contacta serverul. Verifică-ți conexiunea și încearcă din nou.',
+        error_account_locked: 'Prea multe încercări greșite. Contul este blocat temporar, încearcă din nou peste 15 minute.',
         error_invalid_credentials: 'Email sau parolă incorectă.',
         error_email_in_use: 'Această adresă de email este deja folosită.',
         error_login_generic: 'Autentificarea a eșuat. Te rugăm să încerci din nou.',

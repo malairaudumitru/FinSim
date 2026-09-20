@@ -32,9 +32,11 @@ public class AuthLogic : AuthAction, IAuthLogic
     public async Task<ActionResponse> LoginAsync(UserLoginDto data)
     {
         var result = await LoginActionAsync(data);
-        if (result == null)
+        if (result.Status == LoginStatus.Locked)
+            return ActionResponse.BadRequest("Account temporarily locked");
+        if (result.Status != LoginStatus.Success)
             return ActionResponse.BadRequest("Invalid email or password");
-        return ActionResponse.Ok(data: result);
+        return ActionResponse.Ok(data: result.Auth);
     }
 
     public async Task<ActionResponse> RefreshAsync(RefreshTokenRequestDto data)

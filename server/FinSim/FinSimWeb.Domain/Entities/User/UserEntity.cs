@@ -42,6 +42,10 @@ public class UserEntity
 
     public bool IsDeleted { get; set; }
 
+    public int FailedLoginAttempts { get; set; }
+
+    public DateTime? LockoutEnd { get; set; }
+
     public ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = new List<RefreshTokenEntity>();
     public LeaderboardEntity? Leaderboard { get; set; }
     public ICollection<NotificationEntity> Notifications { get; set; } = new List<NotificationEntity>();

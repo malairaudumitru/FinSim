@@ -110,6 +110,7 @@ export default {
         error_account_blocked: 'This account has been blocked by an administrator.',
         error_too_many_requests: 'Too many attempts. Please try again in a little while.',
         error_network: 'We could not reach the server. Check your connection and try again.',
+        error_account_locked: 'Too many failed attempts. Your account is temporarily locked, try again in 15 minutes.',
         error_invalid_credentials: 'Invalid email or password.',
         error_email_in_use: 'This email address is already in use.',
         error_login_generic: 'Login failed. Please try again.',

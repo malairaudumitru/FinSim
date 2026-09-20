@@ -18,6 +18,8 @@ public class AuthAction
 
     private const int CodeExpiryMinutes = 5;
     private const int MaxCodeAttempts = 5;
+    private const int MaxLoginAttempts = 5;
+    private const int LoginLockoutMinutes = 15;
 
     public AuthAction(AppDbContext context)
     {
@@ -95,22 +97,42 @@ public class AuthAction
         }
     }
 
-    protected async Task<AuthResponseDto?> LoginActionAsync(UserLoginDto data)
+    protected async Task<LoginOutcome> LoginActionAsync(UserLoginDto data)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
 
         if (user == null || user.Status == UserStatus.Blocked)
-            return null;
+            return new LoginOutcome(LoginStatus.InvalidCredentials);
+
+        // While locked, even the correct password is refused, so guessing gains nothing.
+        if (user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow)
+            return new LoginOutcome(LoginStatus.Locked);
 
         if (!PasswordHasher.Verify(data.Password, user.Password))
-            return null;
+        {
+            user.FailedLoginAttempts++;
+            var locked = user.FailedLoginAttempts >= MaxLoginAttempts;
+            if (locked)
+            {
+                user.LockoutEnd = DateTime.UtcNow.AddMinutes(LoginLockoutMinutes);
+                user.FailedLoginAttempts = 0;
+            }
 
-        return await GenerateAuthResponseAsync(user);
+            await _context.SaveChangesAsync();
+            return new LoginOutcome(locked ? LoginStatus.Locked : LoginStatus.InvalidCredentials);
+        }
+
+        // Saved together with the new refresh token in GenerateAuthResponseAsync.
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
+
+        return new LoginOutcome(LoginStatus.Success, await GenerateAuthResponseAsync(user));
     }
 
     protected async Task<AuthResponseDto?> RefreshActionAsync(string refreshToken)
     {
-        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
+        var tokenHash = TokenService.HashRefreshToken(refreshToken);
+        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == tokenHash);
 
         if (storedToken == null || storedToken.RevokedAt != null || storedToken.ExpiresAt < DateTime.UtcNow)
             return null;
@@ -182,6 +204,8 @@ public class AuthAction
             return CodeResult.Invalid;
 
         user.Password = verification.PendingPasswordHash;
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
 
         try
         {
@@ -258,6 +282,8 @@ public class AuthAction
             return check;
 
         user.Password = PasswordHasher.Hash(data.NewPassword);
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
 
         try
         {
@@ -275,7 +301,8 @@ public class AuthAction
 
     protected async Task<bool> LogoutActionAsync(string refreshToken)
     {
-        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
+        var tokenHash = TokenService.HashRefreshToken(refreshToken);
+        var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == tokenHash);
         if (storedToken == null || storedToken.RevokedAt != null)
             return false;
 
@@ -293,7 +320,7 @@ public class AuthAction
         _context.Add(new RefreshTokenEntity
         {
             UserId = user.Id,
-            Token = refreshTokenValue,
+            Token = TokenService.HashRefreshToken(refreshTokenValue),
             ExpiresAt = DateTime.UtcNow.AddDays(JwtSettings.RefreshTokenExpireDays)
         });
         await _context.SaveChangesAsync();
