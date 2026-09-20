@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinSim.Domain.Entities.Auth;
 
-public class PendingRegistrationEntity
+public class PendingRegistrationEntity : ICodeChallenge
 {
     public int Id { get; set; }
 
@@ -29,6 +29,8 @@ public class PendingRegistrationEntity
     public string Code { get; set; } = string.Empty;
 
     public DateTime ExpiresAt { get; set; }
+
+    public int Attempts { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

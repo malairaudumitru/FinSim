@@ -3,7 +3,7 @@ using FinSim.Domain.Entities.User;
 
 namespace FinSim.Domain.Entities.Auth;
 
-public class VerificationCodeEntity
+public class VerificationCodeEntity : ICodeChallenge
 {
     public int Id { get; set; }
 
@@ -21,6 +21,8 @@ public class VerificationCodeEntity
     public string? PendingPasswordHash { get; set; }
 
     public DateTime ExpiresAt { get; set; }
+
+    public int Attempts { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

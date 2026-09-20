@@ -117,6 +117,7 @@ export default {
         error_code_generic: 'We could not confirm the code. Please try again.',
         error_forgot_generic: 'We could not send the request. Please try again.',
         error_reset_generic: 'We could not reset your password. Please try again.',
+        error_code_too_many_attempts: 'You entered the wrong code 5 times. Please request a new code.',
         error_code_invalid_or_expired: 'The code is wrong or has expired. Please enter the correct code or request a new one.',
         error_resend_generic: 'We could not resend the code. Please try again.',
         error_email_taken: 'An account with this email already exists.',

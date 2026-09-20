@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 using FinSim.BusinessLayer.Core;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Auth;
@@ -16,6 +17,7 @@ public class AuthAction
     private readonly EmailSender _emailSender = new();
 
     private const int CodeExpiryMinutes = 5;
+    private const int MaxCodeAttempts = 5;
 
     public AuthAction(AppDbContext context)
     {
@@ -59,11 +61,15 @@ public class AuthAction
         }
     }
 
-    protected async Task<bool> ConfirmRegisterActionAsync(RegisterConfirmDto data)
+    protected async Task<CodeResult> ConfirmRegisterActionAsync(RegisterConfirmDto data)
     {
         var pending = await _context.PendingRegistrations.FirstOrDefaultAsync(p => p.Email == data.Email);
-        if (pending == null || pending.Code != data.Code || pending.ExpiresAt < DateTime.UtcNow)
-            return false;
+        if (pending == null)
+            return CodeResult.Invalid;
+
+        var check = await ValidateCodeAsync(pending, data.Code);
+        if (check != CodeResult.Ok)
+            return check;
 
         var userEntity = new UserEntity
         {
@@ -81,11 +87,11 @@ public class AuthAction
             _context.Add(userEntity);
             _context.PendingRegistrations.Remove(pending);
             await _context.SaveChangesAsync();
-            return true;
+            return CodeResult.Ok;
         }
         catch (Exception)
         {
-            return false;
+            return CodeResult.Invalid;
         }
     }
 
@@ -159,17 +165,21 @@ public class AuthAction
         }
     }
 
-    protected async Task<bool> ConfirmChangePasswordActionAsync(int userId, ConfirmCodeDto data)
+    protected async Task<CodeResult> ConfirmChangePasswordActionAsync(int userId, ConfirmCodeDto data)
     {
         var verification = await _context.VerificationCodes.FirstOrDefaultAsync(v =>
             v.UserId == userId && v.Purpose == VerificationPurpose.ChangePassword);
 
-        if (verification == null || verification.Code != data.Code || verification.ExpiresAt < DateTime.UtcNow)
-            return false;
+        if (verification == null)
+            return CodeResult.Invalid;
+
+        var check = await ValidateCodeAsync(verification, data.Code);
+        if (check != CodeResult.Ok)
+            return check;
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false);
         if (user == null || verification.PendingPasswordHash == null)
-            return false;
+            return CodeResult.Invalid;
 
         user.Password = verification.PendingPasswordHash;
 
@@ -178,11 +188,11 @@ public class AuthAction
             _context.Users.Update(user);
             _context.VerificationCodes.Remove(verification);
             await _context.SaveChangesAsync();
-            return true;
+            return CodeResult.Ok;
         }
         catch (Exception)
         {
-            return false;
+            return CodeResult.Invalid;
         }
     }
 
@@ -211,32 +221,40 @@ public class AuthAction
             "Foloseste codul de mai jos ca sa iti resetezi parola contului FinSim.", code);
     }
 
-    protected async Task<bool> VerifyResetCodeActionAsync(VerifyResetCodeDto data)
+    protected async Task<CodeResult> VerifyResetCodeActionAsync(VerifyResetCodeDto data)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
         if (user == null)
-            return false;
+            return CodeResult.Invalid;
 
         var verification = await _context.VerificationCodes.FirstOrDefaultAsync(v =>
             v.UserId == user.Id && v.Purpose == VerificationPurpose.PasswordReset);
 
-        if (verification == null || verification.Code != data.Code || verification.ExpiresAt < DateTime.UtcNow)
-            return false;
+        if (verification == null)
+            return CodeResult.Invalid;
 
-        return true;
+        var check = await ValidateCodeAsync(verification, data.Code);
+        if (check != CodeResult.Ok)
+            return check;
+
+        return CodeResult.Ok;
     }
 
-    protected async Task<bool> ResetPasswordActionAsync(ResetPasswordDto data)
+    protected async Task<CodeResult> ResetPasswordActionAsync(ResetPasswordDto data)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == data.Email && u.IsDeleted == false);
         if (user == null)
-            return false;
+            return CodeResult.Invalid;
 
         var verification = await _context.VerificationCodes.FirstOrDefaultAsync(v =>
             v.UserId == user.Id && v.Purpose == VerificationPurpose.PasswordReset);
 
-        if (verification == null || verification.Code != data.Code || verification.ExpiresAt < DateTime.UtcNow)
-            return false;
+        if (verification == null)
+            return CodeResult.Invalid;
+
+        var check = await ValidateCodeAsync(verification, data.Code);
+        if (check != CodeResult.Ok)
+            return check;
 
         user.Password = PasswordHasher.Hash(data.NewPassword);
 
@@ -245,11 +263,11 @@ public class AuthAction
             _context.Users.Update(user);
             _context.VerificationCodes.Remove(verification);
             await _context.SaveChangesAsync();
-            return true;
+            return CodeResult.Ok;
         }
         catch (Exception)
         {
-            return false;
+            return CodeResult.Invalid;
         }
     }
 
@@ -289,6 +307,31 @@ public class AuthAction
     {
         var html = EmailTemplates.BuildVerificationCodeEmail(heading, introText, code, CodeExpiryMinutes);
         await _emailSender.SendAsync(email, "Codul tau FinSim", html);
+    }
+
+    /// <summary>
+    /// Checks a submitted code. A wrong code counts as an attempt; after <see cref="MaxCodeAttempts"/>
+    /// misses the code is locked (even the right code is refused) until a new one is requested,
+    /// so a 6-digit code cannot be brute-forced within its lifetime.
+    /// </summary>
+    private async Task<CodeResult> ValidateCodeAsync(ICodeChallenge challenge, string submittedCode)
+    {
+        if (challenge.ExpiresAt < DateTime.UtcNow)
+            return CodeResult.Invalid;
+
+        if (challenge.Attempts >= MaxCodeAttempts)
+            return CodeResult.TooManyAttempts;
+
+        var matches = CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(challenge.Code),
+            Encoding.UTF8.GetBytes(submittedCode ?? string.Empty));
+        if (matches)
+            return CodeResult.Ok;
+
+        challenge.Attempts++;
+        await _context.SaveChangesAsync();
+
+        return challenge.Attempts >= MaxCodeAttempts ? CodeResult.TooManyAttempts : CodeResult.Invalid;
     }
 
     private static string GenerateCode() => RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");

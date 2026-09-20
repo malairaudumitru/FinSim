@@ -117,6 +117,7 @@ export default {
         error_code_generic: 'Nu am putut confirma codul. Te rugăm să încerci din nou.',
         error_forgot_generic: 'Nu am putut trimite cererea. Te rugăm să încerci din nou.',
         error_reset_generic: 'Nu am putut reseta parola. Te rugăm să încerci din nou.',
+        error_code_too_many_attempts: 'Ai introdus codul greșit de 5 ori. Cere un cod nou.',
         error_code_invalid_or_expired: 'Codul este greșit sau a expirat. Te rugăm să introduci codul corect sau să retrimiți unul nou.',
         error_resend_generic: 'Nu am putut retrimite codul. Te rugăm să încerci din nou.',
         error_email_taken: 'Există deja un cont înregistrat cu acest email.',

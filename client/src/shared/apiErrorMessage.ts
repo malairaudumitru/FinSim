@@ -7,6 +7,7 @@ const BACKEND_MESSAGE_KEYS: Record<string, string> = {
     'Invalid email or password': 'auth.error_invalid_credentials',
     'Email already in use': 'auth.error_email_in_use',
     'Cod invalid sau expirat': 'auth.error_code_invalid_or_expired',
+    'Too many attempts': 'auth.error_code_too_many_attempts',
     'Current password is incorrect': 'profile.error_current_password_wrong',
 }
 

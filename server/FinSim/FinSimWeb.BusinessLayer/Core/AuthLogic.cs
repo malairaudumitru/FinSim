@@ -22,7 +22,9 @@ public class AuthLogic : AuthAction, IAuthLogic
     public async Task<ActionResponse> ConfirmRegisterAsync(RegisterConfirmDto data)
     {
         var result = await ConfirmRegisterActionAsync(data);
-        if (result == false)
+        if (result == CodeResult.TooManyAttempts)
+            return ActionResponse.BadRequest("Too many attempts");
+        if (result != CodeResult.Ok)
             return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Registered successfully");
     }
@@ -62,7 +64,9 @@ public class AuthLogic : AuthAction, IAuthLogic
     public async Task<ActionResponse> ConfirmChangePasswordAsync(int userId, ConfirmCodeDto data)
     {
         var result = await ConfirmChangePasswordActionAsync(userId, data);
-        if (result == false)
+        if (result == CodeResult.TooManyAttempts)
+            return ActionResponse.BadRequest("Too many attempts");
+        if (result != CodeResult.Ok)
             return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Password changed successfully");
     }
@@ -76,7 +80,9 @@ public class AuthLogic : AuthAction, IAuthLogic
     public async Task<ActionResponse> VerifyResetCodeAsync(VerifyResetCodeDto data)
     {
         var result = await VerifyResetCodeActionAsync(data);
-        if (result == false)
+        if (result == CodeResult.TooManyAttempts)
+            return ActionResponse.BadRequest("Too many attempts");
+        if (result != CodeResult.Ok)
             return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Cod valid");
     }
@@ -84,7 +90,9 @@ public class AuthLogic : AuthAction, IAuthLogic
     public async Task<ActionResponse> ResetPasswordAsync(ResetPasswordDto data)
     {
         var result = await ResetPasswordActionAsync(data);
-        if (result == false)
+        if (result == CodeResult.TooManyAttempts)
+            return ActionResponse.BadRequest("Too many attempts");
+        if (result != CodeResult.Ok)
             return ActionResponse.BadRequest("Cod invalid sau expirat");
         return ActionResponse.Ok("Parola a fost resetata cu succes");
     }
