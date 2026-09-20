@@ -96,6 +96,7 @@ public class UserAction
         userEntity.FirstName = data.FirstName;
         userEntity.Email = data.Email;
         userEntity.Role = data.Role;
+        var revokeSessions = data.Status == UserStatus.Blocked || !string.IsNullOrEmpty(data.Password);
         userEntity.Status = data.Status;
         userEntity.CompletedScenarios = data.CompletedScenarios;
         userEntity.TotalScore = data.TotalScore;
@@ -107,6 +108,8 @@ public class UserAction
         try
         {
             _context.Users.Update(userEntity);
+            if (revokeSessions)
+                await _context.RevokeAllRefreshTokensAsync(userEntity.Id);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -137,6 +140,8 @@ public class UserAction
         try
         {
             _context.Users.Update(userEntity);
+            if (!string.IsNullOrEmpty(data.Password))
+                await _context.RevokeAllRefreshTokensAsync(userEntity.Id);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -156,6 +161,7 @@ public class UserAction
         {
             userEntity.IsDeleted = true;
             _context.Users.Update(userEntity);
+            await _context.RevokeAllRefreshTokensAsync(userEntity.Id);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -176,6 +182,8 @@ public class UserAction
         try
         {
             _context.Users.Update(userEntity);
+            if (status == UserStatus.Blocked)
+                await _context.RevokeAllRefreshTokensAsync(userEntity.Id);
             await _context.SaveChangesAsync();
             return true;
         }

@@ -187,6 +187,7 @@ public class AuthAction
         {
             _context.Users.Update(user);
             _context.VerificationCodes.Remove(verification);
+            await _context.RevokeAllRefreshTokensAsync(user.Id);
             await _context.SaveChangesAsync();
             return CodeResult.Ok;
         }
@@ -262,6 +263,7 @@ public class AuthAction
         {
             _context.Users.Update(user);
             _context.VerificationCodes.Remove(verification);
+            await _context.RevokeAllRefreshTokensAsync(user.Id);
             await _context.SaveChangesAsync();
             return CodeResult.Ok;
         }
