@@ -1,4 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '../AuthContext/AuthContext'
 import { ScenariosContext, type ScenarioDef } from './ScenariosContext.ts'
 import { useErrorModal } from '../ErrorModalContext/ErrorModalContext'
 import { reportIfServerError, reportingCall } from '../reportServerError'
@@ -7,6 +9,8 @@ import { toScenarioCreateDto, toScenarioDef } from '../scenarios/scenarioMapper'
 
 export function ScenariosProvider({ children }: { children: ReactNode }) {
     const { showError } = useErrorModal()
+    const { i18n } = useTranslation()
+    const { user } = useAuth()
     const [scenarios, setScenarios] = useState<ScenarioDef[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -29,8 +33,10 @@ export function ScenariosProvider({ children }: { children: ReactNode }) {
                 setScenarios([])
             })
             .finally(() => setLoading(false))
+        // Re-fetch when the language changes (the API returns the requested language) and on login/logout
+        // (administrators also receive the steps in every language).
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [i18n.language, user?.id, user?.rol])
 
     const getBySlug = (slug: string) => scenarios.find((s) => s.slug === slug)
 

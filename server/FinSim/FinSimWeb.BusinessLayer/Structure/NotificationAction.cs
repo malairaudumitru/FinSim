@@ -1,5 +1,7 @@
+using FinSim.BusinessLayer.Core;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Notifications;
+using FinSim.Domain.Entities.User;
 using FinSim.Domain.Models.Notifications;
 using FinSim.Domain.Models.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -17,20 +19,34 @@ public class NotificationAction
 
     protected async Task<bool> CreateNotificationActionAsync(NotificationCreateDto data)
     {
-        var userId = await ResolveUserIdByEmailAsync(data.Email);
-        if (userId == null)
-            return false;
-
-        var notificationEntity = new NotificationEntity
+        List<int> recipientIds;
+        if (data.SendToAll)
         {
-            Type = data.Type,
-            Message = data.Message,
-            UserId = userId.Value
-        };
+            recipientIds = await _context.Users
+                .Where(u => u.IsDeleted == false && u.Status == UserStatus.Active)
+                .Select(u => u.Id)
+                .ToListAsync();
+        }
+        else
+        {
+            var userId = await ResolveUserIdByEmailAsync(data.Email ?? string.Empty);
+            recipientIds = userId == null ? [] : [userId.Value];
+        }
+
+        if (recipientIds.Count == 0)
+            return false;
 
         try
         {
-            _context.Add(notificationEntity);
+            // One notification per recipient, saved together so it is all-or-nothing.
+            _context.AddRange(recipientIds.Select(recipientId => new NotificationEntity
+            {
+                Type = data.Type,
+                MessageRo = data.MessageRo,
+                MessageEn = NullIfBlank(data.MessageEn),
+                MessageRu = NullIfBlank(data.MessageRu),
+                UserId = recipientId
+            }));
             await _context.SaveChangesAsync();
             return true;
         }
@@ -46,21 +62,21 @@ public class NotificationAction
         return user?.Id;
     }
 
-    protected async Task<List<NotificationInfoDto>> GetNotificationListActionAsync()
+    protected async Task<List<NotificationInfoDto>> GetNotificationListActionAsync(string language)
     {
         return await _context.Notifications
             .Where(x => x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
-            .Select(notificationEntity => MapToInfoDto(notificationEntity))
+            .Select(notificationEntity => MapToInfoDto(notificationEntity, language))
             .ToListAsync();
     }
 
-    protected async Task<List<NotificationInfoDto>> GetNotificationByUserIdActionAsync(int userId)
+    protected async Task<List<NotificationInfoDto>> GetNotificationByUserIdActionAsync(int userId, string language)
     {
         return await _context.Notifications
             .Where(x => x.UserId == userId && x.IsDeleted == false)
             .OrderByDescending(x => x.CreatedAt)
-            .Select(notificationEntity => MapToInfoDto(notificationEntity))
+            .Select(notificationEntity => MapToInfoDto(notificationEntity, language))
             .ToListAsync();
     }
 
@@ -70,12 +86,14 @@ public class NotificationAction
         if (notificationEntity == null || notificationEntity.IsDeleted)
             return false;
 
-        var userId = await ResolveUserIdByEmailAsync(data.Email);
+        var userId = await ResolveUserIdByEmailAsync(data.Email ?? string.Empty);
         if (userId == null)
             return false;
 
         notificationEntity.Type = data.Type;
-        notificationEntity.Message = data.Message;
+        notificationEntity.MessageRo = data.MessageRo;
+        notificationEntity.MessageEn = NullIfBlank(data.MessageEn);
+        notificationEntity.MessageRu = NullIfBlank(data.MessageRu);
         notificationEntity.UserId = userId.Value;
 
         try
@@ -159,11 +177,16 @@ public class NotificationAction
         }
     }
 
-    private static NotificationInfoDto MapToInfoDto(NotificationEntity notificationEntity) => new()
+    private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private static NotificationInfoDto MapToInfoDto(NotificationEntity notificationEntity, string language) => new()
     {
         Id = notificationEntity.Id,
         Type = notificationEntity.Type,
-        Message = notificationEntity.Message,
+        Message = AppLanguage.Pick(language, notificationEntity.MessageRo, notificationEntity.MessageEn, notificationEntity.MessageRu),
+        MessageRo = notificationEntity.MessageRo,
+        MessageEn = notificationEntity.MessageEn,
+        MessageRu = notificationEntity.MessageRu,
         CreatedAt = notificationEntity.CreatedAt,
         IsRead = notificationEntity.IsRead,
         UserId = notificationEntity.UserId,

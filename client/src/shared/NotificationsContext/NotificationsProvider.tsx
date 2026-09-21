@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NotificationsContext, type NotificationItem } from './NotificationsContext.ts'
 import { useAuth } from '../AuthContext/AuthContext'
 import { useErrorModal } from '../ErrorModalContext/ErrorModalContext'
@@ -11,6 +12,7 @@ const NOTIFICATIONS_POLL_MS = 15000
 export function NotificationsProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
     const { showError } = useErrorModal()
+    const { i18n } = useTranslation()
     const [notifications, setNotifications] = useState<NotificationItem[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -42,7 +44,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
             .then((list) => setNotifications(list.map((dto) => toNotificationItem(dto, email))))
             .finally(() => setLoading(false))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id, user?.email])
+    }, [user?.id, user?.email, i18n.language])
 
     useEffect(() => {
         const userId = user?.id

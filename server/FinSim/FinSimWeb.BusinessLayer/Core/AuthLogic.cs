@@ -11,9 +11,9 @@ public class AuthLogic : AuthAction, IAuthLogic
 {
     public AuthLogic(AppDbContext context) : base(context) { }
 
-    public async Task<ActionResponse> StartRegisterAsync(UserRegisterDto data)
+    public async Task<ActionResponse> StartRegisterAsync(UserRegisterDto data, string language)
     {
-        var result = await StartRegisterActionAsync(data);
+        var result = await StartRegisterActionAsync(data, language);
         if (result == false)
             return ActionResponse.BadRequest("Email already in use");
         return ActionResponse.Ok("Cod de confirmare trimis pe email");
@@ -55,9 +55,9 @@ public class AuthLogic : AuthAction, IAuthLogic
         return ActionResponse.Ok("Logged out successfully");
     }
 
-    public async Task<ActionResponse> StartChangePasswordAsync(int userId, ChangePasswordDto data)
+    public async Task<ActionResponse> StartChangePasswordAsync(int userId, ChangePasswordDto data, string language)
     {
-        var result = await StartChangePasswordActionAsync(userId, data);
+        var result = await StartChangePasswordActionAsync(userId, data, language);
         if (result == false)
             return ActionResponse.BadRequest("Current password is incorrect");
         return ActionResponse.Ok("Cod de confirmare trimis pe email");
@@ -73,9 +73,9 @@ public class AuthLogic : AuthAction, IAuthLogic
         return ActionResponse.Ok("Password changed successfully");
     }
 
-    public async Task<ActionResponse> ForgotPasswordAsync(ForgotPasswordDto data)
+    public async Task<ActionResponse> ForgotPasswordAsync(ForgotPasswordDto data, string language)
     {
-        await ForgotPasswordActionAsync(data.Email);
+        await ForgotPasswordActionAsync(data.Email, language);
         return ActionResponse.Ok("Daca adresa exista in sistem, vei primi un cod pe email");
     }
 

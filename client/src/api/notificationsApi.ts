@@ -11,6 +11,9 @@ export interface NotificationInfoDto {
     id: number
     type: NotificationType
     message: string
+    messageRo: string
+    messageEn: string | null
+    messageRu: string | null
     createdAt: string
     isRead: boolean
     userId: number
@@ -20,8 +23,12 @@ export interface NotificationInfoDto {
 
 export interface NotificationCreateDto {
     type: NotificationType
-    message: string
-    email: string
+    messageRo: string
+    messageEn: string | null
+    messageRu: string | null
+    /** Recipient account; null when the notification goes to every user. */
+    email: string | null
+    sendToAll?: boolean
 }
 
 export function getNotificationList(): Promise<NotificationInfoDto[]> {

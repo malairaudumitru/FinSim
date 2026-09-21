@@ -1,3 +1,4 @@
+using FinSim.BusinessLayer.Core;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Scenarios;
 using FinSim.Domain.Models.Responses;
@@ -24,8 +25,12 @@ public class ScenarioAction
         var scenarioEntity = new ScenarioEntity
         {
             Slug = data.Slug,
-            Name = data.Name,
-            Description = data.Description,
+            NameRo = data.NameRo,
+            NameEn = NullIfBlank(data.NameEn),
+            NameRu = NullIfBlank(data.NameRu),
+            DescriptionRo = data.DescriptionRo,
+            DescriptionEn = NullIfBlank(data.DescriptionEn),
+            DescriptionRu = NullIfBlank(data.DescriptionRu),
             Difficulty = data.Difficulty,
             InitialBalance = data.InitialBalance,
             RequiresAccount = data.RequiresAccount,
@@ -50,9 +55,9 @@ public class ScenarioAction
     {
         if (string.IsNullOrEmpty(data.Slug))
             return new ActionResponse { IsSuccess = false, Message = "Slug is empty" };
-        if (string.IsNullOrEmpty(data.Name))
+        if (string.IsNullOrEmpty(data.NameRo))
             return new ActionResponse { IsSuccess = false, Message = "Name is empty" };
-        if (string.IsNullOrEmpty(data.Description))
+        if (string.IsNullOrEmpty(data.DescriptionRo))
             return new ActionResponse { IsSuccess = false, Message = "Description is empty" };
 
         var duplicate = await _context.Scenarios.AnyAsync(s =>
@@ -63,21 +68,21 @@ public class ScenarioAction
         return new ActionResponse { IsSuccess = true };
     }
 
-    protected async Task<ScenarioInfoDto?> GetScenarioBySlugActionAsync(string slug)
+    protected async Task<ScenarioInfoDto?> GetScenarioBySlugActionAsync(string slug, string language, bool isAdmin)
     {
         var scenarioEntity = await _context.Scenarios
             .FirstOrDefaultAsync(x => x.Slug == slug && x.IsDeleted == false);
         if (scenarioEntity == null)
             return null;
 
-        return MapToInfoDto(scenarioEntity);
+        return MapToInfoDto(scenarioEntity, language, isAdmin);
     }
 
-    protected async Task<List<ScenarioInfoDto>> GetScenarioListActionAsync()
+    protected async Task<List<ScenarioInfoDto>> GetScenarioListActionAsync(string language, bool isAdmin)
     {
         return await _context.Scenarios
             .Where(x => x.IsDeleted == false)
-            .Select(scenarioEntity => MapToInfoDto(scenarioEntity))
+            .Select(scenarioEntity => MapToInfoDto(scenarioEntity, language, isAdmin))
             .ToListAsync();
     }
 
@@ -92,8 +97,12 @@ public class ScenarioAction
             return false;
 
         scenarioEntity.Slug = data.Slug;
-        scenarioEntity.Name = data.Name;
-        scenarioEntity.Description = data.Description;
+        scenarioEntity.NameRo = data.NameRo;
+        scenarioEntity.NameEn = NullIfBlank(data.NameEn);
+        scenarioEntity.NameRu = NullIfBlank(data.NameRu);
+        scenarioEntity.DescriptionRo = data.DescriptionRo;
+        scenarioEntity.DescriptionEn = NullIfBlank(data.DescriptionEn);
+        scenarioEntity.DescriptionRu = NullIfBlank(data.DescriptionRu);
         scenarioEntity.Difficulty = data.Difficulty;
         scenarioEntity.InitialBalance = data.InitialBalance;
         scenarioEntity.RequiresAccount = data.RequiresAccount;
@@ -132,18 +141,27 @@ public class ScenarioAction
         }
     }
 
-    private static ScenarioInfoDto MapToInfoDto(ScenarioEntity scenarioEntity) => new()
+    private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private static ScenarioInfoDto MapToInfoDto(ScenarioEntity scenarioEntity, string language, bool isAdmin) => new()
     {
         Id = scenarioEntity.Id,
         Slug = scenarioEntity.Slug,
-        Name = scenarioEntity.Name,
-        Description = scenarioEntity.Description,
+        Name = AppLanguage.Pick(language, scenarioEntity.NameRo, scenarioEntity.NameEn, scenarioEntity.NameRu),
+        Description = AppLanguage.Pick(language, scenarioEntity.DescriptionRo, scenarioEntity.DescriptionEn, scenarioEntity.DescriptionRu),
+        NameRo = scenarioEntity.NameRo,
+        NameEn = scenarioEntity.NameEn,
+        NameRu = scenarioEntity.NameRu,
+        DescriptionRo = scenarioEntity.DescriptionRo,
+        DescriptionEn = scenarioEntity.DescriptionEn,
+        DescriptionRu = scenarioEntity.DescriptionRu,
         Difficulty = scenarioEntity.Difficulty,
         InitialBalance = scenarioEntity.InitialBalance,
         RequiresAccount = scenarioEntity.RequiresAccount,
         InitialCreditScore = scenarioEntity.InitialCreditScore,
         InitialStress = scenarioEntity.InitialStress,
-        StepsJson = scenarioEntity.StepsJson,
+        StepsJson = AppLanguage.LocalizeJson(scenarioEntity.StepsJson, language),
+        StepsJsonRaw = isAdmin ? scenarioEntity.StepsJson : null,
         IsDeleted = scenarioEntity.IsDeleted
     };
 }

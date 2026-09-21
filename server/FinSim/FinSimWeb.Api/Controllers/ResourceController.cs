@@ -1,3 +1,4 @@
+using FinSim.Api.Middleware;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ public class ResourceController : ControllerBase
     [HttpGet("videos")]
     public async Task<IActionResult> GetVideoList()
     {
-        var result = await _resourceLogic.GetVideoListAsync();
+        var result = await _resourceLogic.GetVideoListAsync(RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -62,7 +63,7 @@ public class ResourceController : ControllerBase
     [HttpGet("pdfs")]
     public async Task<IActionResult> GetPdfList()
     {
-        var result = await _resourceLogic.GetPdfListAsync();
+        var result = await _resourceLogic.GetPdfListAsync(RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

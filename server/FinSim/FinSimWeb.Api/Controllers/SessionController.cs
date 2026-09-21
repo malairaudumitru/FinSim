@@ -90,7 +90,7 @@ public class SessionController : ControllerBase
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var ip = RequestContextHelpers.GetIp(HttpContext);
 
-        var result = await _authLogic.StartChangePasswordAsync(userId, passwordInfo);
+        var result = await _authLogic.StartChangePasswordAsync(userId, passwordInfo, RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
         {
             _logger.LogWarning("Failed change-password attempt (wrong current password) for user {UserId} from {Ip}", userId, ip);
@@ -128,7 +128,7 @@ public class SessionController : ControllerBase
         var ip = RequestContextHelpers.GetIp(HttpContext);
         _logger.LogWarning("Password reset requested for {Email} from {Ip}", forgotInfo.Email, ip);
 
-        var result = await _authLogic.ForgotPasswordAsync(forgotInfo);
+        var result = await _authLogic.ForgotPasswordAsync(forgotInfo, RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

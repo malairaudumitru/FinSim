@@ -18,15 +18,15 @@ public class NotificationLogic : NotificationAction, INotificationLogic
         return ActionResponse.Ok("Notification created successfully");
     }
 
-    public async Task<ActionResponse> GetNotificationListAsync()
+    public async Task<ActionResponse> GetNotificationListAsync(string language)
     {
-        var result = await GetNotificationListActionAsync();
+        var result = await GetNotificationListActionAsync(language);
         return ActionResponse.Ok(data: result);
     }
 
-    public async Task<ActionResponse> GetNotificationByUserIdAsync(int userId)
+    public async Task<ActionResponse> GetNotificationByUserIdAsync(int userId, string language)
     {
-        var result = await GetNotificationByUserIdActionAsync(userId);
+        var result = await GetNotificationByUserIdActionAsync(userId, language);
         return ActionResponse.Ok(data: result);
     }
 

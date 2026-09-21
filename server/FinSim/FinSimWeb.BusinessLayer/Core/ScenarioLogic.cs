@@ -18,17 +18,17 @@ public class ScenarioLogic : ScenarioAction, IScenarioLogic
         return ActionResponse.Ok("Scenario created successfully");
     }
 
-    public async Task<ActionResponse> GetScenarioBySlugAsync(string slug)
+    public async Task<ActionResponse> GetScenarioBySlugAsync(string slug, string language, bool isAdmin)
     {
-        var result = await GetScenarioBySlugActionAsync(slug);
+        var result = await GetScenarioBySlugActionAsync(slug, language, isAdmin);
         if (result == null)
             return ActionResponse.NotFound("Scenario not found");
         return ActionResponse.Ok(data: result);
     }
 
-    public async Task<ActionResponse> GetScenarioListAsync()
+    public async Task<ActionResponse> GetScenarioListAsync(string language, bool isAdmin)
     {
-        var result = await GetScenarioListActionAsync();
+        var result = await GetScenarioListActionAsync(language, isAdmin);
         return ActionResponse.Ok(data: result);
     }
 

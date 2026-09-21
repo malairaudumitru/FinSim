@@ -11,11 +11,23 @@ public class ScenarioCreateDto
 
     [Required]
     [StringLength(150)]
-    public string Name { get; set; } = string.Empty;
+    public string NameRo { get; set; } = string.Empty;
+
+    [StringLength(150)]
+    public string? NameEn { get; set; }
+
+    [StringLength(150)]
+    public string? NameRu { get; set; }
 
     [Required]
     [StringLength(600)]
-    public string Description { get; set; } = string.Empty;
+    public string DescriptionRo { get; set; } = string.Empty;
+
+    [StringLength(600)]
+    public string? DescriptionEn { get; set; }
+
+    [StringLength(600)]
+    public string? DescriptionRu { get; set; }
 
     [EnumDataType(typeof(ScenarioDifficulty))]
     public ScenarioDifficulty Difficulty { get; set; } = ScenarioDifficulty.Easy;

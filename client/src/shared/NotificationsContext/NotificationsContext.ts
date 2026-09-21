@@ -6,6 +6,9 @@ export interface NotificationItem {
     id: string
     tip: NotificationType
     mesaj: string
+    mesajRo: string
+    mesajEn: string
+    mesajRu: string
     data: string
     citit: boolean
     email: string

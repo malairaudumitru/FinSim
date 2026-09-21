@@ -5,13 +5,14 @@ import type { ScenarioDef, ScenarioStep } from '../../shared/scenarios/scenarios
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
 import Checkbox from '../../shared/Checkbox/Checkbox'
+import LanguageFields, { type LanguageValues } from './LanguageFields'
 
 const LOCALE_MAP: Record<string, string> = { ro: 'ro-RO', ru: 'ru-RU', en: 'en-US' }
 
 type FormState = {
     slug: string
-    nume: string
-    descriere: string
+    nume: LanguageValues
+    descriere: LanguageValues
     dificultate: string
     soldInitial: string
     necesitaCont: boolean
@@ -30,8 +31,8 @@ function slugify(text: string) {
 
 const emptyForm: FormState = {
     slug: '',
-    nume: '',
-    descriere: '',
+    nume: { ro: '', en: '', ru: '' },
+    descriere: { ro: '', en: '', ru: '' },
     dificultate: 'Ușor',
     soldInitial: '5000',
     necesitaCont: false,
@@ -39,16 +40,26 @@ const emptyForm: FormState = {
     pasiJson: '[]',
 }
 
+// Steps come from the API with every language; show them formatted so they are easier to edit.
+function prettyJson(raw: string | undefined) {
+    if (!raw) return undefined
+    try {
+        return JSON.stringify(JSON.parse(raw), null, 2)
+    } catch {
+        return raw
+    }
+}
+
 function toForm(s: ScenarioDef): FormState {
     return {
         slug: s.slug,
-        nume: s.nume,
-        descriere: s.descriere,
+        nume: { ro: s.numeRo ?? s.nume, en: s.numeEn ?? '', ru: s.numeRu ?? '' },
+        descriere: { ro: s.descriereRo ?? s.descriere, en: s.descriereEn ?? '', ru: s.descriereRu ?? '' },
         dificultate: s.dificultate,
         soldInitial: String(s.soldInitial),
         necesitaCont: s.necesitaCont,
         scorCreditInitial: s.scorCreditInitial !== undefined ? String(s.scorCreditInitial) : '',
-        pasiJson: JSON.stringify(s.pasi, null, 2),
+        pasiJson: prettyJson(s.pasiRaw) ?? JSON.stringify(s.pasi, null, 2),
     }
 }
 
@@ -90,7 +101,7 @@ function ScenariosSection() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        if (!form.nume.trim() || !form.descriere.trim()) {
+        if (!form.nume.ro.trim() || !form.descriere.ro.trim()) {
             setError(t('admin.scenarios.error_required'))
             return
         }
@@ -105,7 +116,7 @@ function ScenariosSection() {
             return
         }
 
-        const slug = editingId !== null ? form.slug : form.slug.trim() ? slugify(form.slug) : slugify(form.nume)
+        const slug = editingId !== null ? form.slug : form.slug.trim() ? slugify(form.slug) : slugify(form.nume.ro)
         if (editingId === null && scenarios.some((s) => s.slug === slug)) {
             setError(t('admin.scenarios.error_duplicate_slug'))
             return
@@ -113,13 +124,20 @@ function ScenariosSection() {
 
         const payload: ScenarioDef = {
             slug,
-            nume: form.nume.trim(),
-            descriere: form.descriere.trim(),
+            nume: form.nume.ro.trim(),
+            descriere: form.descriere.ro.trim(),
+            numeRo: form.nume.ro.trim(),
+            numeEn: form.nume.en.trim(),
+            numeRu: form.nume.ru.trim(),
+            descriereRo: form.descriere.ro.trim(),
+            descriereEn: form.descriere.en.trim(),
+            descriereRu: form.descriere.ru.trim(),
             dificultate: form.dificultate.trim() || 'Ușor',
             soldInitial: Number(form.soldInitial) || 0,
             necesitaCont: form.necesitaCont,
             scorCreditInitial: form.scorCreditInitial.trim() ? Number(form.scorCreditInitial) : undefined,
             pasi,
+            pasiRaw: JSON.stringify(pasi),
         }
 
         setSubmitting(true)
@@ -208,24 +226,21 @@ function ScenariosSection() {
             {showForm && (
                 <Modal title={editingId !== null ? t('admin.scenarios.modal_edit_title') : t('admin.scenarios.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
-                        <div className="admin-form-row">
-                            <div className="admin-field">
-                                <label htmlFor="sc-nume">{t('admin.scenarios.label_name')}</label>
-                                <input
-                                    id="sc-nume"
-                                    value={form.nume}
-                                    onChange={(e) => setForm((f) => ({ ...f, nume: e.target.value }))}
-                                />
-                            </div>
-                            <div className="admin-field">
-                                <label htmlFor="sc-dificultate">{t('admin.scenarios.label_difficulty')}</label>
-                                <Dropdown
-                                    value={form.dificultate}
-                                    onChange={(v) => setForm((f) => ({ ...f, dificultate: v }))}
-                                    options={dificultateOptions}
-                                    placeholder={t('admin.scenarios.label_difficulty')}
-                                />
-                            </div>
+                        <span className="admin-form-hint">{t('admin.translations_hint')}</span>
+                        <LanguageFields
+                            idPrefix="sc-nume"
+                            label={t('admin.scenarios.label_name')}
+                            values={form.nume}
+                            onChange={(lang, value) => setForm((f) => ({ ...f, nume: { ...f.nume, [lang]: value } }))}
+                        />
+                        <div className="admin-field">
+                            <label htmlFor="sc-dificultate">{t('admin.scenarios.label_difficulty')}</label>
+                            <Dropdown
+                                value={form.dificultate}
+                                onChange={(v) => setForm((f) => ({ ...f, dificultate: v }))}
+                                options={dificultateOptions}
+                                placeholder={t('admin.scenarios.label_difficulty')}
+                            />
                         </div>
 
                         {editingId === null && (
@@ -240,15 +255,13 @@ function ScenariosSection() {
                             </div>
                         )}
 
-                        <div className="admin-field">
-                            <label htmlFor="sc-descriere">{t('admin.scenarios.label_description')}</label>
-                            <textarea
-                                id="sc-descriere"
-                                value={form.descriere}
-                                onChange={(e) => setForm((f) => ({ ...f, descriere: e.target.value }))}
-                                style={{ fontFamily: 'var(--sans)', minHeight: 80 }}
-                            />
-                        </div>
+                        <LanguageFields
+                            idPrefix="sc-descriere"
+                            label={t('admin.scenarios.label_description')}
+                            values={form.descriere}
+                            multiline
+                            onChange={(lang, value) => setForm((f) => ({ ...f, descriere: { ...f.descriere, [lang]: value } }))}
+                        />
 
                         <div className="admin-form-row">
                             <div className="admin-field">

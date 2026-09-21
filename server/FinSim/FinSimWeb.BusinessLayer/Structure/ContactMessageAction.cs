@@ -104,7 +104,9 @@ public class ContactMessageAction
         _context.Add(new NotificationEntity
         {
             Type = NotificationType.Account,
-            Message = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
+            MessageRo = "Ai primit un răspuns la mesajul tău trimis către FinSim.",
+            MessageEn = "You received a reply to your message sent to FinSim.",
+            MessageRu = "Ты получил ответ на своё сообщение, отправленное в FinSim.",
             UserId = userId,
             ContactMessageId = contactMessageId
         });

@@ -4,6 +4,9 @@ export interface VideoResource {
     id: string
     youtubeId: string
     titlu: string
+    titluRo: string
+    titluEn: string
+    titluRu: string
     sursa: string
     tema: string
 }
@@ -12,6 +15,12 @@ export interface PdfResource {
     id: string
     titlu: string
     descriere: string
+    titluRo: string
+    titluEn: string
+    titluRu: string
+    descriereRo: string
+    descriereEn: string
+    descriereRu: string
     fisier: string
     tema: string
 }

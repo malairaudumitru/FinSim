@@ -8,17 +8,20 @@ import { toNotificationItem, toType } from '../../shared/notifications/notificat
 import type { NotificationItem, NotificationType } from '../../shared/NotificationsContext/NotificationsContext'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
+import Checkbox from '../../shared/Checkbox/Checkbox'
+import LanguageFields, { type LanguageValues } from './LanguageFields'
 
 type FormState = {
     email: string
     tip: NotificationType
-    mesaj: string
+    mesaj: LanguageValues
+    toAll: boolean
 }
 
-const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: '' }
+const emptyForm: FormState = { email: '', tip: 'sistem', mesaj: { ro: '', en: '', ru: '' }, toAll: false }
 
 function toForm(n: NotificationItem): FormState {
-    return { email: n.email, tip: n.tip, mesaj: n.mesaj }
+    return { email: n.email, tip: n.tip, mesaj: { ro: n.mesajRo, en: n.mesajEn, ru: n.mesajRu }, toAll: false }
 }
 
 function NotificationsSection() {
@@ -90,16 +93,29 @@ function NotificationsSection() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        if (!form.mesaj.trim()) {
+        if (!form.mesaj.ro.trim()) {
             setError(t('admin.notifications.error_message_required'))
             return
         }
-        if (!form.email.trim()) {
+        if (!form.toAll && !form.email.trim()) {
             setError(t('admin.notifications.error_recipient_required'))
             return
         }
 
-        const dto = { type: toType(form.tip), message: form.mesaj.trim(), email: form.email.trim() }
+        // A broadcast reaches every active account and cannot be undone in one step, so ask first.
+        if (form.toAll && !editingId) {
+            const activeUsers = users.filter((u) => u.status === 'activ').length
+            if (!confirm(t('admin.notifications.confirm_send_all', { count: activeUsers }))) return
+        }
+
+        const dto = {
+            type: toType(form.tip),
+            messageRo: form.mesaj.ro.trim(),
+            messageEn: form.mesaj.en.trim() || null,
+            messageRu: form.mesaj.ru.trim() || null,
+            email: form.toAll ? null : form.email.trim(),
+            sendToAll: form.toAll,
+        }
 
         try {
             if (editingId) await reportingCall(notificationsApi.updateNotification(Number(editingId), dto), showError)
@@ -186,17 +202,33 @@ function NotificationsSection() {
             {showForm && (
                 <Modal title={editingId ? t('admin.notifications.modal_edit_title') : t('admin.notifications.modal_add_title')} onClose={close}>
                     <form className="admin-form" onSubmit={handleSubmit}>
-                        <div className="admin-field">
-                            <label htmlFor="nt-email">{t('admin.notifications.label_recipient')}</label>
-                            <Dropdown
-                                value={form.email}
-                                onChange={(v) => setForm((f) => ({ ...f, email: v }))}
-                                options={emailOptions}
-                                placeholder={t('admin.notifications.placeholder_recipient')}
-                                searchable
-                                searchPlaceholder={t('admin.notifications.search_placeholder_recipient')}
-                            />
-                        </div>
+                        {!editingId && (
+                            <div className="admin-field admin-checkbox-field">
+                                <Checkbox
+                                    id="nt-all"
+                                    checked={form.toAll}
+                                    onChange={(v) => setForm((f) => ({ ...f, toAll: v }))}
+                                    label={t('admin.notifications.label_send_to_all')}
+                                />
+                                {form.toAll && (
+                                    <span className="admin-form-hint">{t('admin.notifications.hint_send_to_all')}</span>
+                                )}
+                            </div>
+                        )}
+
+                        {!form.toAll && (
+                            <div className="admin-field">
+                                <label htmlFor="nt-email">{t('admin.notifications.label_recipient')}</label>
+                                <Dropdown
+                                    value={form.email}
+                                    onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+                                    options={emailOptions}
+                                    placeholder={t('admin.notifications.placeholder_recipient')}
+                                    searchable
+                                    searchPlaceholder={t('admin.notifications.search_placeholder_recipient')}
+                                />
+                            </div>
+                        )}
 
                         <div className="admin-field">
                             <label htmlFor="nt-tip">{t('admin.notifications.label_type')}</label>
@@ -208,15 +240,14 @@ function NotificationsSection() {
                             />
                         </div>
 
-                        <div className="admin-field">
-                            <label htmlFor="nt-mesaj">{t('admin.notifications.label_message')}</label>
-                            <textarea
-                                id="nt-mesaj"
-                                value={form.mesaj}
-                                onChange={(e) => setForm((f) => ({ ...f, mesaj: e.target.value }))}
-                                style={{ fontFamily: 'var(--sans)', minHeight: 80 }}
-                            />
-                        </div>
+                        <span className="admin-form-hint">{t('admin.translations_hint')}</span>
+                        <LanguageFields
+                            idPrefix="nt-mesaj"
+                            label={t('admin.notifications.label_message')}
+                            values={form.mesaj}
+                            multiline
+                            onChange={(lang, value) => setForm((f) => ({ ...f, mesaj: { ...f.mesaj, [lang]: value } }))}
+                        />
 
                         {error && <span className="admin-form-error">{error}</span>}
 

@@ -28,6 +28,9 @@ export function toVideoResource(dto: VideoResourceInfoDto): VideoResource {
         id: String(dto.id),
         youtubeId: dto.youtubeId,
         titlu: dto.title,
+        titluRo: dto.titleRo,
+        titluEn: dto.titleEn ?? '',
+        titluRu: dto.titleRu ?? '',
         sursa: dto.source,
         tema: THEME_TO_LABEL[dto.theme] ?? 'General',
     }
@@ -36,7 +39,9 @@ export function toVideoResource(dto: VideoResourceInfoDto): VideoResource {
 export function toVideoCreateDto(video: Omit<VideoResource, 'id'>): VideoResourceCreateDto {
     return {
         youtubeId: video.youtubeId,
-        title: video.titlu,
+        titleRo: video.titluRo,
+        titleEn: video.titluEn.trim() || null,
+        titleRu: video.titluRu.trim() || null,
         source: video.sursa,
         theme: LABEL_TO_THEME[video.tema] ?? ResourceTheme.General,
     }
@@ -47,6 +52,12 @@ export function toPdfResource(dto: PdfResourceInfoDto): PdfResource {
         id: String(dto.id),
         titlu: dto.title,
         descriere: dto.description,
+        titluRo: dto.titleRo,
+        titluEn: dto.titleEn ?? '',
+        titluRu: dto.titleRu ?? '',
+        descriereRo: dto.descriptionRo,
+        descriereEn: dto.descriptionEn ?? '',
+        descriereRu: dto.descriptionRu ?? '',
         fisier: dto.filePath,
         tema: THEME_TO_LABEL[dto.theme] ?? 'General',
     }
@@ -54,8 +65,12 @@ export function toPdfResource(dto: PdfResourceInfoDto): PdfResource {
 
 export function toPdfCreateDto(pdf: Omit<PdfResource, 'id'>): PdfResourceCreateDto {
     return {
-        title: pdf.titlu,
-        description: pdf.descriere,
+        titleRo: pdf.titluRo,
+        titleEn: pdf.titluEn.trim() || null,
+        titleRu: pdf.titluRu.trim() || null,
+        descriptionRo: pdf.descriereRo,
+        descriptionEn: pdf.descriereEn.trim() || null,
+        descriptionRu: pdf.descriereRu.trim() || null,
         filePath: pdf.fisier,
         theme: LABEL_TO_THEME[pdf.tema] ?? ResourceTheme.General,
     }

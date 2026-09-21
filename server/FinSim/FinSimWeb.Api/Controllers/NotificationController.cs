@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FinSim.Api.Middleware;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Notifications;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ public class NotificationController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetNotificationList()
     {
-        var result = await _notificationLogic.GetNotificationListAsync();
+        var result = await _notificationLogic.GetNotificationListAsync(RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -49,7 +50,7 @@ public class NotificationController : ControllerBase
         if (!IsAdmin && userId != CurrentUserId)
             return Forbid();
 
-        var result = await _notificationLogic.GetNotificationByUserIdAsync(userId);
+        var result = await _notificationLogic.GetNotificationByUserIdAsync(userId, RequestContextHelpers.GetLanguage(HttpContext));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

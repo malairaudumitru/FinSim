@@ -26,7 +26,7 @@ public class AuthAction
         _context = context;
     }
 
-    protected async Task<bool> StartRegisterActionAsync(UserRegisterDto data)
+    protected async Task<bool> StartRegisterActionAsync(UserRegisterDto data, string language)
     {
         var duplicate = await _context.Users.AnyAsync(u => u.Email == data.Email && u.IsDeleted == false);
         if (duplicate)
@@ -53,8 +53,7 @@ public class AuthAction
             _context.Add(pending);
             await _context.SaveChangesAsync();
 
-            await SendCodeEmailAsync(data.Email, "Confirmă înregistrarea",
-                "Foloseste codul de mai jos ca sa iti finalizezi crearea contului FinSim.", code);
+            await SendCodeEmailAsync(data.Email, CodeEmailKind.Register, language, code);
             return true;
         }
         catch (Exception)
@@ -148,7 +147,7 @@ public class AuthAction
         return await GenerateAuthResponseAsync(user);
     }
 
-    protected async Task<bool> StartChangePasswordActionAsync(int userId, ChangePasswordDto data)
+    protected async Task<bool> StartChangePasswordActionAsync(int userId, ChangePasswordDto data, string language)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.IsDeleted == false);
         if (user == null)
@@ -177,8 +176,7 @@ public class AuthAction
             _context.Add(verification);
             await _context.SaveChangesAsync();
 
-            await SendCodeEmailAsync(user.Email, "Confirmă schimbarea parolei",
-                "Foloseste codul de mai jos ca sa confirmi schimbarea parolei contului tau FinSim.", code);
+            await SendCodeEmailAsync(user.Email, CodeEmailKind.ChangePassword, language, code);
             return true;
         }
         catch (Exception)
@@ -221,7 +219,7 @@ public class AuthAction
         }
     }
 
-    protected async Task ForgotPasswordActionAsync(string email)
+    protected async Task ForgotPasswordActionAsync(string email, string language)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
         if (user == null)
@@ -242,8 +240,7 @@ public class AuthAction
         });
         await _context.SaveChangesAsync();
 
-        await SendCodeEmailAsync(user.Email, "Resetează parola",
-            "Foloseste codul de mai jos ca sa iti resetezi parola contului FinSim.", code);
+        await SendCodeEmailAsync(user.Email, CodeEmailKind.ResetPassword, language, code);
     }
 
     protected async Task<CodeResult> VerifyResetCodeActionAsync(VerifyResetCodeDto data)
@@ -332,10 +329,11 @@ public class AuthAction
         };
     }
 
-    private async Task SendCodeEmailAsync(string email, string heading, string introText, string code)
+    private async Task SendCodeEmailAsync(string email, CodeEmailKind kind, string language, string code)
     {
-        var html = EmailTemplates.BuildVerificationCodeEmail(heading, introText, code, CodeExpiryMinutes);
-        await _emailSender.SendAsync(email, "Codul tau FinSim", html);
+        var content = EmailTexts.Get(kind, language, CodeExpiryMinutes);
+        var html = EmailTemplates.BuildVerificationCodeEmail(content.Heading, content.Intro, code, content.Footer);
+        await _emailSender.SendAsync(email, content.Subject, html);
     }
 
     /// <summary>

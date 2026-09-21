@@ -96,6 +96,13 @@ export interface ScenarioDef {
     necesitaCont: boolean
     scorCreditInitial?: number
     pasi: ScenarioStep[]
+    numeRo?: string
+    numeEn?: string
+    numeRu?: string
+    descriereRo?: string
+    descriereEn?: string
+    descriereRu?: string
+    pasiRaw?: string
 }
 
 export const scenarios: ScenarioDef[] = [

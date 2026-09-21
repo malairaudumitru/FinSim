@@ -2,6 +2,8 @@ import { createContext, useContext } from 'react'
 
 export interface HistoryEntry {
     id: string
+    scenarioId: number
+    slug?: string
     scenariu: string
     data: string
     scor: number

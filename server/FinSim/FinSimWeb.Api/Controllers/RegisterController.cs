@@ -27,7 +27,7 @@ public class RegisterController : ControllerBase
     public async Task<IActionResult> Start([FromBody] UserRegisterDto registerInfo)
     {
         var ip = RequestContextHelpers.GetIp(HttpContext);
-        var result = await _authLogic.StartRegisterAsync(registerInfo);
+        var result = await _authLogic.StartRegisterAsync(registerInfo, RequestContextHelpers.GetLanguage(HttpContext));
 
         if (result.IsSuccess == false)
         {

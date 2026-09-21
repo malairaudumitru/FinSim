@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using FinSim.BusinessLayer.Core;
 using FinSim.DataAccessLayer.Context;
 using FinSim.Domain.Entities.Resources;
 using FinSim.Domain.Models.Resources;
@@ -43,7 +44,9 @@ public class ResourceAction
         var videoResourceEntity = new VideoResourceEntity
         {
             YoutubeId = ExtractYoutubeId(data.YoutubeId),
-            Title = data.Title,
+            TitleRo = data.TitleRo,
+            TitleEn = NullIfBlank(data.TitleEn),
+            TitleRu = NullIfBlank(data.TitleRu),
             Source = data.Source,
             Theme = data.Theme
         };
@@ -60,11 +63,11 @@ public class ResourceAction
         }
     }
 
-    protected async Task<List<VideoResourceInfoDto>> GetVideoListActionAsync()
+    protected async Task<List<VideoResourceInfoDto>> GetVideoListActionAsync(string language)
     {
         return await _context.VideoResources
             .Where(x => x.IsDeleted == false)
-            .Select(videoResourceEntity => MapToInfoDto(videoResourceEntity))
+            .Select(videoResourceEntity => MapToInfoDto(videoResourceEntity, language))
             .ToListAsync();
     }
 
@@ -75,7 +78,9 @@ public class ResourceAction
             return false;
 
         videoResourceEntity.YoutubeId = ExtractYoutubeId(data.YoutubeId);
-        videoResourceEntity.Title = data.Title;
+        videoResourceEntity.TitleRo = data.TitleRo;
+        videoResourceEntity.TitleEn = NullIfBlank(data.TitleEn);
+        videoResourceEntity.TitleRu = NullIfBlank(data.TitleRu);
         videoResourceEntity.Source = data.Source;
         videoResourceEntity.Theme = data.Theme;
 
@@ -114,8 +119,12 @@ public class ResourceAction
     {
         var pdfResourceEntity = new PdfResourceEntity
         {
-            Title = data.Title,
-            Description = data.Description,
+            TitleRo = data.TitleRo,
+            TitleEn = NullIfBlank(data.TitleEn),
+            TitleRu = NullIfBlank(data.TitleRu),
+            DescriptionRo = data.DescriptionRo,
+            DescriptionEn = NullIfBlank(data.DescriptionEn),
+            DescriptionRu = NullIfBlank(data.DescriptionRu),
             FilePath = data.FilePath,
             Theme = data.Theme
         };
@@ -132,11 +141,11 @@ public class ResourceAction
         }
     }
 
-    protected async Task<List<PdfResourceInfoDto>> GetPdfListActionAsync()
+    protected async Task<List<PdfResourceInfoDto>> GetPdfListActionAsync(string language)
     {
         return await _context.PdfResources
             .Where(x => x.IsDeleted == false)
-            .Select(pdfResourceEntity => MapToInfoDto(pdfResourceEntity))
+            .Select(pdfResourceEntity => MapToInfoDto(pdfResourceEntity, language))
             .ToListAsync();
     }
 
@@ -146,8 +155,12 @@ public class ResourceAction
         if (pdfResourceEntity == null || pdfResourceEntity.IsDeleted)
             return false;
 
-        pdfResourceEntity.Title = data.Title;
-        pdfResourceEntity.Description = data.Description;
+        pdfResourceEntity.TitleRo = data.TitleRo;
+        pdfResourceEntity.TitleEn = NullIfBlank(data.TitleEn);
+        pdfResourceEntity.TitleRu = NullIfBlank(data.TitleRu);
+        pdfResourceEntity.DescriptionRo = data.DescriptionRo;
+        pdfResourceEntity.DescriptionEn = NullIfBlank(data.DescriptionEn);
+        pdfResourceEntity.DescriptionRu = NullIfBlank(data.DescriptionRu);
         pdfResourceEntity.FilePath = data.FilePath;
         pdfResourceEntity.Theme = data.Theme;
 
@@ -182,21 +195,32 @@ public class ResourceAction
         }
     }
 
-    private static VideoResourceInfoDto MapToInfoDto(VideoResourceEntity videoResourceEntity) => new()
+    private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
+
+    private static VideoResourceInfoDto MapToInfoDto(VideoResourceEntity videoResourceEntity, string language) => new()
     {
         Id = videoResourceEntity.Id,
         YoutubeId = videoResourceEntity.YoutubeId,
-        Title = videoResourceEntity.Title,
+        Title = AppLanguage.Pick(language, videoResourceEntity.TitleRo, videoResourceEntity.TitleEn, videoResourceEntity.TitleRu),
+        TitleRo = videoResourceEntity.TitleRo,
+        TitleEn = videoResourceEntity.TitleEn,
+        TitleRu = videoResourceEntity.TitleRu,
         Source = videoResourceEntity.Source,
         Theme = videoResourceEntity.Theme,
         IsDeleted = videoResourceEntity.IsDeleted
     };
 
-    private static PdfResourceInfoDto MapToInfoDto(PdfResourceEntity pdfResourceEntity) => new()
+    private static PdfResourceInfoDto MapToInfoDto(PdfResourceEntity pdfResourceEntity, string language) => new()
     {
         Id = pdfResourceEntity.Id,
-        Title = pdfResourceEntity.Title,
-        Description = pdfResourceEntity.Description,
+        Title = AppLanguage.Pick(language, pdfResourceEntity.TitleRo, pdfResourceEntity.TitleEn, pdfResourceEntity.TitleRu),
+        Description = AppLanguage.Pick(language, pdfResourceEntity.DescriptionRo, pdfResourceEntity.DescriptionEn, pdfResourceEntity.DescriptionRu),
+        TitleRo = pdfResourceEntity.TitleRo,
+        TitleEn = pdfResourceEntity.TitleEn,
+        TitleRu = pdfResourceEntity.TitleRu,
+        DescriptionRo = pdfResourceEntity.DescriptionRo,
+        DescriptionEn = pdfResourceEntity.DescriptionEn,
+        DescriptionRu = pdfResourceEntity.DescriptionRu,
         FilePath = pdfResourceEntity.FilePath,
         Theme = pdfResourceEntity.Theme,
         IsDeleted = pdfResourceEntity.IsDeleted

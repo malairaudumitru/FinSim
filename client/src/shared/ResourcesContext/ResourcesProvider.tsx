@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     ResourcesContext,
     type VideoResource,
@@ -11,6 +12,7 @@ import { toPdfCreateDto, toPdfResource, toVideoCreateDto, toVideoResource } from
 
 export function ResourcesProvider({ children }: { children: ReactNode }) {
     const { showError } = useErrorModal()
+    const { i18n } = useTranslation()
     const [videos, setVideos] = useState<VideoResource[]>([])
     const [pdfs, setPdfs] = useState<PdfResource[]>([])
     const [loading, setLoading] = useState(true)
@@ -39,8 +41,9 @@ export function ResourcesProvider({ children }: { children: ReactNode }) {
                 setPdfs([])
             })
             .finally(() => setLoading(false))
+        // Re-fetch when the language changes: the API returns titles and descriptions in that language.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [i18n.language])
 
     const addVideo = async (video: Omit<VideoResource, 'id'>) => {
         await reportingCall(resourcesApi.createVideo(toVideoCreateDto(video)), showError)

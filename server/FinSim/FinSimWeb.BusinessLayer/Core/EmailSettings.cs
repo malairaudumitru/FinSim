@@ -22,3 +22,4 @@ public static class EmailSettings
         Configuration["Email:AppPassword"]
         ?? throw new InvalidOperationException("Email:AppPassword not configured. Add it to user-secrets.");
 }
+

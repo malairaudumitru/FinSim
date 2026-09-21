@@ -319,7 +319,6 @@ export default {
         thread_unavailable: 'This message is no longer available.',
         your_message: 'Your message',
         admin_reply: 'Reply from FinSim',
-        reply_received: 'You received a reply to your message sent to FinSim.',
         mark_all_read: 'Mark all as read',
         empty: 'You have no notifications at the moment.',
         typeLabel: {
@@ -612,6 +611,7 @@ export default {
         youBadge: 'You',
     },
     admin: {
+        translations_hint: 'Romanian is required. If English or Russian is left empty, the Romanian text is shown.',
         dashboard: {
             tab_overview: 'Overview',
             tab_users: 'Users',
@@ -715,7 +715,7 @@ export default {
             label_initial_credit_score: 'Initial credit score (optional)',
             label_requires_account: 'Requires a logged-in account',
             label_steps_json: 'Scenario steps (advanced JSON)',
-            hint_steps_json: 'The complete step structure (questions, options, scores). Edit carefully — it must remain valid JSON.',
+            hint_steps_json: 'The complete step structure (questions, options, scores). Each text can be an object with its languages: { "ro": "...", "en": "...", "ru": "..." }. A plain text is shown the same in every language. Edit carefully — it must remain valid JSON.',
             cancel: 'Cancel',
             save: 'Save',
         },
@@ -768,6 +768,9 @@ export default {
             delete: 'Delete',
             modal_edit_title: 'Edit notification',
             modal_add_title: 'Send notification',
+            label_send_to_all: 'Send to all users',
+            hint_send_to_all: 'One notification is created for every active account.',
+            confirm_send_all: 'Send this notification to {{count}} active users? This cannot be undone in one step.',
             label_recipient: 'Send to (user account)',
             placeholder_recipient: 'Choose the user',
             search_placeholder_recipient: 'Search by name or email...',

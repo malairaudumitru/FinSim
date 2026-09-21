@@ -12,19 +12,30 @@ export interface ScenarioInfoDto {
     slug: string
     name: string
     description: string
+    nameRo: string
+    nameEn: string | null
+    nameRu: string | null
+    descriptionRo: string
+    descriptionEn: string | null
+    descriptionRu: string | null
     difficulty: ScenarioDifficulty
     initialBalance: number
     requiresAccount: boolean
     initialCreditScore: number | null
     initialStress: number | null
     stepsJson: string
+    stepsJsonRaw: string | null
     isDeleted: boolean
 }
 
 export interface ScenarioCreateDto {
     slug: string
-    name: string
-    description: string
+    nameRo: string
+    nameEn: string | null
+    nameRu: string | null
+    descriptionRo: string
+    descriptionEn: string | null
+    descriptionRu: string | null
     difficulty: ScenarioDifficulty
     initialBalance: number
     requiresAccount: boolean

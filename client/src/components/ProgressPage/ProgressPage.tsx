@@ -103,13 +103,13 @@ function ProgressPage() {
 
     const perScenario = useMemo(() => {
         return scenarios.map((s) => {
-            const entries = history.filter((h) => h.scenariu === s.nume)
+            const entries = history.filter((h) => h.scenarioId === s.id)
             const best = entries.length > 0 ? Math.max(...entries.map((e) => e.scor)) : null
             return { nume: s.nume, dificultate: s.dificultate, jucat: entries.length, best }
         })
     }, [history, scenarios])
 
-    const scenariiDistincte = new Set(history.map((h) => h.scenariu)).size
+    const scenariiDistincte = new Set(history.map((h) => h.scenarioId)).size
 
     const badgeContent = t('progress.badges', { returnObjects: true }) as BadgeContent[]
     const badgeIds = ['prima', 'cinci', 'toate', 'perfect', 'active']

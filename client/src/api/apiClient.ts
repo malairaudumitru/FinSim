@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { clearTokens, getAccessToken, getRefreshToken, isRemembered, setTokens } from './tokenStorage'
+import i18n from '../shared/i18n/i18n'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
@@ -9,6 +10,7 @@ const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use((config) => {
+    config.headers.set('Accept-Language', i18n.resolvedLanguage ?? 'ro')
     const token = getAccessToken()
     if (token) {
         config.headers.set('Authorization', `Bearer ${token}`)

@@ -2,7 +2,7 @@ namespace FinSim.BusinessLayer.Core;
 
 public static class EmailTemplates
 {
-    public static string BuildVerificationCodeEmail(string heading, string introText, string code, int expiryMinutes)
+    public static string BuildVerificationCodeEmail(string heading, string introText, string code, string footerText)
     {
         return $$"""
         <!DOCTYPE html>
@@ -36,7 +36,7 @@ public static class EmailTemplates
                   </tr>
                   <tr>
                     <td style="padding:0 32px 28px 32px;">
-                      <p style="margin:0;font-size:13px;color:#a9b6a4;">Codul expiră în {{expiryMinutes}} minute. Dacă nu ai cerut tu asta, poți ignora acest email.</p>
+                      <p style="margin:0;font-size:13px;color:#a9b6a4;">{{footerText}}</p>
                     </td>
                   </tr>
                 </table>

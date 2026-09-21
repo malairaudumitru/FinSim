@@ -13,6 +13,9 @@ export interface VideoResourceInfoDto {
     id: number
     youtubeId: string
     title: string
+    titleRo: string
+    titleEn: string | null
+    titleRu: string | null
     source: string
     theme: ResourceTheme
     isDeleted: boolean
@@ -20,7 +23,9 @@ export interface VideoResourceInfoDto {
 
 export interface VideoResourceCreateDto {
     youtubeId: string
-    title: string
+    titleRo: string
+    titleEn: string | null
+    titleRu: string | null
     source: string
     theme: ResourceTheme
 }
@@ -29,14 +34,24 @@ export interface PdfResourceInfoDto {
     id: number
     title: string
     description: string
+    titleRo: string
+    titleEn: string | null
+    titleRu: string | null
+    descriptionRo: string
+    descriptionEn: string | null
+    descriptionRu: string | null
     filePath: string
     theme: ResourceTheme
     isDeleted: boolean
 }
 
 export interface PdfResourceCreateDto {
-    title: string
-    description: string
+    titleRo: string
+    titleEn: string | null
+    titleRu: string | null
+    descriptionRo: string
+    descriptionEn: string | null
+    descriptionRu: string | null
     filePath: string
     theme: ResourceTheme
 }

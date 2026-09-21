@@ -6,12 +6,13 @@ import { reportingCall } from '../../shared/reportServerError'
 import { uploadPdf } from '../../api/resourcesApi'
 import Modal from '../../shared/Modal/Modal'
 import Dropdown from '../../shared/Dropdown/Dropdown'
+import LanguageFields, { type LanguageValues } from './LanguageFields'
 
-type VideoForm = { youtubeId: string; titlu: string; sursa: string; tema: string }
-type PdfForm = { titlu: string; descriere: string; fisier: string; tema: string }
+type VideoForm = { youtubeId: string; titlu: LanguageValues; sursa: string; tema: string }
+type PdfForm = { titlu: LanguageValues; descriere: LanguageValues; fisier: string; tema: string }
 
-const emptyVideo: VideoForm = { youtubeId: '', titlu: '', sursa: '', tema: '' }
-const emptyPdf: PdfForm = { titlu: '', descriere: '', fisier: '', tema: '' }
+const emptyVideo: VideoForm = { youtubeId: '', titlu: { ro: '', en: '', ru: '' }, sursa: '', tema: '' }
+const emptyPdf: PdfForm = { titlu: { ro: '', en: '', ru: '' }, descriere: { ro: '', en: '', ru: '' }, fisier: '', tema: '' }
 
 function extractYoutubeId(input: string): string {
     const trimmed = input.trim()
@@ -75,14 +76,19 @@ function ResourcesSection() {
 
     const openEditVideo = (v: VideoResource) => {
         setVideoEditId(v.id)
-        setVideoForm({ youtubeId: v.youtubeId, titlu: v.titlu, sursa: v.sursa, tema: v.tema })
+        setVideoForm({
+            youtubeId: v.youtubeId,
+            titlu: { ro: v.titluRo, en: v.titluEn, ru: v.titluRu },
+            sursa: v.sursa,
+            tema: v.tema,
+        })
         setVideoError('')
         setShowVideoForm(true)
     }
 
     const handleVideoSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        if (!videoForm.titlu.trim() || !videoForm.youtubeId.trim()) {
+        if (!videoForm.titlu.ro.trim() || !videoForm.youtubeId.trim()) {
             setVideoError(t('admin.resources.error_video_required'))
             return
         }
@@ -93,7 +99,10 @@ function ResourcesSection() {
         }
         const payload = {
             youtubeId,
-            titlu: videoForm.titlu.trim(),
+            titlu: videoForm.titlu.ro.trim(),
+            titluRo: videoForm.titlu.ro.trim(),
+            titluEn: videoForm.titlu.en.trim(),
+            titluRu: videoForm.titlu.ru.trim(),
             sursa: videoForm.sursa.trim(),
             tema: videoForm.tema.trim() || 'General',
         }
@@ -125,20 +134,31 @@ function ResourcesSection() {
 
     const openEditPdf = (p: PdfResource) => {
         setPdfEditId(p.id)
-        setPdfForm({ titlu: p.titlu, descriere: p.descriere, fisier: p.fisier, tema: p.tema })
+        setPdfForm({
+            titlu: { ro: p.titluRo, en: p.titluEn, ru: p.titluRu },
+            descriere: { ro: p.descriereRo, en: p.descriereEn, ru: p.descriereRu },
+            fisier: p.fisier,
+            tema: p.tema,
+        })
         setPdfError('')
         setShowPdfForm(true)
     }
 
     const handlePdfSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        if (!pdfForm.titlu.trim() || !pdfForm.fisier.trim()) {
+        if (!pdfForm.titlu.ro.trim() || !pdfForm.fisier.trim()) {
             setPdfError(t('admin.resources.error_pdf_required'))
             return
         }
         const payload = {
-            titlu: pdfForm.titlu.trim(),
-            descriere: pdfForm.descriere.trim(),
+            titlu: pdfForm.titlu.ro.trim(),
+            descriere: pdfForm.descriere.ro.trim(),
+            titluRo: pdfForm.titlu.ro.trim(),
+            titluEn: pdfForm.titlu.en.trim(),
+            titluRu: pdfForm.titlu.ru.trim(),
+            descriereRo: pdfForm.descriere.ro.trim(),
+            descriereEn: pdfForm.descriere.en.trim(),
+            descriereRu: pdfForm.descriere.ru.trim(),
             fisier: pdfForm.fisier.trim(),
             tema: pdfForm.tema.trim() || 'General',
         }
@@ -298,14 +318,13 @@ function ResourcesSection() {
             {showVideoForm && (
                 <Modal title={videoEditId ? t('admin.resources.modal_edit_video_title') : t('admin.resources.modal_add_video_title')} onClose={() => setShowVideoForm(false)}>
                     <form className="admin-form" onSubmit={handleVideoSubmit}>
-                        <div className="admin-field">
-                            <label htmlFor="vd-titlu">{t('admin.resources.label_title')}</label>
-                            <input
-                                id="vd-titlu"
-                                value={videoForm.titlu}
-                                onChange={(e) => setVideoForm((f) => ({ ...f, titlu: e.target.value }))}
-                            />
-                        </div>
+                        <span className="admin-form-hint">{t('admin.translations_hint')}</span>
+                        <LanguageFields
+                            idPrefix="vd-titlu"
+                            label={t('admin.resources.label_title')}
+                            values={videoForm.titlu}
+                            onChange={(lang, value) => setVideoForm((f) => ({ ...f, titlu: { ...f.titlu, [lang]: value } }))}
+                        />
                         <div className="admin-form-row">
                             <div className="admin-field">
                                 <label htmlFor="vd-sursa">{t('admin.resources.label_source')}</label>
@@ -353,23 +372,20 @@ function ResourcesSection() {
             {showPdfForm && (
                 <Modal title={pdfEditId ? t('admin.resources.modal_edit_pdf_title') : t('admin.resources.modal_add_pdf_title')} onClose={() => setShowPdfForm(false)}>
                     <form className="admin-form" onSubmit={handlePdfSubmit}>
-                        <div className="admin-field">
-                            <label htmlFor="pd-titlu">{t('admin.resources.label_title')}</label>
-                            <input
-                                id="pd-titlu"
-                                value={pdfForm.titlu}
-                                onChange={(e) => setPdfForm((f) => ({ ...f, titlu: e.target.value }))}
-                            />
-                        </div>
-                        <div className="admin-field">
-                            <label htmlFor="pd-descriere">{t('admin.resources.label_description')}</label>
-                            <textarea
-                                id="pd-descriere"
-                                value={pdfForm.descriere}
-                                onChange={(e) => setPdfForm((f) => ({ ...f, descriere: e.target.value }))}
-                                style={{ fontFamily: 'var(--sans)', minHeight: 80 }}
-                            />
-                        </div>
+                        <span className="admin-form-hint">{t('admin.translations_hint')}</span>
+                        <LanguageFields
+                            idPrefix="pd-titlu"
+                            label={t('admin.resources.label_title')}
+                            values={pdfForm.titlu}
+                            onChange={(lang, value) => setPdfForm((f) => ({ ...f, titlu: { ...f.titlu, [lang]: value } }))}
+                        />
+                        <LanguageFields
+                            idPrefix="pd-descriere"
+                            label={t('admin.resources.label_description')}
+                            values={pdfForm.descriere}
+                            multiline
+                            onChange={(lang, value) => setPdfForm((f) => ({ ...f, descriere: { ...f.descriere, [lang]: value } }))}
+                        />
                         <div className="admin-form-row">
                             <div className="admin-field">
                                 <label htmlFor="pd-tema">{t('admin.resources.label_theme')}</label>

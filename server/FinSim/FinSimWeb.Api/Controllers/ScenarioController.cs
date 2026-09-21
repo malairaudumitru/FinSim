@@ -1,3 +1,4 @@
+using FinSim.Api.Middleware;
 using FinSim.BusinessLayer.Interfaces;
 using FinSim.Domain.Models.Scenarios;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ public class ScenarioController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetScenarioList()
     {
-        var result = await _scenarioLogic.GetScenarioListAsync();
+        var result = await _scenarioLogic.GetScenarioListAsync(RequestContextHelpers.GetLanguage(HttpContext), User.IsInRole("Admin"));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 
@@ -40,7 +41,7 @@ public class ScenarioController : ControllerBase
     [HttpGet("{slug}")]
     public async Task<IActionResult> GetScenarioBySlug([FromRoute] string slug)
     {
-        var result = await _scenarioLogic.GetScenarioBySlugAsync(slug);
+        var result = await _scenarioLogic.GetScenarioBySlugAsync(slug, RequestContextHelpers.GetLanguage(HttpContext), User.IsInRole("Admin"));
         if (result.IsSuccess == false)
             return StatusCode((int)result.StatusCode, result.Message);
 

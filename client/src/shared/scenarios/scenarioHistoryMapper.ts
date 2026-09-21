@@ -11,6 +11,8 @@ export function toHistoryEntry(dto: ScenarioHistoryInfoDto, scenarios: ScenarioD
     const scenario = scenarios.find((s) => s.id === dto.scenarioId)
     return {
         id: String(dto.id),
+        scenarioId: dto.scenarioId,
+        slug: scenario?.slug,
         scenariu: scenario?.nume ?? '—',
         data: formatDate(dto.createdAt),
         scor: dto.score,

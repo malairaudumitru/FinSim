@@ -319,7 +319,6 @@ export default {
         thread_unavailable: 'Mesajul nu mai este disponibil.',
         your_message: 'Mesajul tău',
         admin_reply: 'Răspuns de la FinSim',
-        reply_received: 'Ai primit un răspuns la mesajul tău trimis către FinSim.',
         mark_all_read: 'Marchează tot ca citit',
         empty: 'Nu ai nicio notificare momentan.',
         typeLabel: {
@@ -612,6 +611,7 @@ export default {
         youBadge: 'Tu',
     },
     admin: {
+        translations_hint: 'Româna este obligatorie. Dacă lași engleza sau rusa goale, se afișează textul în română.',
         dashboard: {
             tab_overview: 'Prezentare generală',
             tab_users: 'Utilizatori',
@@ -715,7 +715,7 @@ export default {
             label_initial_credit_score: 'Scor credit inițial (opțional)',
             label_requires_account: 'Necesită cont autentificat',
             label_steps_json: 'Pașii scenariului (JSON avansat)',
-            hint_steps_json: 'Structura completă a pașilor (întrebări, opțiuni, punctaje). Editează cu atenție — trebuie să rămână un JSON valid.',
+            hint_steps_json: 'Structura completă a pașilor (întrebări, opțiuni, punctaje). Fiecare text poate fi un obiect cu limbile lui: { "ro": "...", "en": "...", "ru": "..." }. Un text simplu se afișează la fel în toate limbile. Editează cu atenție — trebuie să rămână un JSON valid.',
             cancel: 'Anulează',
             save: 'Salvează',
         },
@@ -768,6 +768,9 @@ export default {
             delete: 'Șterge',
             modal_edit_title: 'Editează notificarea',
             modal_add_title: 'Trimite notificare',
+            label_send_to_all: 'Trimite tuturor utilizatorilor',
+            hint_send_to_all: 'Se creează câte o notificare pentru fiecare cont activ.',
+            confirm_send_all: 'Trimiți această notificare către {{count}} utilizatori activi? Acțiunea nu poate fi anulată dintr-un pas.',
             label_recipient: 'Trimite către (cont utilizator)',
             placeholder_recipient: 'Alege utilizatorul',
             search_placeholder_recipient: 'Caută după nume sau email...',

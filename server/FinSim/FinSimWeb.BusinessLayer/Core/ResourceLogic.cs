@@ -18,9 +18,9 @@ public class ResourceLogic : ResourceAction, IResourceLogic
         return ActionResponse.Ok("Video resource created successfully");
     }
 
-    public async Task<ActionResponse> GetVideoListAsync()
+    public async Task<ActionResponse> GetVideoListAsync(string language)
     {
-        var result = await GetVideoListActionAsync();
+        var result = await GetVideoListActionAsync(language);
         return ActionResponse.Ok(data: result);
     }
 
@@ -48,9 +48,9 @@ public class ResourceLogic : ResourceAction, IResourceLogic
         return ActionResponse.Ok("Pdf resource created successfully");
     }
 
-    public async Task<ActionResponse> GetPdfListAsync()
+    public async Task<ActionResponse> GetPdfListAsync(string language)
     {
-        var result = await GetPdfListActionAsync();
+        var result = await GetPdfListActionAsync(language);
         return ActionResponse.Ok(data: result);
     }
 

@@ -12,7 +12,13 @@ public class VideoResourceEntity
 
     [Required]
     [StringLength(150)]
-    public string Title { get; set; } = string.Empty;
+    public string TitleRo { get; set; } = string.Empty;
+
+    [StringLength(150)]
+    public string? TitleEn { get; set; }
+
+    [StringLength(150)]
+    public string? TitleRu { get; set; }
     
     public ResourceTheme Theme { get; set; } = ResourceTheme.General;
 

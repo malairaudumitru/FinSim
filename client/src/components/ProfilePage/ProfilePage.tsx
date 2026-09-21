@@ -5,7 +5,6 @@ import { useAuth } from '../../shared/AuthContext/AuthContext'
 import { useScenarioHistory } from '../../shared/ScenarioHistoryContext/ScenarioHistoryContext'
 import { useReviews } from '../../shared/ReviewsContext/ReviewsContext'
 import { useErrorModal } from '../../shared/ErrorModalContext/ErrorModalContext'
-import { scenarios } from '../../shared/scenarios/scenariosData'
 import * as authApi from '../../api/authApi'
 import { normalizeApiError } from '../../api/apiClient'
 import {
@@ -75,10 +74,6 @@ function scoreClass(scor: number) {
     if (scor >= 70) return 'positive'
     if (scor < 50) return 'negative'
     return ''
-}
-
-function slugForScenario(nume: string) {
-    return scenarios.find((s) => s.nume === nume)?.slug
 }
 
 type NameField = 'nume' | 'prenume' | 'zi' | 'luna' | 'an'
@@ -747,7 +742,7 @@ function ProfilePage() {
 
                     <div className="history-list">
                         {history.map((entry) => {
-                            const slug = slugForScenario(entry.scenariu)
+                            const slug = entry.slug
                             return (
                                 <div className="history-row" key={entry.id}>
                                     <div className="history-info">

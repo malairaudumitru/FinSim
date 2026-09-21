@@ -11,7 +11,13 @@ public class NotificationEntity
 
     [Required]
     [StringLength(300)]
-    public string Message { get; set; } = string.Empty;
+    public string MessageRo { get; set; } = string.Empty;
+
+    [StringLength(300)]
+    public string? MessageEn { get; set; }
+
+    [StringLength(300)]
+    public string? MessageRu { get; set; }
     
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

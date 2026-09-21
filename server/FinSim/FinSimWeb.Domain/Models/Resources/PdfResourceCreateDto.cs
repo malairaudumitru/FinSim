@@ -7,10 +7,22 @@ public class PdfResourceCreateDto
 {
     [Required]
     [StringLength(150)]
-    public string Title { get; set; } = string.Empty;
+    public string TitleRo { get; set; } = string.Empty;
+
+    [StringLength(150)]
+    public string? TitleEn { get; set; }
+
+    [StringLength(150)]
+    public string? TitleRu { get; set; }
 
     [StringLength(600)]
-    public string Description { get; set; } = string.Empty;
+    public string DescriptionRo { get; set; } = string.Empty;
+
+    [StringLength(600)]
+    public string? DescriptionEn { get; set; }
+
+    [StringLength(600)]
+    public string? DescriptionRu { get; set; }
 
     [Required]
     [StringLength(300)]
